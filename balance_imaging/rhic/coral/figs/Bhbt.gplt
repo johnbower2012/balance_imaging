@@ -1,0 +1,36 @@
+clear
+set term pdf enh font "Helvetica,14" size 6,5;
+set output "Bhbt.pdf";
+#set term aqua enh font "Helvetica,14" size 800 500;
+
+unset key;
+set pointsize 3;
+set border lw 6;
+set size 1.0,0.8
+set lmargin 11;
+set rmargin 2;
+
+set origin 0.0,0.15
+set tmargin 0;
+set bmargin 0;
+
+set yrange [-0.06:.03];
+set xrange [0:180];
+set xtics font "Helvetica,12";
+set ytics font "Helvetica,12";
+set xtics 0,30;
+set mxtics 2;
+set ytics -0.1,0.02;
+set mytics 5
+
+unset xlabel;
+set ylabel "B_{HBT}({/Symbol Df})" font "Helvetica,18" offset 1,0;
+set xlabel "{/Symbol Df}(degrees)" font "Helvetica,18" offset 0,0;
+
+plot "Bhbt_0.dat" using 1:2 with linespoints lw 6 pointtype 6 lc 1,\
+"Bhbt_20.dat" using 1:2 with linespoints lw 6 pointtype 4 lc 2,\
+"Bhbt_40.dat" using 1:2 with linespoints lw 6 pointtype 8 lc 3,\
+"Bhbt_60.dat" using 1:2 with linespoints lw 6 pointtype 10 lc 4
+
+
+

@@ -1,0 +1,12 @@
+double PT 600.0
+double DELPT 10.0
+double PHIMIN_DEG -360.0
+double PHIMAX_DEG 360.0
+double YMIN -0.5
+double YMAX 0.5
+int NMAX 20000   #must be large enough for reading in arrays
+double MA 139.57
+double MB 139.57
+string OSCARfilename /Users/scottepratt/data/bb/oscar.dat
+int NEVENTSMAX 192
+bool AEQUALB true

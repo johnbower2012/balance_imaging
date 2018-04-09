@@ -1,0 +1,5 @@
+int NXYZMAX 60
+double DELXYZ 1.0
+bool XSYM true
+bool YSYM true
+bool ZSYM true

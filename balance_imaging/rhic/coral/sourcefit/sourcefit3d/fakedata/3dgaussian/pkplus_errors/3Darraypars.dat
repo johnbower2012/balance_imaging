@@ -1,0 +1,9 @@
+bool XSYM true
+bool YSYM true
+bool ZSYM true
+int NXMAX 25
+int NYMAX 25
+int NZMAX 25
+double DELX 2
+double DELY 2
+double DELZ 2

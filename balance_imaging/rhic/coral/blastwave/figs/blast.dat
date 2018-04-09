@@ -1,0 +1,48 @@
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0195   0.7148   0.0139  0.0037 -0.0031
+#____________ percent centrality = 0 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.026, p0=1.04, p2=0.0298, p4=0.0022, T=96.4, Npart=347.3, Nch=406.1
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0184   0.7155   0.0132  0.0046 -0.0025
+#____________ percent centrality = 5 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.0482, p0=0.999, p2=0.0406, p4=0.00407, T=99.6, Npart=293.3, Nch=343
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0290   0.6923   0.0201  0.0067 -0.0054
+#____________ percent centrality = 10 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.078, p0=0.982, p2=0.0532, p4=0.00514, T=99.5, Npart=229, Nch=267.5
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0422   0.6847   0.0289  0.0097 -0.0088
+#____________ percent centrality = 20 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.121, p0=0.937, p2=0.0627, p4=0.00514, T=102, Npart=162, Nch=188
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0576   0.6595   0.0380  0.0141 -0.0140
+#____________ percent centrality = 30 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.151, p0=0.894, p2=0.0699, p4=0.00844, T=104, Npart=112, Nch=128
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0685   0.6344   0.0435  0.0182 -0.0173
+#____________ percent centrality = 40 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.185, p0=0.841, p2=0.069, p4=0.0108, T=107, Npart=74.2, Nch=83.5
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0737   0.5996   0.0442  0.0212 -0.0228
+#____________ percent centrality = 50 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.221, p0=0.788, p2=0.0623, p4=0.0113, T=110, Npart=45.8, Nch=51.5
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0759   0.5622   0.0427  0.0234 -0.0269
+#____________ percent centrality = 60 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.292, p0=0.707, p2=0.0484, p4=0.0224, T=116, Npart=25.9, Nch=29
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0762   0.4951   0.0377  0.0298 -0.0333
+#____________ percent centrality = 70 ____________
+# NPAIRS=1x10^6, tau=12, etaG=1.7, ymax=1
+# eps=0.378, p0=0.608, p2=0.0477, p4=0.0396, T=125, Npart=13, Nch=14.5
+# v2 <cos(phi_B)> v2*<cos(phi_B)>  v2c    v2s
+ 0.0799   0.4069   0.0325  0.0359 -0.0391

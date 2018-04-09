@@ -1,0 +1,6 @@
+double tau 12.0
+double etaG 1.7
+double ptmin 200.0
+double ymax 1.0
+double RHBT 13.0
+double NMILLIONPAIRS 1000
