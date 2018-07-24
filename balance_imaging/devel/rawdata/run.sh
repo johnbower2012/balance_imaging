@@ -1,7 +1,10 @@
-#! /bin/sh
-for((i=$1;i<=$2;i++))
+#!/bin/bash
+
+for((i=$1;i<$2;i++))
 do
-	run_name=`printf "run%04d" ${i}`;
-	echo  XXXXXXXX  run_name=${run_name}  XXXXXXXX;
-	balance ${run_name};
+    fn=` printf "run%04d" $i`
+    echo -e "\n+++++++++ Running Balance on $fn +++++++++\n"
+    ./balance $fn
 done
+
+echo Finished...\n
