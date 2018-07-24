@@ -1,0 +1,12 @@
+double PT 600.0
+double DELPT 20.0
+double PHIMIN_DEG 0.0
+double PHIMAX_DEG 360.0
+double YMIN -1.0
+double YMAX 1.0
+int NMAX 5000   #must be large enough for reading in arrays
+double MA 139.57
+double MB 139.57
+string OSCARfilename /Users/scottepratt/data/viscoushydro/oscar_bb.tmp
+#string OSCARfilename /Users/scottepratt/data/fakedata/oscar.tmp
+int NEVENTSMAX 200

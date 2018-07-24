@@ -1,0 +1,52 @@
+Hi Vasili,
+
+First untar/unzip trunk.tar.gz and put the directory "trunk" somewhere convenient. This is the CorAL distribution.
+
+Also untar/unzip the file vasili.tar.gz. This is the working space, and has the files you should normally have to edit to work.
+
+Before you run code you must install:
+A. scons   -- this is a "make" replacement based on python. It is a pain in the ass, and I wish I had just used make, but this is what we have
+B. GSL -- the GNU scientific library
+
+You must make some definitions of environment variables. In bash,
+
+export CORAL_GSLPATH=/usr/local/
+export CORAL_HOME=/Users/vasili/CorAL/trunk/
+export CORAL_CCFLAGS=-O2 -fast
+export CORAL_X11PATH=/usr/X11R6/           You shouldn't need this one
+Of course, if you unpack CorAL somewhere else, or if GSL is installed somewhere else, you need to change the variables.
+
+Sometimes the OSCAR formats differ, and you have to edit the CorAL code so that it is read correctly. If you have to do this, the file is 
+.../src/SourceCalc/sourcecalc_OSCAR.cc
+You might have to change the number of dummy lines, or add or edit the variables read in on  a given line
+
+--------------------------------------------------------------------------
+FILES in vasili/
+
+SCconstruct
+	This is like a makefile. To compile everything you should just type "scons"
+
+cfmaker3d_oscar.cc  and cfmaker3d_oscar_fullwf.cc
+	These makes 3-d correlation functions. Read the beginnings of the files for more info. You will 
+	undoubtedly have to edit these files
+	
+sourcefit_3dgaussian.cc and sourcefit_3dgaussian_fullwf.cc
+	These find the Gaussian radii Rout=Rx, Rside=Ry and Rlong=Rz. Results are written to
+	results/results3d.dat or results/results3d_fullwf.dat respectively.
+	These use Newton's methods, which may or may not work. You might try changing initial radii and lambda,
+	or you might prefer to use your own fitting programs all-together. If you want to fit the full-wf CFs
+	with Bowler-Sinyukov corrected Gaussians, you can set the calc flag to 10 in
+	sourcefit_3dgaussian_fullwf.cc. If you do BS, you may want to go to .../trunk/src/Source2CF/source2cf.cc 
+	and edit the routine S2CF::s2c_bowlersinyukov and change the parameter Rbar, which is currently set 
+	to 5.0 fm, to be consistent with RHIC experiments
+
+Good luck and keep me posted as to whether you can get the stuff to compile/run/work
+
+- Scott
+
+	
+
+
+
+
+

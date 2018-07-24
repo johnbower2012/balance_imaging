@@ -1,0 +1,59 @@
+********************************************************************************
+***                                                                          ***
+*** PHYSICA                      VERSION # 2.92               October   2007 ***
+*** Copyright (C) 1992,...,2007                              Joseph L. Chuma ***
+***                           All rights reserved                            ***
+***                                                                          ***
+***  Enter NEWS to get the latest information on new commands and features   ***
+***  Latest news added on October 23, 2007                                   ***
+***  Journal file: physica.journal                                           ***
+***                                                                          ***
+***            UNAUTHORIZED COMMERCIAL USE IS STRICTLY PROHIBITED            ***
+***                                                                          ***
+*** Physica 3.0 for the Windows environment has been released under the name ***
+*** Extrema. See www.extremasoftware.com                                     ***
+***                                                                          ***
+********************************************************************************
+User: scottepratt   Date: 29-Mar-2009 18:03:11
+ Default graphics hardcopy device: PostScript: colour, paper size A
+ PHYSICA: exec spectra.plt
+ vector MT has been created with 160 values
+ vector SPI has been created with 160 values
+ vector SK has been created with 160 values
+ vector SP has been created with 160 values
+ vector MT has been created with 160 values
+ vector SPI has been created with 160 values
+ vector SK has been created with 160 values
+ vector SP has been created with 160 values
+ vector PT_PIMINUS has been created with 27 values
+ vector MB_PIMINUS has been created with 27 values
+ vector MBE_PIMINUS has been created with 27 values
+ vector PHENIX_PIMINUS has been created with 27 values
+ vector PHENIX_PIMINUS_ERROR has been created with 27 values
+ vector PT_PIPLUS has been created with 27 values
+ vector MB_PIPLUS has been created with 27 values
+ vector MBE_PIPLUS has been created with 27 values
+ vector PHENIX_PIPLUS has been created with 27 values
+ vector PHENIX_PIPLUS_ERROR has been created with 27 values
+ vector PT_PROTON has been created with 21 values
+ vector MB_PROTON has been created with 21 values
+ vector MBE_PROTON has been created with 21 values
+ vector PHENIX_PROTON has been created with 21 values
+ vector PHENIX_PROTON_ERROR has been created with 21 values
+ vector PT_PBAR has been created with 21 values
+ vector MB_PBAR has been created with 21 values
+ vector MBE_PBAR has been created with 21 values
+ vector PHENIX_PBAR has been created with 21 values
+ vector PHENIX_PBAR_ERROR has been created with 21 values
+ vector PT_KMINUS has been created with 15 values
+ vector MB_KMINUS has been created with 15 values
+ vector MBE_KMINUS has been created with 15 values
+ vector PHENIX_KMINUS has been created with 15 values
+ vector PHENIX_KMINUS_ERROR has been created with 15 values
+ vector PT_KPLUS has been created with 15 values
+ vector MB_KPLUS has been created with 15 values
+ vector MBE_KPLUS has been created with 15 values
+ vector PHENIX_KPLUS has been created with 15 values
+ vector PHENIX_KPLUS_ERROR has been created with 15 values
+  Hardcopy file: spectra.eps
+ PHYSICA: quit

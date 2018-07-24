@@ -1,0 +1,53 @@
+ALLCHARGES = false # calcs BF(Delta eta) for all charges
+BARYON_FUDGE = 0.666667
+DELY = 0.1 # binning width for BF
+GAUSSIAN = false # calcs BF normalized to unity for two charges, uses SIGMA_GAUSS for eta width
+NSAMPLE = 100000000
+QUARK_ENTROPY_RATIO = 0.18
+SIGMAPHI_HAD = 0.1 # spread of <(Del u_phi)^2>/<u_t^2> due to diffusion
+SIGMAPHI_QGP = 0.2 # spread of <(Del u_phi)^2>/<u_t^2> due to diffusion
+SIGMA_GAUSS = 0.3 # eta width if GAUSSIAN is set
+SIGMA_HAD_RATIO = 0.1
+SIGMA_QGP = 1.0
+SINGLEWAVE = false # For a single gaussian, same as setting number of quarks in QGP to zero, with single wave characterized by SIGMA_LOCAL (SIGMA_QGP irrelevant)
+SOVERUD = 0.93
+STAR_ACCEPTANCE_I = true
+STAR_ACCEPTANCE_J = true
+T = 102 # blast wave final Temp
+UPERPX = 0.732 # blast wave max transverse gamma*v
+UPERPY = 0.732 # blast wave max transverse gamma*v
+will read res info from progdata/resinfo/resonances_pdg_weak.dat
+NResonances=319
+will read decay info from progdata/resinfo/decays_pdg_weak.dat
+SIGMA_HAD=0.1, SIGMA_QGP=1
+arrays initialized
+for baryon_fudge=sreduction=1.0, s/rho_h=7.27182, sdens=3.43746, rho_h=0.472709
+nquarks=1260, totalhadrons=903.891
+for baryon_fudge=sreduction=1.0, s/rho_h=7.27182, sdens=3.43746, rho_h=0.472709
+nquarks=1260, totalhadrons=903.891
+Weights Calculated
+********** Entering CalcBF, NSAMPLE=100000000 **********
+finished 10 percent
+finished 20 percent
+finished 30 percent
+finished 40 percent
+finished 50 percent
+finished 60 percent
+finished 70 percent
+finished 80 percent
+finished 90 percent
+finished 100 percent
+<pt>= 464.67 for pions, 729.369 for kaons, 1102.89 for nucleons
+ibal=0, normalization=0.239531
+dNch/dy=1.80608
+ibal=1, normalization=0.223743
+ibal=2, normalization=0.0135828
+ibal=3, normalization=0
+ibal=4, normalization=0.00591331
+ibal=5, normalization=0.0588268
+ibal=6, normalization=0
+ibal=7, normalization=0.0180463
+ibal=8, normalization=nan
+ibal=9, normalization=nan
+ibal=10, normalization=0.07582
+npiplus=45156420, npiminus=45149375, npipairs=21029771
