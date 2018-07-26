@@ -1,0 +1,1 @@
+ set multiplot layout 1,2 title "PiPi Balance Function" font ",14"; set ylabel "Balance Function"; set xlabel "Relative Rapidity"; set grid; unset key; set title "Prior"; plot [0:1.8][-0.01:0.6] for [i=2:21] "../../model_output_original_1000/I211_J211.dat" u 1:i with lines; set title "Posterior"; plot [0:1.8][-0.01:0.6] for [i=2:21] "I211_J211.dat" u 1:i with lines
