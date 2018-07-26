@@ -7,8 +7,8 @@
 #!/bin/bash
 
 EXEC_FILE='collect.x'
-PARAM_FILE='script_parameters.dat'
-NAMES_FILE='script_names.dat'
+PARAM_FILE='script_model_parameters.dat'
+NAMES_FILE='script_model_names.dat'
 
 SOURCE_FOLDER=''
 DEST_FOLDER=''
@@ -50,4 +50,4 @@ while read NAME; do
    DEST="$FOLDER$NAME"
    ./collect.x $RUNS $NAME $DEST
    rm -r $NAME
-done < <(cat $NAMES_FILE)
+done < <(egrep -v "^(#|$)" $NAMES_FILE)

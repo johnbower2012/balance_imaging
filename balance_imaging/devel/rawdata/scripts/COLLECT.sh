@@ -7,8 +7,8 @@
 #!/bin/bash
 
 EXEC_FILE='collect.x'
-PARAM_FILE='script_parameters.dat'
-NAMES_FILE='script_names.dat'
+PARAM_FILE='script_model_parameters.dat'
+NAMES_FILE='script_model_names.dat'
 
 SOURCE_FOLDER=''
 DEST_FOLDER=''
@@ -43,11 +43,11 @@ while read NAME; do
        then
 	   mkdir -v $NAME
        fi
-       RUN=` printf "${FOLDER}run%04d/${NAME}" $j `
+       RUN=` printf "${SOURCE_FOLDER}run%04d/${NAME}" $j `
        NEWFILE=` printf "${NAME}/run%04d" $j `   
        egrep -v "^(#|$)" $RUN > $NEWFILE
    done
-   DEST="$FOLDER$NAME"
+   DEST="$DEST_FOLDER$NAME"
    ./collect.x $RUNS $NAME $DEST
    rm -r $NAME
-done < <(cat $NAMES_FILE)
+done < <(egrep -v "^(#|$)" $NAMES_FILE)
