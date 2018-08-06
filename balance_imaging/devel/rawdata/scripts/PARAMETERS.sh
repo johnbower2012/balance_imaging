@@ -4,6 +4,7 @@
 #  parameter files required to run 'balance'
 
 #File location
+EXEC_FILE='exec/parameters.x'
 PRIOR_FILE='../model_output/parameter_priors.dat'
 FIXED_FILE='../model_output/fixed_parameters.dat'
 
@@ -30,4 +31,4 @@ for((i=0;i<latinHyperCube_samples;i++))
     done
 
 #Execute parameters.x
-./parameters.x $PRIOR_FILE $LINES $latinHyperCube_samples
+./$EXEC_FILE $PRIOR_FILE $LINES $latinHyperCube_samples

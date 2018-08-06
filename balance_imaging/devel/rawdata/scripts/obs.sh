@@ -1,0 +1,1 @@
+for((i=0;i<5;i++)); do fn=model_run05/; ./OBSERVABLES_MODEL.sh calculations/data/model_run04/ calculations/moments/exp_run00/ calculations/moments/model_run04/; done

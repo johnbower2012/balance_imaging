@@ -6,7 +6,7 @@
 #include<armadillo>
 #include<string>
 #include<fstream>
-#include "emulator_class.cpp"
+#include "lib/emulator_class.cpp"
 
 class MCMC{
 public:
@@ -112,7 +112,8 @@ int main(int argc, char* argv[]){
   random.set_range(range);
   random.set_position(position);
   random.set_widths(widths);
-  random.set_seed_clock();
+  random.set_seed(1);
+  //  random.set_seed_clock();
 
   arma::mat gauss_mat = arma::zeros<arma::mat>(1,parameters + observables*3);
   bool stepped;

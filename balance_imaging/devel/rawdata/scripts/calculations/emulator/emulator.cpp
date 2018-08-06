@@ -4,14 +4,22 @@
 #include "emulator_class.cpp"
 #include<armadillo>
 
+double calc_llh(arma::mat target, arma::mat model, int cutoff){
+  double sum=0.0;
+  for(int i=0;i<cutoff;i++){
+    sum += (target(i) - model(i))*(target(i) - model(i));
+  }
+  return -sum/2.0;
+}
+
 int main(int argc, char* argv[]){
   int train = 1000;
-  int test = 719;
+  int test = 1;
   int param = 4;
   int observables=12;
   int hp = 3;
   double epsilon=1e-8;
-
+  int INT;
   std::string fileName, betaName,hypName;
 
   arma::mat X = arma::zeros<arma::mat>(train,param);
@@ -29,6 +37,7 @@ int main(int argc, char* argv[]){
     fileName = argv[1];
     betaName = argv[2];
     hypName = argv[3];
+    INT = atoi(argv[4]);
   }
   
   load_data_file(fileName,X,Y);
@@ -39,12 +48,39 @@ int main(int argc, char* argv[]){
     range(i,0) = 0.01;
     range(i,1) = 2.0;
   }
-  X_s = construct_latinhypercube_sampling(test,range);
+  //  X_s = construct_latinhypercube_sampling(test,range);
+  arma::mat mllh = arma::zeros<arma::mat>(train,5);
+  double llh;
+  std::ofstream ofile;
+  ofile.open("likelihood.dat");
+  for(int i=0;i<train;i++){
+    X_s.row(0) = X.row(i);
+    //X.shed_row(INT);
+    arma::mat target = Y.row(i);
+    //Y.shed_row(INT);
 
-  emulator gauss(X,H,beta,epsilon);
-  arma::mat output = gauss.emulate(X_s,Y);
+    emulator gauss(X,H,beta,epsilon);
+    arma::mat output = gauss.emulate(X_s,Y);
 
-  write_output(output,param,observables,"test.dat");
-  write_trainset(X, Y, "train.dat");
+    arma::mat Y_s = arma::zeros<arma::mat>(1,observables);
+    for(int j=0;j<observables;j++){
+      Y_s.col(j) = output.col(param+j);
+    }
+    llh = calc_llh(target,Y_s,INT);
+    for(int i=0;i<param;i++){
+      ofile << X_s(0,i) << " ";
+    }
+    ofile << llh << std::endl;
+
+    X_s.print();
+    target.print();
+    Y_s.print();
+    
+    printf("llh: %f\n",llh);
+  }
+  ofile.close();
+  //  write_output(output,param,observables,"test.dat");
+  //  write_trainset(X, Y, "train.dat");
+
   return 0;
 }

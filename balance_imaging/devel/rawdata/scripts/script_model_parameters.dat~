@@ -1,5 +1,5 @@
 SOURCE_FOLDER ../model_output/
 DEST_FOLDER calculations/
-RUNS 20
-LINES 16
+RUNS 1000
+LINES 18
 FILES 4

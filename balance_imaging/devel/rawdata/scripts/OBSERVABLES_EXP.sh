@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXEC_FILE='observables_exp.x'
+EXEC_FILE='exec/observables_exp.x'
 PARAM_FILE='script_exp_parameters.dat'
 NAMES_FILE='script_exp_names.dat'
 
@@ -30,6 +30,15 @@ while read NAME VALUE; do
        echo "Variable unknown: $NAME $VALUE"
    fi
 done < <(egrep -v '^(#|$)' $PARAM_FILE)
+
+if [ $1 ]
+then
+    SOURCE_FOLDER=$1
+    if [ $2 ]
+    then
+	DEST_FOLDER=$2
+    fi
+fi
 
 declare -a array
 i=0

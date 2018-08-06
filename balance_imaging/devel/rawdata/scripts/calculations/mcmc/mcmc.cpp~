@@ -5,7 +5,8 @@
 #include<chrono>
 #include<armadillo>
 #include<string>
-#include "emulator_class.cpp"
+#include<fstream>
+#include "lib/emulator_class.cpp"
 
 class MCMC{
 public:
@@ -43,6 +44,8 @@ public:
   double get_likelihood(arma::vec z);
   bool decide(arma::vec z);
 };
+
+std::ofstream ofile;
 
 int main(int argc, char* argv[]){
   int mcmc_runs = 100;
@@ -150,6 +153,12 @@ int main(int argc, char* argv[]){
   }
   std::string title = "'uu_width','ud_width','us_width','ss_width'";
   write_csv_file(outfile,title,trace_final);
+
+  ofile.open("mcmc_stats.dat");
+  ofile << "acc_ratio: " << fraction/mcmc_runs << '\n';
+  ofile << "max_llh: " << random.max_log_likelihood << '\n';
+  ofile.close();
+  
   return 0;
 }
 

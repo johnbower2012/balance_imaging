@@ -4,6 +4,7 @@
 #include<chrono>
 #include<armadillo>
 #include<fstream>
+#include<string>
 
 std::ofstream ofile;
 std::ifstream ifile;
@@ -21,8 +22,17 @@ int main(int argc, char* argv[]){
   arma::vec y = arma::zeros<arma::vec>(points);
   arma::vec result = arma::zeros<arma::vec>(points);
   arma::vec beta = arma::zeros<arma::vec>(points);
-
-  ifile.open("plot.dat");
+  std::string plotname;
+  std::string dest_folder;
+  if(argc<3){
+    printf("Improper usage. Enter also 'plotname dest_folder' on same line.\n");
+    exit(1);
+  } else{
+    plotname = argv[1];
+    dest_folder = argv[2];
+  }
+  
+  ifile.open(plotname);
   for(int i=0;i<points;i++){
     X(i,0) = 1.0;
     for(int j=0;j<dimensions;j++){
@@ -39,7 +49,8 @@ int main(int argc, char* argv[]){
   X.resize(points,2);
   beta = linear_regression_ls(y,X);
   
-  ofile.open("beta.dat");
+  std::string destfile = dest_folder + "beta.dat";
+  ofile.open(destfile);
   ofile << "#observables(1,2,3...down)parameters(1,2,3...across)" << std::endl;
   for(int i=0;i<observables;i++){
     for(int j=0;j<1+dimensions;j++){
