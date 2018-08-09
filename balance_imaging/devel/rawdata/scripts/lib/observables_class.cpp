@@ -170,13 +170,13 @@ void obs_matrix_moments(int files, int obs_file, arma::mat *&val_matrix, const a
   int i,j,k;
   int runs = val_matrix[0].n_rows;
   int lines = delY_vec.n_elem;
-  arma::mat function = arma::zeros<arma::mat>(lines,2);
+  arma::mat function = arma::zeros<arma::mat>(lines-1,2);
   obs_matrix = arma::zeros<arma::mat>(runs,obs_file*files);
   for(i=0;i<files;i++){
     for(j=0;j<runs;j++){
-      for(k=0;k<lines;k++){
-	function(k,0) = delY_vec(k);
-	function(k,1) = val_matrix[i](j,k);
+      for(k=0;k<lines-1;k++){
+	function(k,0) = delY_vec(k+1);
+	function(k,1) = val_matrix[i](j,k+1);
       }
       obs_matrix(j,i*obs_file) = zeroth_moment(function);
       obs_matrix(j,i*obs_file+1) = first_moment(function);

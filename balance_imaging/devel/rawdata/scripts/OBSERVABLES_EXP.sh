@@ -48,7 +48,7 @@ while read name; do
    array[$i]="$dest"
 done < <(egrep -v '^(#|$)' $NAMES_FILE)
 
-echo "OBSERVABLES.sh Running:"
+echo "OBSERVABLES_EXP.sh Running:"
 echo $EXEC_FILE $DEST_FOLDER $LINES $RUNS $FILES ${array[1]} ${array[2]} ${array[3]} ${array[4]} ${array[5]} ${array[6]} ${array[7]}
 
 ./$EXEC_FILE $DEST_FOLDER $LINES $RUNS $FILES ${array[1]} ${array[2]} ${array[3]} ${array[4]} ${array[5]} ${array[6]} ${array[7]}

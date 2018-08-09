@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
   //all observables that aren't pipi, reduce unc by factor of ten.
 
   load_file(files, lines, runs, infilename, delY_vec, val_matrix);
-  obs_matrix_moments_fabs(files,obs_file,val_matrix,delY_vec,obs_matrix);
+  obs_matrix_moments(files,obs_file,val_matrix,delY_vec,obs_matrix);
   //reorder to match model output
   arma::mat temp = obs_matrix;
   for(int i=0;i<observables;i++){

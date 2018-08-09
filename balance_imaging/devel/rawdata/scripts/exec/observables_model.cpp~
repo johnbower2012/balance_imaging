@@ -178,13 +178,10 @@ int main(int argc, char* argv[]){
   printf("%s saved to file.\n",printname.c_str());
 
   arma::mat exp_tilde = arma::zeros<arma::mat>(1,observables);
-  tilde_function(exp_data,obs_error,mean_vec,exp_tilde);
+  for(int i=0;i<observables;i++){
+    exp_tilde(0,i) = (exp_data(0,i) - mean_vec(i))/obs_error(i);
+  }
   arma::mat exp_z = exp_tilde*eigvec_matrix;
-  exp_data.print("data");
-  obs_error.print("error");
-  mean_vec.print("mean");
-  exp_tilde.print("tilde");
-  exp_z.print("z");
   printname = dest_folder + "moments_exp_z.dat";
   title = "#exp_z";
   print_file(printname,exp_z);

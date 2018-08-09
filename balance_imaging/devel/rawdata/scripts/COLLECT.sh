@@ -11,6 +11,7 @@ PARAM_FILE='script_model_parameters.dat'
 NAMES_FILE='script_model_names.dat'
 
 SOURCE_FOLDER=''
+EXP_FOLDER=''
 DEST_FOLDER=''
 LINES=0
 RUNS=0

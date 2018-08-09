@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
   obs_error = arma::zeros<arma::vec>(observables);
 
   load_file(files, lines, runs, infilename, delY_vec, val_matrix);
-  obs_matrix_moments_fabs(files,obs_file,val_matrix,delY_vec,obs_matrix);
+  obs_matrix_moments(files,obs_file,val_matrix,delY_vec,obs_matrix);
 
 
   /*********

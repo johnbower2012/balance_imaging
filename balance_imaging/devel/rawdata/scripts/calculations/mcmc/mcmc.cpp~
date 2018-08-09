@@ -52,13 +52,13 @@ int main(int argc, char* argv[]){
   std::string datafile, expfile, hpfile, betafile, outfile;
 
   if(argc<7){
-    printf("Improper usage. Please enter also 'model_file exp_file hpfile betafile mcmc_runs outfile' on sabme line.\n");
+    printf("Improper usage. Please enter also 'model_file exp_file betafile hpfile mcmc_runs outfile' on sabme line.\n");
     exit(1);
   }else{
     datafile = argv[1];
     expfile = argv[2];
-    hpfile = argv[3];
-    betafile = argv[4];
+    betafile = argv[3];
+    hpfile = argv[4];
     mcmc_runs = atoi(argv[5]);
     outfile = argv[6];
   }
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
 
   for(int i=0;i<parameters;i++){
     //position(i) = fabs(dist(generator));
-    widths(i) = (1.5-0.1)/25.0;
+    widths(i) = (1.5-0.1)/30.0;
     range(i,0) = 0.1;
     range(i,1) = 1.5;
   }
@@ -112,7 +112,8 @@ int main(int argc, char* argv[]){
   random.set_range(range);
   random.set_position(position);
   random.set_widths(widths);
-  random.set_seed_clock();
+  random.set_seed(1);
+  //  random.set_seed_clock();
 
   arma::mat gauss_mat = arma::zeros<arma::mat>(1,parameters + observables*3);
   bool stepped;
@@ -123,10 +124,12 @@ int main(int argc, char* argv[]){
   int j=0,k=0;
   int pts=mcmc_runs/10.0;
 
+  arma::mat gauss_output = arma::mat(mcmc_runs,parameters + 3*observables);
   for(int i=0;i<mcmc_runs;i++){
     random.step();
     X_s = random.test_position.t();
     gauss_mat = gauss.emulate(X_s,Y_model);
+    gauss_output.row(i) = gauss_mat.row(0);
     for(int l=0;l<observables;l++){
       z(l) = gauss_mat(0,parameters+l); 
     }
@@ -153,7 +156,8 @@ int main(int argc, char* argv[]){
   }
   std::string title = "'uu_width','ud_width','us_width','ss_width'";
   write_csv_file(outfile,title,trace_final);
-
+  gauss_output.print("gauss");
+  write_file("gauss_output.dat",gauss_output);
   ofile.open("mcmc_stats.dat");
   ofile << "acc_ratio: " << fraction/mcmc_runs << '\n';
   ofile << "max_llh: " << random.max_log_likelihood << '\n';

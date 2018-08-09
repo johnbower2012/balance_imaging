@@ -36,6 +36,15 @@ while read NAME VALUE; do
    fi
 done < <(egrep -v '^(#|$)' $PARAM_FILE)
 
+if [ $1 ]
+then
+    SOURCE_FOLDER=$1
+    if [ $2 ]
+    then
+	DEST_FOLDER=$2
+    fi
+fi
+
 while read NAME; do
    for((j=0;j<$RUNS;j++))
    do

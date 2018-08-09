@@ -150,21 +150,22 @@ arma::mat emulator::emulate(arma::mat X_s, arma::mat Y){
     var_mat = kernel_ss - kernel_s.t()*kernel_inverse[i]*kernel_s + R.t()*temp_pp_inverse*R;	
 
     //Cholesky Decomposition, 'sqrt' of Variance matrix, here the lower triangular form
-    L = arma::chol(var_mat,"lower");
+    //L = arma::chol(var_mat,"lower");
 
     //generator random distribution
     //create matrix of "Mean" values for easy generation of output function values
-
+    /*
     for(j=0;j<test_points;j++){
       random_sample(j,0) = dist(generator);
     }
+    */
 
     //sample posterior functions
-    post_func = mean_mat + L*random_sample;
+    //   post_func = mean_mat + L*random_sample;
 
     output_mat.col(parameter_count + i) = mean_mat.col(0);
     output_mat.col(parameter_count + observable_count + i) = var_mat.diag();
-    output_mat.col(parameter_count + 2*observable_count + i) = post_func.col(0);
+    output_mat.col(parameter_count + observable_count*2 + i) = post_func.col(0);
   }
 
   //generate output matrix:
