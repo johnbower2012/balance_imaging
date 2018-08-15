@@ -13,11 +13,10 @@ int main(int argc, char * const argv[]){
 												 // and after acceptance is instantiated (needs to know ETA range to set bins)
 
 	balance->CalcWeights();
-	balance->WriteWeightTables();
-	balance->WriteGQGPTables(); // output in tex format in results/directory
+	//balance->WriteWeightTables();
+	//balance->WriteGQGPTables(); // output in tex format in results/directory
 	balance->CalcBF();
 	//balance->PrintBF();
-	balance->WriteG();
 	balance->WriteBF();
 	return 0;
 }
