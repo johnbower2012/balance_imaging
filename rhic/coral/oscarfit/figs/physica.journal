@@ -1,0 +1,43 @@
+********************************************************************************
+***                                                                          ***
+*** PHYSICA                      VERSION # 2.92               October   2007 ***
+*** Copyright (C) 1992,...,2007                              Joseph L. Chuma ***
+***                           All rights reserved                            ***
+***                                                                          ***
+***  Enter NEWS to get the latest information on new commands and features   ***
+***  Latest news added on October 23, 2007                                   ***
+***  Journal file: physica.journal                                           ***
+***                                                                          ***
+***            UNAUTHORIZED COMMERCIAL USE IS STRICTLY PROHIBITED            ***
+***                                                                          ***
+*** Physica 3.0 for the Windows environment has been released under the name ***
+*** Extrema. See www.extremasoftware.com                                     ***
+***                                                                          ***
+********************************************************************************
+User: scottepratt   Date:  4-Nov-2008 11:08:45
+ Default graphics hardcopy device: PostScript: colour, paper size A
+ PHYSICA: exec Rosl_finalfit.plt
+ vector KT has been created with 10 values
+ vector LAMBDA_DEFAULT has been created with 10 values
+ vector ROUT_DEFAULT has been created with 10 values
+ vector ROUTLAB_DEFAULT has been created with 10 values
+ vector RSIDE_DEFAULT has been created with 10 values
+ vector RLONG_DEFAULT has been created with 10 values
+ vector RATIO_DEFAULT has been created with 10 values
+ *** WARNING from READ\VECTORS
+     no vectors made
+ vector KT has been created with 10 values
+ vector LAMBDA_BS has been created with 10 values
+ vector ROUT_BS has been created with 10 values
+ vector ROUTLAB_BS has been created with 10 values
+ vector RSIDE_BS has been created with 10 values
+ vector RLONG_BS has been created with 10 values
+ vector RATIO_BS has been created with 10 values
+ *** ERROR in expression evaluator
+  
+ Rlong_fullwf=sqrt(Rlong_fullwf*Rlong_fullwf*Rlong_cutoff*Rlong_cutoff/(Rlong_fu
+ llwf*Rlong_fullwf+Rlong_cutoff*Rlong_cutoff))
+ the above line in Rosl_finalfit.plt caused the error
+  
+     RLONG_FULLWF is undefined: not a function or a variable
+ PHYSICA: quit

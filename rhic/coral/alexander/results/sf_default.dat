@@ -1,0 +1,1503 @@
+SFit Initialized
+Enter qualifer : qarrayfilename set to no_qarray_file
+__ WFPARAMETERS __
+delq set to 1
+nqmax set to 90
+epsilon set to 1
+STRONG set to 1
+COULOMB set to 1
+IDENTICAL set to 1
+____________________
+initialization finished
+Fixing par[4], name=Xoff
+dirname=/Users/pratt/data/cfdata/oscar_default/kt350_3d
+++++++++++++ C(q) from S(x) +++++++++++++++
+bool XSYM 1 bool YSYM 1 bool ZSYM 1
+int NXMAX 50 int NYMAX 50 int NZMAX 50
+double DELX 1 double DELY 1 double DELZ 1
+  0 | 6.212e-01 | 6.212e-01 | 6.212e-01 
+  1 | 5.643e-01 | 6.132e-01 | 6.082e-01 
+  2 | 4.872e-01 | 5.990e-01 | 5.888e-01 
+  3 | 4.026e-01 | 5.813e-01 | 5.621e-01 
+  4 | 3.173e-01 | 5.611e-01 | 5.344e-01 
+  5 | 2.367e-01 | 5.395e-01 | 5.016e-01 
+  6 | 1.696e-01 | 5.160e-01 | 4.695e-01 
+  7 | 1.157e-01 | 4.922e-01 | 4.363e-01 
+  8 | 7.450e-02 | 4.666e-01 | 4.012e-01 
+  9 | 4.500e-02 | 4.403e-01 | 3.673e-01 
+ 10 | 2.571e-02 | 4.135e-01 | 3.347e-01 
+ 11 | 1.377e-02 | 3.877e-01 | 3.025e-01 
+ 12 | 7.282e-03 | 3.625e-01 | 2.732e-01 
+ 13 | 3.924e-03 | 3.365e-01 | 2.444e-01 
+ 14 | 2.387e-03 | 3.115e-01 | 2.189e-01 
+ 15 | 1.844e-03 | 2.871e-01 | 1.941e-01 
+ 16 | 1.481e-03 | 2.644e-01 | 1.711e-01 
+ 17 | 1.266e-03 | 2.411e-01 | 1.517e-01 
+ 18 | 1.094e-03 | 2.188e-01 | 1.340e-01 
+ 19 | 9.182e-04 | 1.987e-01 | 1.170e-01 
+ 20 | 6.952e-04 | 1.794e-01 | 1.021e-01 
+ 21 | 6.285e-04 | 1.618e-01 | 8.925e-02 
+ 22 | 4.611e-04 | 1.449e-01 | 7.725e-02 
+ 23 | 3.465e-04 | 1.292e-01 | 6.747e-02 
+ 24 | 2.986e-04 | 1.149e-01 | 5.842e-02 
+ 25 | 1.753e-04 | 1.019e-01 | 5.119e-02 
+ 26 | 1.175e-04 | 8.933e-02 | 4.435e-02 
+ 27 | 8.175e-05 | 7.816e-02 | 3.849e-02 
+ 28 | 3.872e-05 | 6.799e-02 | 3.360e-02 
+ 29 | 5.880e-05 | 5.918e-02 | 2.930e-02 
+ 30 | 4.985e-05 | 5.046e-02 | 2.556e-02 
+ 31 | 3.869e-05 | 4.385e-02 | 2.234e-02 
+ 32 | 4.957e-05 | 3.757e-02 | 1.943e-02 
+ 33 | 2.017e-05 | 3.149e-02 | 1.717e-02 
+ 34 | -7.569e-06 | 2.696e-02 | 1.486e-02 
+ 35 | -1.477e-05 | 2.275e-02 | 1.289e-02 
+ 36 | -1.153e-05 | 1.885e-02 | 1.118e-02 
+ 37 | -8.036e-06 | 1.554e-02 | 9.893e-03 
+ 38 | -1.368e-06 | 1.284e-02 | 8.506e-03 
+ 39 | -3.075e-06 | 1.055e-02 | 7.447e-03 
+ 40 | -1.232e-05 | 8.689e-03 | 6.628e-03 
+ 41 | -4.846e-06 | 6.801e-03 | 5.956e-03 
+ 42 | -4.077e-06 | 5.488e-03 | 5.253e-03 
+ 43 | -9.267e-06 | 4.284e-03 | 4.652e-03 
+ 44 | -1.132e-05 | 3.336e-03 | 4.275e-03 
+ 45 | -1.727e-05 | 2.578e-03 | 3.688e-03 
+ 46 | -1.620e-05 | 1.938e-03 | 3.344e-03 
+ 47 | -1.732e-05 | 1.473e-03 | 3.032e-03 
+ 48 | -1.574e-05 | 1.009e-03 | 2.780e-03 
+ 49 | -1.478e-05 | 7.097e-04 | 2.392e-03 
+chi^2/Ndof=562.646
+chi^2/Ndof=562.71
+chi^2/Ndof=562.581
+chi^2/Ndof=562.654
+chi^2/Ndof=562.637
+chi^2/Ndof=562.626
+chi^2/Ndof=562.665
+chi^2/Ndof=562.63
+chi^2/Ndof=562.662
+chi^2/Ndof=562.716
+chi^2/Ndof=562.575
+||||||||| qstep=10.0562, -> 1 |||||||||
+chi^2/Ndof=549.331
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=549.394
+chi^2/Ndof=549.268
+||||||||| qstep=8.93452, -> 1 |||||||||
+chi^2/Ndof=537.427
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=537.483
+chi^2/Ndof=537.371
+||||||||| qstep=7.82652, -> 1 |||||||||
+chi^2/Ndof=526.954
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=527.003
+chi^2/Ndof=526.905
+||||||||| qstep=6.73219, -> 1 |||||||||
+chi^2/Ndof=517.929
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=517.971
+chi^2/Ndof=517.888
+||||||||| qstep=5.65153, -> 1 |||||||||
+chi^2/Ndof=510.372
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=510.406
+chi^2/Ndof=510.338
+||||||||| qstep=4.5845, -> 1 |||||||||
+chi^2/Ndof=504.302
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=504.329
+chi^2/Ndof=504.276
+||||||||| qstep=3.53108, -> 1 |||||||||
+chi^2/Ndof=499.739
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=499.758
+chi^2/Ndof=499.72
+||||||||| qstep=2.49123, -> 1 |||||||||
+chi^2/Ndof=496.702
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=496.713
+chi^2/Ndof=496.691
+||||||||| qstep=1.46493, -> 1 |||||||||
+chi^2/Ndof=495.213
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=495.216
+chi^2/Ndof=495.209
+||||||||| qstep=0.452127, -> 0.452127 |||||||||
+chi^2/Ndof=495.053
+++++++++++++ qstep=0.452127 ++++++++++++++
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+||||||||| qstep=-0.00136634, -> -0.00136634 |||||||||
+chi^2/Ndof=495.053
+++++++++++++ qstep=-0.00136634 ++++++++++++++
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+||||||||| qstep=3.62834e-08, -> 3.62834e-08 |||||||||
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+++++++++++++ qstep=2.26771e-09 ++++++++++++++
+chi^2/Ndof=495.053
+chi^2/Ndof=495.053
+||||||||| qstep=4.01257e-08, -> 4.01257e-08 |||||||||
+chi^2/Ndof=495.053
+++++++++++++ qstep=4.01257e-08 ++++++++++++++
+_______________________ finished itry=0 _______________________________
+chi^2/Ndof=495.041
+chi^2/Ndof=495.064
+chi^2/Ndof=495.078
+chi^2/Ndof=495.027
+chi^2/Ndof=495.039
+chi^2/Ndof=495.066
+chi^2/Ndof=495.037
+chi^2/Ndof=495.068
+chi^2/Ndof=495.088
+chi^2/Ndof=495.018
+||||||||| qstep=18.009, -> 1 |||||||||
+chi^2/Ndof=488.257
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=488.29
+chi^2/Ndof=488.224
+||||||||| qstep=17.2663, -> 1 |||||||||
+chi^2/Ndof=481.844
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=481.875
+chi^2/Ndof=481.813
+||||||||| qstep=16.5047, -> 1 |||||||||
+chi^2/Ndof=475.808
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=475.837
+chi^2/Ndof=475.779
+||||||||| qstep=15.7246, -> 1 |||||||||
+chi^2/Ndof=470.144
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=470.171
+chi^2/Ndof=470.116
+||||||||| qstep=14.9265, -> 1 |||||||||
+chi^2/Ndof=464.847
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=464.872
+chi^2/Ndof=464.821
+||||||||| qstep=14.1111, -> 1 |||||||||
+chi^2/Ndof=459.912
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=459.936
+chi^2/Ndof=459.889
+||||||||| qstep=13.2788, -> 1 |||||||||
+chi^2/Ndof=455.336
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=455.358
+chi^2/Ndof=455.314
+||||||||| qstep=12.4302, -> 1 |||||||||
+chi^2/Ndof=451.113
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=451.134
+chi^2/Ndof=451.093
+||||||||| qstep=11.566, -> 1 |||||||||
+chi^2/Ndof=447.241
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=447.259
+chi^2/Ndof=447.222
+||||||||| qstep=10.6867, -> 1 |||||||||
+chi^2/Ndof=443.715
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=443.731
+chi^2/Ndof=443.698
+||||||||| qstep=9.79324, -> 1 |||||||||
+chi^2/Ndof=440.531
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=440.546
+chi^2/Ndof=440.516
+||||||||| qstep=8.88607, -> 1 |||||||||
+chi^2/Ndof=437.686
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=437.699
+chi^2/Ndof=437.673
+||||||||| qstep=7.96599, -> 1 |||||||||
+chi^2/Ndof=435.177
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=435.189
+chi^2/Ndof=435.166
+||||||||| qstep=7.03371, -> 1 |||||||||
+chi^2/Ndof=433.001
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=433.011
+chi^2/Ndof=432.991
+||||||||| qstep=6.08997, -> 1 |||||||||
+chi^2/Ndof=431.156
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=431.164
+chi^2/Ndof=431.147
+||||||||| qstep=5.13558, -> 1 |||||||||
+chi^2/Ndof=429.638
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=429.644
+chi^2/Ndof=429.631
+||||||||| qstep=4.17133, -> 1 |||||||||
+chi^2/Ndof=428.444
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=428.449
+chi^2/Ndof=428.439
+||||||||| qstep=3.19797, -> 1 |||||||||
+chi^2/Ndof=427.574
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=427.577
+chi^2/Ndof=427.57
+||||||||| qstep=2.21636, -> 1 |||||||||
+chi^2/Ndof=427.023
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=427.025
+chi^2/Ndof=427.021
+||||||||| qstep=1.2273, -> 1 |||||||||
+chi^2/Ndof=426.791
+++++++++++++ qstep=1 ++++++++++++++
+chi^2/Ndof=426.792
+chi^2/Ndof=426.791
+||||||||| qstep=0.23164, -> 0.23164 |||||||||
+chi^2/Ndof=426.783
+++++++++++++ qstep=0.23164 ++++++++++++++
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+||||||||| qstep=0.000151034, -> 0.000151034 |||||||||
+chi^2/Ndof=426.783
+++++++++++++ qstep=0.000151034 ++++++++++++++
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+||||||||| qstep=-2.15522e-08, -> -2.15522e-08 |||||||||
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+++++++++++++ qstep=-1.34701e-09 ++++++++++++++
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+||||||||| qstep=-1.39148e-08, -> -1.39148e-08 |||||||||
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+++++++++++++ qstep=-1.08709e-10 ++++++++++++++
+_______________________ finished itry=1 _______________________________
+chi^2/Ndof=426.783
+chi^2/Ndof=426.783
+chi^2/Ndof=412.938
+chi^2/Ndof=440.085
+chi^2/Ndof=415.91
+chi^2/Ndof=442.029
+___ itry=1, Curvature[1][0]=-1.60621e+07 ___
+chi^2/Ndof=418.617
+chi^2/Ndof=445.466
+chi^2/Ndof=410.197
+chi^2/Ndof=436.607
+___ itry=1, Curvature[2][0]=-6.85919e+06 ___
+chi^2/Ndof=430.008
+chi^2/Ndof=432.375
+chi^2/Ndof=421.268
+chi^2/Ndof=423.783
+___ itry=1, Curvature[2][1]=463691 ___
+chi^2/Ndof=418.369
+chi^2/Ndof=444.964
+chi^2/Ndof=410.347
+chi^2/Ndof=437.032
+___ itry=1, Curvature[3][0]=1.39431e+06 ___
+chi^2/Ndof=429.604
+chi^2/Ndof=432.017
+chi^2/Ndof=421.587
+chi^2/Ndof=424.053
+___ itry=1, Curvature[3][1]=165007 ___
+chi^2/Ndof=435.107
+chi^2/Ndof=426.476
+chi^2/Ndof=427.152
+chi^2/Ndof=418.449
+___ itry=1, Curvature[3][2]=-225117 ___
+chi^2/Ndof=414.372
+chi^2/Ndof=441.014
+___ itry=1, Curvature[0][0]=5.68866e+08 ___
+chi^2/Ndof=425.61
+chi^2/Ndof=428.05
+___ itry=1, Curvature[1][1]=1.18192e+06 ___
+chi^2/Ndof=431.145
+chi^2/Ndof=422.478
+___ itry=1, Curvature[2][2]=710726 ___
+chi^2/Ndof=430.764
+chi^2/Ndof=422.772
+___ itry=1, Curvature[3][3]=-376308 ___
+NEWTON's METHOD: screwy eigenval[i]=-476251, is less than zero
+chi^2/Ndof=398.003
+chi^2/Ndof=421.268
+chi^2/Ndof=401.64
+chi^2/Ndof=423.783
+___ itry=1, Curvature[1][0]=-1.75236e+07 ___
+chi^2/Ndof=403.782
+chi^2/Ndof=426.783
+chi^2/Ndof=395.84
+chi^2/Ndof=418.238
+___ itry=1, Curvature[2][0]=-9.41285e+06 ___
+chi^2/Ndof=412.938
+chi^2/Ndof=415.91
+chi^2/Ndof=404.58
+chi^2/Ndof=407.727
+___ itry=1, Curvature[2][1]=548215 ___
+chi^2/Ndof=403.777
+chi^2/Ndof=426.476
+chi^2/Ndof=395.726
+chi^2/Ndof=418.449
+___ itry=1, Curvature[3][0]=380255 ___
+chi^2/Ndof=412.748
+chi^2/Ndof=415.774
+chi^2/Ndof=404.664
+chi^2/Ndof=407.753
+___ itry=1, Curvature[3][1]=197913 ___
+chi^2/Ndof=418.369
+chi^2/Ndof=410.128
+chi^2/Ndof=410.347
+chi^2/Ndof=402.044
+___ itry=1, Curvature[3][2]=-193876 ___
+chi^2/Ndof=399.765
+chi^2/Ndof=422.478
+___ itry=1, Curvature[0][0]=5.77653e+08 ___
+chi^2/Ndof=408.721
+chi^2/Ndof=411.778
+___ itry=1, Curvature[1][1]=1.30778e+06 ___
+chi^2/Ndof=414.372
+chi^2/Ndof=406.101
+___ itry=1, Curvature[2][2]=987387 ___
+chi^2/Ndof=414.209
+chi^2/Ndof=406.156
+___ itry=1, Curvature[3][3]=-359877 ___
+NEWTON's METHOD: screwy eigenval[i]=-440700, is less than zero
+chi^2/Ndof=385.073
+chi^2/Ndof=404.664
+chi^2/Ndof=389.368
+chi^2/Ndof=407.753
+___ itry=1, Curvature[1][0]=-1.88418e+07 ___
+chi^2/Ndof=391.002
+chi^2/Ndof=410.347
+chi^2/Ndof=383.424
+chi^2/Ndof=402.044
+___ itry=1, Curvature[2][0]=-1.13337e+07 ___
+chi^2/Ndof=398.025
+chi^2/Ndof=401.602
+chi^2/Ndof=389.959
+chi^2/Ndof=393.734
+___ itry=1, Curvature[2][1]=620442 ___
+chi^2/Ndof=391.181
+chi^2/Ndof=410.197
+chi^2/Ndof=383.111
+chi^2/Ndof=402.086
+___ itry=1, Curvature[3][0]=-635421 ___
+chi^2/Ndof=398.003
+chi^2/Ndof=401.64
+chi^2/Ndof=389.861
+chi^2/Ndof=393.573
+___ itry=1, Curvature[3][1]=233148 ___
+chi^2/Ndof=403.782
+chi^2/Ndof=395.84
+chi^2/Ndof=395.705
+chi^2/Ndof=387.709
+___ itry=1, Curvature[3][2]=-166823 ___
+chi^2/Ndof=387.159
+chi^2/Ndof=406.156
+___ itry=1, Curvature[0][0]=5.82244e+08 ___
+chi^2/Ndof=393.946
+chi^2/Ndof=397.62
+___ itry=1, Curvature[1][1]=1.43154e+06 ___
+chi^2/Ndof=399.757
+chi^2/Ndof=391.788
+___ itry=1, Curvature[2][2]=1.17499e+06 ___
+chi^2/Ndof=399.765
+chi^2/Ndof=391.659
+___ itry=1, Curvature[3][3]=-338448 ___
+NEWTON's METHOD: screwy eigenval[i]=-413468, is less than zero
+chi^2/Ndof=374.006
+chi^2/Ndof=389.861
+chi^2/Ndof=379.009
+chi^2/Ndof=393.573
+___ itry=1, Curvature[1][0]=-2.01814e+07 ___
+chi^2/Ndof=380.076
+chi^2/Ndof=395.705
+chi^2/Ndof=372.931
+chi^2/Ndof=387.709
+___ itry=1, Curvature[2][0]=-1.32863e+07 ___
+chi^2/Ndof=384.912
+chi^2/Ndof=389.142
+chi^2/Ndof=377.203
+chi^2/Ndof=381.656
+___ itry=1, Curvature[2][1]=697513 ___
+chi^2/Ndof=380.455
+chi^2/Ndof=395.726
+chi^2/Ndof=372.403
+chi^2/Ndof=387.566
+___ itry=1, Curvature[3][0]=-1.68529e+06 ___
+chi^2/Ndof=385.073
+chi^2/Ndof=389.368
+chi^2/Ndof=376.91
+chi^2/Ndof=381.292
+___ itry=1, Curvature[3][1]=271480 ___
+chi^2/Ndof=391.002
+chi^2/Ndof=383.424
+chi^2/Ndof=382.904
+chi^2/Ndof=375.283
+___ itry=1, Curvature[3][2]=-135543 ___
+chi^2/Ndof=376.44
+chi^2/Ndof=391.659
+___ itry=1, Curvature[0][0]=5.86908e+08 ___
+chi^2/Ndof=381.004
+chi^2/Ndof=385.342
+___ itry=1, Curvature[1][1]=1.56199e+06 ___
+chi^2/Ndof=386.965
+chi^2/Ndof=379.366
+___ itry=1, Curvature[2][2]=1.37709e+06 ___
+chi^2/Ndof=387.159
+chi^2/Ndof=379.038
+___ itry=1, Curvature[3][3]=-311803 ___
+NEWTON's METHOD: screwy eigenval[i]=-385570, is less than zero
+chi^2/Ndof=364.854
+chi^2/Ndof=376.91
+chi^2/Ndof=370.615
+chi^2/Ndof=381.292
+___ itry=1, Curvature[1][0]=-2.15429e+07 ___
+chi^2/Ndof=371.055
+chi^2/Ndof=382.904
+chi^2/Ndof=364.412
+chi^2/Ndof=375.283
+___ itry=1, Curvature[2][0]=-1.52713e+07 ___
+chi^2/Ndof=373.649
+chi^2/Ndof=378.58
+chi^2/Ndof=366.365
+chi^2/Ndof=371.545
+___ itry=1, Curvature[2][1]=779546 ___
+chi^2/Ndof=371.648
+chi^2/Ndof=383.111
+chi^2/Ndof=363.655
+chi^2/Ndof=374.941
+___ itry=1, Curvature[3][0]=-2.77064e+06 ___
+chi^2/Ndof=374.006
+chi^2/Ndof=379.009
+chi^2/Ndof=365.861
+chi^2/Ndof=370.964
+___ itry=1, Curvature[3][1]=313050 ___
+chi^2/Ndof=380.076
+chi^2/Ndof=372.931
+chi^2/Ndof=371.997
+chi^2/Ndof=364.819
+___ itry=1, Curvature[3][2]=-99830.7 ___
+chi^2/Ndof=367.661
+chi^2/Ndof=379.038
+___ itry=1, Curvature[0][0]=5.91648e+08 ___
+chi^2/Ndof=369.945
+chi^2/Ndof=374.997
+___ itry=1, Curvature[1][1]=1.69928e+06 ___
+chi^2/Ndof=376.048
+chi^2/Ndof=368.886
+___ itry=1, Curvature[2][2]=1.59405e+06 ___
+chi^2/Ndof=376.44
+chi^2/Ndof=368.344
+___ itry=1, Curvature[3][3]=-279570 ___
+NEWTON's METHOD: screwy eigenval[i]=-356637, is less than zero
+chi^2/Ndof=357.669
+chi^2/Ndof=365.861
+chi^2/Ndof=364.24
+chi^2/Ndof=370.964
+___ itry=1, Curvature[1][0]=-2.29267e+07 ___
+chi^2/Ndof=363.993
+chi^2/Ndof=371.997
+chi^2/Ndof=357.922
+chi^2/Ndof=364.819
+___ itry=1, Curvature[2][0]=-1.72896e+07 ___
+chi^2/Ndof=364.287
+chi^2/Ndof=369.968
+chi^2/Ndof=357.497
+chi^2/Ndof=363.456
+___ itry=1, Curvature[2][1]=866665 ___
+chi^2/Ndof=364.813
+chi^2/Ndof=372.403
+chi^2/Ndof=356.921
+chi^2/Ndof=364.262
+___ itry=1, Curvature[3][0]=-3.89283e+06 ___
+chi^2/Ndof=364.854
+chi^2/Ndof=370.615
+chi^2/Ndof=356.766
+chi^2/Ndof=362.642
+___ itry=1, Curvature[3][1]=358003 ___
+chi^2/Ndof=371.055
+chi^2/Ndof=364.412
+chi^2/Ndof=363.035
+chi^2/Ndof=356.372
+___ itry=1, Curvature[3][2]=-59470.9 ___
+chi^2/Ndof=360.875
+chi^2/Ndof=368.344
+___ itry=1, Curvature[0][0]=5.96465e+08 ___
+chi^2/Ndof=360.82
+chi^2/Ndof=366.638
+___ itry=1, Curvature[1][1]=1.8436e+06 ___
+chi^2/Ndof=367.055
+chi^2/Ndof=360.402
+___ itry=1, Curvature[2][2]=1.82624e+06 ___
+chi^2/Ndof=367.661
+chi^2/Ndof=359.63
+___ itry=1, Curvature[3][3]=-241353 ___
+NEWTON's METHOD: screwy eigenval[i]=-326389, is less than zero
+chi^2/Ndof=350.653
+chi^2/Ndof=358.159
+chi^2/Ndof=357.444
+chi^2/Ndof=363.443
+___ itry=1, Curvature[1][0]=-2.35477e+07 ___
+chi^2/Ndof=356.921
+chi^2/Ndof=364.262
+chi^2/Ndof=351.196
+chi^2/Ndof=357.344
+___ itry=1, Curvature[2][0]=-1.86382e+07 ___
+chi^2/Ndof=356.766
+chi^2/Ndof=362.642
+chi^2/Ndof=350.271
+chi^2/Ndof=356.438
+___ itry=1, Curvature[2][1]=911018 ___
+chi^2/Ndof=357.922
+chi^2/Ndof=364.819
+chi^2/Ndof=349.998
+chi^2/Ndof=356.622
+___ itry=1, Curvature[3][0]=-4.26729e+06 ___
+chi^2/Ndof=357.497
+chi^2/Ndof=363.456
+chi^2/Ndof=349.361
+chi^2/Ndof=355.44
+___ itry=1, Curvature[3][1]=373076 ___
+chi^2/Ndof=363.655
+chi^2/Ndof=357.309
+chi^2/Ndof=355.585
+chi^2/Ndof=349.228
+___ itry=1, Curvature[3][2]=-35600.9 ___
+chi^2/Ndof=353.968
+chi^2/Ndof=360.731
+___ itry=1, Curvature[0][0]=6.10795e+08 ___
+chi^2/Ndof=353.438
+chi^2/Ndof=359.457
+___ itry=1, Curvature[1][1]=1.88705e+06 ___
+chi^2/Ndof=359.63
+chi^2/Ndof=353.278
+___ itry=1, Curvature[2][2]=2.03735e+06 ___
+chi^2/Ndof=360.402
+chi^2/Ndof=352.324
+___ itry=1, Curvature[3][3]=-228920 ___
+NEWTON's METHOD: screwy eigenval[i]=-314439, is less than zero
+chi^2/Ndof=343.8
+chi^2/Ndof=350.565
+chi^2/Ndof=350.823
+chi^2/Ndof=356.039
+___ itry=1, Curvature[1][0]=-2.41946e+07 ___
+chi^2/Ndof=349.998
+chi^2/Ndof=356.622
+chi^2/Ndof=344.661
+chi^2/Ndof=350
+___ itry=1, Curvature[2][0]=-2.00876e+07 ___
+chi^2/Ndof=349.361
+chi^2/Ndof=355.44
+chi^2/Ndof=343.199
+chi^2/Ndof=349.584
+___ itry=1, Curvature[2][1]=958214 ___
+chi^2/Ndof=351.196
+chi^2/Ndof=357.344
+chi^2/Ndof=343.246
+chi^2/Ndof=349.095
+___ itry=1, Curvature[3][0]=-4.66801e+06 ___
+chi^2/Ndof=350.271
+chi^2/Ndof=356.438
+chi^2/Ndof=342.093
+chi^2/Ndof=348.385
+___ itry=1, Curvature[3][1]=388969 ___
+chi^2/Ndof=356.372
+chi^2/Ndof=350.363
+chi^2/Ndof=348.259
+chi^2/Ndof=342.247
+___ itry=1, Curvature[3][2]=-9026.69 ___
+chi^2/Ndof=347.228
+chi^2/Ndof=353.23
+___ itry=1, Curvature[0][0]=6.25666e+08 ___
+chi^2/Ndof=346.191
+chi^2/Ndof=352.42
+___ itry=1, Curvature[1][1]=1.93212e+06 ___
+chi^2/Ndof=352.324
+chi^2/Ndof=346.313
+___ itry=1, Curvature[2][2]=2.26792e+06 ___
+chi^2/Ndof=353.278
+chi^2/Ndof=345.161
+___ itry=1, Curvature[3][3]=-214933 ___
+NEWTON's METHOD: screwy eigenval[i]=-301837, is less than zero
+chi^2/Ndof=336.482
+chi^2/Ndof=343.85
+chi^2/Ndof=343.246
+chi^2/Ndof=349.095
+___ itry=1, Curvature[1][0]=-2.37161e+07 ___
+chi^2/Ndof=342.632
+chi^2/Ndof=349.867
+chi^2/Ndof=337.135
+chi^2/Ndof=343.098
+___ itry=1, Curvature[2][0]=-1.98656e+07 ___
+chi^2/Ndof=342.421
+chi^2/Ndof=348.259
+chi^2/Ndof=336.109
+chi^2/Ndof=342.247
+___ itry=1, Curvature[2][1]=936839 ___
+chi^2/Ndof=343.8
+chi^2/Ndof=350.565
+chi^2/Ndof=335.753
+chi^2/Ndof=342.22
+___ itry=1, Curvature[3][0]=-4.65091e+06 ___
+chi^2/Ndof=343.304
+chi^2/Ndof=349.228
+chi^2/Ndof=335.032
+chi^2/Ndof=341.078
+___ itry=1, Curvature[3][1]=381169 ___
+chi^2/Ndof=349.361
+chi^2/Ndof=343.199
+chi^2/Ndof=341.153
+chi^2/Ndof=334.987
+___ itry=1, Curvature[3][2]=-11837.7 ___
+chi^2/Ndof=339.783
+chi^2/Ndof=346.402
+___ itry=1, Curvature[0][0]=6.2462e+08 ___
+chi^2/Ndof=339.176
+chi^2/Ndof=345.161
+___ itry=1, Curvature[1][1]=1.88622e+06 ___
+chi^2/Ndof=345.266
+chi^2/Ndof=339.101
+___ itry=1, Curvature[2][2]=2.25052e+06 ___
+chi^2/Ndof=346.191
+chi^2/Ndof=337.979
+___ itry=1, Curvature[3][3]=-213262 ___
+NEWTON's METHOD: screwy eigenval[i]=-299300, is less than zero
+chi^2/Ndof=329.691
+chi^2/Ndof=336.264
+chi^2/Ndof=336.693
+chi^2/Ndof=341.705
+___ itry=1, Curvature[1][0]=-2.43814e+07 ___
+chi^2/Ndof=335.753
+chi^2/Ndof=342.22
+chi^2/Ndof=330.688
+chi^2/Ndof=335.784
+___ itry=1, Curvature[2][0]=-2.14202e+07 ___
+chi^2/Ndof=335.032
+chi^2/Ndof=341.078
+chi^2/Ndof=329.092
+chi^2/Ndof=335.454
+___ itry=1, Curvature[2][1]=986391 ___
+chi^2/Ndof=337.135
+chi^2/Ndof=343.098
+chi^2/Ndof=329.071
+chi^2/Ndof=334.708
+___ itry=1, Curvature[3][0]=-5.08485e+06 ___
+chi^2/Ndof=336.109
+chi^2/Ndof=342.247
+chi^2/Ndof=327.802
+chi^2/Ndof=334.067
+___ itry=1, Curvature[3][1]=397821 ___
+chi^2/Ndof=342.093
+chi^2/Ndof=336.307
+chi^2/Ndof=333.848
+chi^2/Ndof=328.067
+___ itry=1, Curvature[3][2]=17960.3 ___
+chi^2/Ndof=333.109
+chi^2/Ndof=338.913
+___ itry=1, Curvature[0][0]=6.40078e+08 ___
+chi^2/Ndof=331.964
+chi^2/Ndof=338.164
+___ itry=1, Curvature[1][1]=1.93203e+06 ___
+chi^2/Ndof=337.979
+chi^2/Ndof=332.195
+___ itry=1, Curvature[2][2]=2.50211e+06 ___
+chi^2/Ndof=339.101
+chi^2/Ndof=330.857
+___ itry=1, Curvature[3][3]=-196933 ___
+NEWTON's METHOD: screwy eigenval[i]=-285339, is less than zero
+chi^2/Ndof=322.327
+chi^2/Ndof=329.495
+chi^2/Ndof=329.071
+chi^2/Ndof=334.708
+___ itry=1, Curvature[1][0]=-2.39078e+07 ___
+chi^2/Ndof=328.341
+chi^2/Ndof=335.411
+chi^2/Ndof=323.116
+chi^2/Ndof=328.829
+___ itry=1, Curvature[2][0]=-2.1203e+07 ___
+chi^2/Ndof=328.041
+chi^2/Ndof=333.848
+chi^2/Ndof=321.951
+chi^2/Ndof=328.067
+___ itry=1, Curvature[2][1]=964922 ___
+chi^2/Ndof=329.691
+chi^2/Ndof=336.264
+chi^2/Ndof=321.532
+chi^2/Ndof=327.78
+___ itry=1, Curvature[3][0]=-5.07888e+06 ___
+chi^2/Ndof=329.09
+chi^2/Ndof=334.987
+chi^2/Ndof=320.69
+chi^2/Ndof=326.711
+___ itry=1, Curvature[3][1]=390136 ___
+chi^2/Ndof=335.032
+chi^2/Ndof=329.092
+chi^2/Ndof=326.692
+chi^2/Ndof=320.758
+___ itry=1, Curvature[3][2]=15644.4 ___
+chi^2/Ndof=325.618
+chi^2/Ndof=332.031
+___ itry=1, Curvature[0][0]=6.39161e+08 ___
+chi^2/Ndof=324.898
+chi^2/Ndof=330.857
+___ itry=1, Curvature[1][1]=1.88672e+06 ___
+chi^2/Ndof=330.87
+chi^2/Ndof=324.933
+___ itry=1, Curvature[2][2]=2.48517e+06 ___
+chi^2/Ndof=331.964
+chi^2/Ndof=323.625
+___ itry=1, Curvature[3][3]=-194051 ___
+NEWTON's METHOD: screwy eigenval[i]=-281697, is less than zero
+chi^2/Ndof=315.04
+chi^2/Ndof=322.789
+chi^2/Ndof=321.532
+chi^2/Ndof=327.78
+___ itry=1, Curvature[1][0]=-2.34476e+07 ___
+chi^2/Ndof=321.008
+chi^2/Ndof=328.667
+chi^2/Ndof=315.626
+chi^2/Ndof=321.941
+___ itry=1, Curvature[2][0]=-2.09941e+07 ___
+chi^2/Ndof=321.118
+chi^2/Ndof=326.692
+chi^2/Ndof=314.882
+chi^2/Ndof=320.758
+___ itry=1, Curvature[2][1]=944043 ___
+chi^2/Ndof=322.327
+chi^2/Ndof=329.495
+chi^2/Ndof=314.076
+chi^2/Ndof=320.918
+___ itry=1, Curvature[3][0]=-5.07919e+06 ___
+chi^2/Ndof=322.141
+chi^2/Ndof=327.802
+chi^2/Ndof=313.649
+chi^2/Ndof=319.433
+___ itry=1, Curvature[3][1]=382679 ___
+chi^2/Ndof=328.041
+chi^2/Ndof=321.951
+chi^2/Ndof=319.609
+chi^2/Ndof=313.524
+___ itry=1, Curvature[3][2]=13576.2 ___
+chi^2/Ndof=318.207
+chi^2/Ndof=325.216
+___ itry=1, Curvature[0][0]=6.38353e+08 ___
+chi^2/Ndof=317.903
+chi^2/Ndof=323.625
+___ itry=1, Curvature[1][1]=1.84289e+06 ___
+chi^2/Ndof=323.833
+chi^2/Ndof=317.745
+___ itry=1, Curvature[2][2]=2.46898e+06 ___
+chi^2/Ndof=324.898
+chi^2/Ndof=316.467
+___ itry=1, Curvature[3][3]=-190571 ___
+NEWTON's METHOD: screwy eigenval[i]=-277536, is less than zero
+chi^2/Ndof=308.216
+chi^2/Ndof=315.118
+chi^2/Ndof=314.948
+chi^2/Ndof=320.306
+___ itry=1, Curvature[1][0]=-2.41239e+07 ___
+chi^2/Ndof=314.076
+chi^2/Ndof=320.918
+chi^2/Ndof=309.169
+chi^2/Ndof=314.562
+___ itry=1, Curvature[2][0]=-2.26607e+07 ___
+chi^2/Ndof=313.649
+chi^2/Ndof=319.433
+chi^2/Ndof=307.827
+chi^2/Ndof=313.929
+___ itry=1, Curvature[2][1]=995462 ___
+chi^2/Ndof=315.626
+chi^2/Ndof=321.941
+chi^2/Ndof=307.366
+chi^2/Ndof=313.325
+___ itry=1, Curvature[3][0]=-5.55604e+06 ___
+chi^2/Ndof=314.882
+chi^2/Ndof=320.758
+chi^2/Ndof=306.363
+chi^2/Ndof=312.368
+___ itry=1, Curvature[3][1]=400064 ___
+chi^2/Ndof=320.69
+chi^2/Ndof=315.017
+chi^2/Ndof=312.229
+chi^2/Ndof=306.571
+___ itry=1, Curvature[3][2]=47326.2 ___
+chi^2/Ndof=311.501
+chi^2/Ndof=317.642
+___ itry=1, Curvature[0][0]=6.54464e+08 ___
+chi^2/Ndof=310.63
+chi^2/Ndof=316.569
+___ itry=1, Curvature[1][1]=1.88858e+06 ___
+chi^2/Ndof=316.467
+chi^2/Ndof=310.801
+___ itry=1, Curvature[2][2]=2.74355e+06 ___
+chi^2/Ndof=317.745
+chi^2/Ndof=309.289
+___ itry=1, Curvature[3][3]=-170771 ___
+NEWTON's METHOD: screwy eigenval[i]=-261292, is less than zero
+chi^2/Ndof=300.884
+chi^2/Ndof=308.358
+chi^2/Ndof=307.366
+chi^2/Ndof=313.325
+___ itry=1, Curvature[1][0]=-2.36683e+07 ___
+chi^2/Ndof=306.698
+chi^2/Ndof=314.121
+chi^2/Ndof=301.635
+chi^2/Ndof=307.621
+___ itry=1, Curvature[2][0]=-2.24577e+07 ___
+chi^2/Ndof=306.677
+chi^2/Ndof=312.229
+chi^2/Ndof=300.708
+chi^2/Ndof=306.571
+___ itry=1, Curvature[2][1]=974488 ___
+chi^2/Ndof=308.216
+chi^2/Ndof=315.118
+chi^2/Ndof=299.866
+chi^2/Ndof=306.412
+___ itry=1, Curvature[3][0]=-5.56942e+06 ___
+chi^2/Ndof=307.882
+chi^2/Ndof=313.524
+chi^2/Ndof=299.274
+chi^2/Ndof=305.042
+___ itry=1, Curvature[3][1]=392743 ___
+chi^2/Ndof=313.649
+chi^2/Ndof=307.827
+chi^2/Ndof=305.098
+chi^2/Ndof=299.29
+___ itry=1, Curvature[3][2]=45870.8 ___
+chi^2/Ndof=304.046
+chi^2/Ndof=310.773
+___ itry=1, Curvature[0][0]=6.53795e+08 ___
+chi^2/Ndof=303.585
+chi^2/Ndof=309.289
+___ itry=1, Curvature[1][1]=1.84527e+06 ___
+chi^2/Ndof=309.381
+chi^2/Ndof=303.565
+___ itry=1, Curvature[2][2]=2.72799e+06 ___
+chi^2/Ndof=310.63
+chi^2/Ndof=302.084
+___ itry=1, Curvature[3][3]=-165808 ___
+NEWTON's METHOD: screwy eigenval[i]=-255827, is less than zero
+chi^2/Ndof=293.629
+chi^2/Ndof=301.661
+chi^2/Ndof=299.866
+chi^2/Ndof=306.412
+___ itry=1, Curvature[1][0]=-2.32257e+07 ___
+chi^2/Ndof=299.399
+chi^2/Ndof=307.387
+chi^2/Ndof=294.182
+chi^2/Ndof=300.746
+___ itry=1, Curvature[2][0]=-2.22633e+07 ___
+chi^2/Ndof=299.773
+chi^2/Ndof=305.098
+chi^2/Ndof=293.66
+chi^2/Ndof=299.29
+___ itry=1, Curvature[2][1]=954089 ___
+chi^2/Ndof=300.884
+chi^2/Ndof=308.358
+chi^2/Ndof=292.447
+chi^2/Ndof=299.564
+___ itry=1, Curvature[3][0]=-5.58982e+06 ___
+chi^2/Ndof=300.95
+chi^2/Ndof=306.363
+chi^2/Ndof=292.255
+chi^2/Ndof=297.792
+___ itry=1, Curvature[3][1]=385653 ___
+chi^2/Ndof=306.677
+chi^2/Ndof=300.708
+chi^2/Ndof=298.038
+chi^2/Ndof=292.083
+___ itry=1, Curvature[3][2]=44700.6 ___
+chi^2/Ndof=296.67
+chi^2/Ndof=303.969
+___ itry=1, Curvature[0][0]=6.53237e+08 ___
+chi^2/Ndof=296.609
+chi^2/Ndof=302.084
+___ itry=1, Curvature[1][1]=1.80333e+06 ___
+chi^2/Ndof=302.364
+chi^2/Ndof=296.401
+___ itry=1, Curvature[2][2]=2.7132e+06 ___
+chi^2/Ndof=303.585
+chi^2/Ndof=294.951
+___ itry=1, Curvature[3][3]=-160130 ___
+NEWTON's METHOD: screwy eigenval[i]=-249748, is less than zero
+chi^2/Ndof=286.808
+chi^2/Ndof=293.935
+chi^2/Ndof=293.289
+chi^2/Ndof=298.884
+___ itry=1, Curvature[1][0]=-2.39149e+07 ___
+chi^2/Ndof=292.447
+chi^2/Ndof=299.564
+chi^2/Ndof=287.758
+chi^2/Ndof=293.335
+___ itry=1, Curvature[2][0]=-2.40543e+07 ___
+chi^2/Ndof=292.255
+chi^2/Ndof=297.792
+chi^2/Ndof=286.602
+chi^2/Ndof=292.461
+___ itry=1, Curvature[2][1]=1.0076e+06 ___
+chi^2/Ndof=294.182
+chi^2/Ndof=300.746
+chi^2/Ndof=285.749
+chi^2/Ndof=291.921
+___ itry=1, Curvature[3][0]=-6.11589e+06 ___
+chi^2/Ndof=293.66
+chi^2/Ndof=299.29
+chi^2/Ndof=284.948
+chi^2/Ndof=290.708
+___ itry=1, Curvature[3][1]=403883 ___
+chi^2/Ndof=299.274
+chi^2/Ndof=293.767
+chi^2/Ndof=290.616
+chi^2/Ndof=285.135
+___ itry=1, Curvature[3][2]=83016.1 ___
+chi^2/Ndof=289.969
+chi^2/Ndof=296.341
+___ itry=1, Curvature[0][0]=6.70058e+08 ___
+chi^2/Ndof=289.31
+chi^2/Ndof=295.004
+___ itry=1, Curvature[1][1]=1.84901e+06 ___
+chi^2/Ndof=294.951
+chi^2/Ndof=289.456
+___ itry=1, Curvature[2][2]=3.01337e+06 ___
+chi^2/Ndof=296.401
+chi^2/Ndof=287.753
+___ itry=1, Curvature[3][3]=-136160 ___
+NEWTON's METHOD: screwy eigenval[i]=-230781, is less than zero
+chi^2/Ndof=279.512
+chi^2/Ndof=287.186
+chi^2/Ndof=285.749
+chi^2/Ndof=291.921
+___ itry=1, Curvature[1][0]=-2.34767e+07 ___
+chi^2/Ndof=285.106
+chi^2/Ndof=292.779
+chi^2/Ndof=280.265
+chi^2/Ndof=286.41
+___ itry=1, Curvature[2][0]=-2.38671e+07 ___
+chi^2/Ndof=285.304
+chi^2/Ndof=290.616
+chi^2/Ndof=279.507
+chi^2/Ndof=285.135
+___ itry=1, Curvature[2][1]=987112 ___
+chi^2/Ndof=286.808
+chi^2/Ndof=293.935
+chi^2/Ndof=278.291
+chi^2/Ndof=285.024
+___ itry=1, Curvature[3][0]=-6.15166e+06 ___
+chi^2/Ndof=286.68
+chi^2/Ndof=292.083
+chi^2/Ndof=277.884
+chi^2/Ndof=283.414
+___ itry=1, Curvature[3][1]=396955 ___
+chi^2/Ndof=292.255
+chi^2/Ndof=286.602
+chi^2/Ndof=283.511
+chi^2/Ndof=277.884
+___ itry=1, Curvature[3][2]=82600.3 ___
+chi^2/Ndof=282.553
+chi^2/Ndof=289.487
+___ itry=1, Curvature[0][0]=6.69652e+08 ___
+chi^2/Ndof=282.287
+chi^2/Ndof=287.753
+___ itry=1, Curvature[1][1]=1.80754e+06 ___
+chi^2/Ndof=287.889
+chi^2/Ndof=282.248
+___ itry=1, Curvature[2][2]=2.99941e+06 ___
+chi^2/Ndof=289.31
+chi^2/Ndof=280.576
+___ itry=1, Curvature[3][3]=-128671 ___
+NEWTON's METHOD: screwy eigenval[i]=-223162, is less than zero
+chi^2/Ndof=272.852
+chi^2/Ndof=279.55
+chi^2/Ndof=279.34
+chi^2/Ndof=284.49
+___ itry=1, Curvature[1][0]=-2.41889e+07 ___
+chi^2/Ndof=278.291
+chi^2/Ndof=285.024
+chi^2/Ndof=274.036
+chi^2/Ndof=279.117
+___ itry=1, Curvature[2][0]=-2.57967e+07 ___
+chi^2/Ndof=277.884
+chi^2/Ndof=283.414
+chi^2/Ndof=272.601
+chi^2/Ndof=278.466
+___ itry=1, Curvature[2][1]=1.04363e+06 ___
+chi^2/Ndof=280.265
+chi^2/Ndof=286.41
+chi^2/Ndof=271.765
+chi^2/Ndof=277.479
+___ itry=1, Curvature[3][0]=-6.72488e+06 ___
+chi^2/Ndof=279.507
+chi^2/Ndof=285.135
+chi^2/Ndof=270.707
+chi^2/Ndof=276.468
+___ itry=1, Curvature[3][1]=416209 ___
+chi^2/Ndof=284.948
+chi^2/Ndof=279.811
+chi^2/Ndof=276.196
+chi^2/Ndof=271.098
+___ itry=1, Curvature[3][2]=125646 ___
+chi^2/Ndof=276.016
+chi^2/Ndof=281.951
+___ itry=1, Curvature[0][0]=6.87196e+08 ___
+chi^2/Ndof=275.112
+chi^2/Ndof=280.805
+___ itry=1, Curvature[1][1]=1.85416e+06 ___
+chi^2/Ndof=280.576
+chi^2/Ndof=275.458
+___ itry=1, Curvature[2][2]=3.32794e+06 ___
+chi^2/Ndof=282.248
+chi^2/Ndof=273.513
+___ itry=1, Curvature[3][3]=-100918 ___
+NEWTON's METHOD: screwy eigenval[i]=-201951, is less than zero
+chi^2/Ndof=265.518
+chi^2/Ndof=272.753
+chi^2/Ndof=271.765
+chi^2/Ndof=277.479
+___ itry=1, Curvature[1][0]=-2.37552e+07 ___
+chi^2/Ndof=270.913
+chi^2/Ndof=278.191
+chi^2/Ndof=266.507
+chi^2/Ndof=272.145
+___ itry=1, Curvature[2][0]=-2.5618e+07 ___
+chi^2/Ndof=270.89
+chi^2/Ndof=276.196
+chi^2/Ndof=265.465
+chi^2/Ndof=271.098
+___ itry=1, Curvature[2][1]=1.02305e+06 ___
+chi^2/Ndof=272.852
+chi^2/Ndof=279.55
+chi^2/Ndof=264.272
+chi^2/Ndof=270.536
+___ itry=1, Curvature[3][0]=-6.77796e+06 ___
+chi^2/Ndof=272.483
+chi^2/Ndof=277.884
+chi^2/Ndof=263.602
+chi^2/Ndof=269.134
+___ itry=1, Curvature[3][1]=409468 ___
+chi^2/Ndof=277.884
+chi^2/Ndof=272.601
+chi^2/Ndof=269.05
+chi^2/Ndof=263.808
+___ itry=1, Curvature[3][2]=126113 ___
+chi^2/Ndof=268.564
+chi^2/Ndof=275.049
+___ itry=1, Curvature[0][0]=6.86952e+08 ___
+chi^2/Ndof=268.047
+chi^2/Ndof=273.513
+___ itry=1, Curvature[1][1]=1.81313e+06 ___
+chi^2/Ndof=273.471
+chi^2/Ndof=268.208
+___ itry=1, Curvature[2][2]=3.31498e+06 ___
+chi^2/Ndof=275.112
+chi^2/Ndof=266.295
+___ itry=1, Curvature[3][3]=-91342.5 ___
+NEWTON's METHOD: screwy eigenval[i]=-192606, is less than zero
+chi^2/Ndof=258.261
+chi^2/Ndof=266.018
+chi^2/Ndof=264.272
+chi^2/Ndof=270.536
+___ itry=1, Curvature[1][0]=-2.33339e+07 ___
+chi^2/Ndof=263.613
+chi^2/Ndof=271.422
+chi^2/Ndof=259.06
+chi^2/Ndof=265.239
+___ itry=1, Curvature[2][0]=-2.54486e+07 ___
+chi^2/Ndof=263.963
+chi^2/Ndof=269.05
+chi^2/Ndof=258.4
+chi^2/Ndof=263.808
+___ itry=1, Curvature[2][1]=1.00303e+06 ___
+chi^2/Ndof=265.518
+chi^2/Ndof=272.753
+chi^2/Ndof=256.862
+chi^2/Ndof=263.659
+___ itry=1, Curvature[3][0]=-6.83973e+06 ___
+chi^2/Ndof=265.527
+chi^2/Ndof=270.707
+chi^2/Ndof=256.568
+chi^2/Ndof=261.878
+___ itry=1, Curvature[3][1]=402972 ___
+chi^2/Ndof=270.89
+chi^2/Ndof=265.465
+chi^2/Ndof=261.977
+chi^2/Ndof=256.593
+___ itry=1, Curvature[3][2]=126953 ___
+chi^2/Ndof=261.191
+chi^2/Ndof=268.212
+___ itry=1, Curvature[0][0]=6.86825e+08 ___
+chi^2/Ndof=261.051
+chi^2/Ndof=266.295
+___ itry=1, Curvature[1][1]=1.77337e+06 ___
+chi^2/Ndof=266.437
+chi^2/Ndof=261.032
+___ itry=1, Curvature[2][2]=3.3029e+06 ___
+chi^2/Ndof=268.047
+chi^2/Ndof=259.151
+___ itry=1, Curvature[3][3]=-80782.7 ___
+NEWTON's METHOD: screwy eigenval[i]=-182441, is less than zero
+chi^2/Ndof=251.081
+chi^2/Ndof=259.345
+chi^2/Ndof=256.862
+chi^2/Ndof=263.659
+___ itry=1, Curvature[1][0]=-2.29246e+07 ___
+chi^2/Ndof=256.391
+chi^2/Ndof=264.714
+chi^2/Ndof=251.694
+chi^2/Ndof=258.398
+___ itry=1, Curvature[2][0]=-2.52884e+07 ___
+chi^2/Ndof=257.103
+chi^2/Ndof=261.977
+chi^2/Ndof=251.404
+chi^2/Ndof=256.593
+___ itry=1, Curvature[2][1]=983568 ___
+chi^2/Ndof=258.261
+chi^2/Ndof=266.018
+chi^2/Ndof=249.532
+chi^2/Ndof=256.847
+___ itry=1, Curvature[3][0]=-6.91051e+06 ___
+chi^2/Ndof=258.638
+chi^2/Ndof=263.602
+chi^2/Ndof=249.604
+chi^2/Ndof=254.696
+___ itry=1, Curvature[3][1]=396720 ___
+chi^2/Ndof=263.963
+chi^2/Ndof=258.4
+chi^2/Ndof=254.974
+chi^2/Ndof=249.452
+___ itry=1, Curvature[3][2]=128180 ___
+chi^2/Ndof=253.897
+chi^2/Ndof=261.438
+___ itry=1, Curvature[0][0]=6.86816e+08 ___
+chi^2/Ndof=254.124
+chi^2/Ndof=259.151
+___ itry=1, Curvature[1][1]=1.73483e+06 ___
+chi^2/Ndof=259.472
+chi^2/Ndof=253.928
+___ itry=1, Curvature[2][2]=3.2917e+06 ___
+chi^2/Ndof=261.051
+chi^2/Ndof=252.08
+___ itry=1, Curvature[3][3]=-69183.8 ___
+NEWTON's METHOD: screwy eigenval[i]=-171415, is less than zero
+chi^2/Ndof=244.407
+chi^2/Ndof=251.621
+chi^2/Ndof=250.439
+chi^2/Ndof=256.14
+___ itry=1, Curvature[1][0]=-2.36461e+07 ___
+chi^2/Ndof=249.532
+chi^2/Ndof=256.847
+chi^2/Ndof=245.483
+chi^2/Ndof=251.046
+___ itry=1, Curvature[2][0]=-2.73713e+07 ___
+chi^2/Ndof=249.604
+chi^2/Ndof=254.696
+chi^2/Ndof=244.476
+chi^2/Ndof=249.901
+___ itry=1, Curvature[2][1]=1.04207e+06 ___
+chi^2/Ndof=251.694
+chi^2/Ndof=258.398
+chi^2/Ndof=243.001
+chi^2/Ndof=249.222
+___ itry=1, Curvature[3][0]=-7.55819e+06 ___
+chi^2/Ndof=251.404
+chi^2/Ndof=256.593
+chi^2/Ndof=242.384
+chi^2/Ndof=247.706
+___ itry=1, Curvature[3][1]=417049 ___
+chi^2/Ndof=256.568
+chi^2/Ndof=251.577
+chi^2/Ndof=247.588
+chi^2/Ndof=242.653
+___ itry=1, Curvature[3][2]=177898 ___
+chi^2/Ndof=247.346
+chi^2/Ndof=253.814
+___ itry=1, Curvature[0][0]=7.0525e+08 ___
+chi^2/Ndof=246.896
+chi^2/Ndof=252.15
+___ itry=1, Curvature[1][1]=1.78078e+06 ___
+chi^2/Ndof=252.08
+chi^2/Ndof=247.116
+___ itry=1, Curvature[2][2]=3.65228e+06 ___
+chi^2/Ndof=253.928
+chi^2/Ndof=244.973
+___ itry=1, Curvature[3][3]=-34191.7 ___
+NEWTON's METHOD: screwy eigenval[i]=-145349, is less than zero
+chi^2/Ndof=237.198
+chi^2/Ndof=244.907
+chi^2/Ndof=243.001
+chi^2/Ndof=249.222
+___ itry=1, Curvature[1][0]=-2.32412e+07 ___
+chi^2/Ndof=242.281
+chi^2/Ndof=250.098
+chi^2/Ndof=238.09
+chi^2/Ndof=244.165
+___ itry=1, Curvature[2][0]=-2.7222e+07 ___
+chi^2/Ndof=242.709
+chi^2/Ndof=247.588
+chi^2/Ndof=237.447
+chi^2/Ndof=242.653
+___ itry=1, Curvature[2][1]=1.02253e+06 ___
+chi^2/Ndof=244.407
+chi^2/Ndof=251.621
+chi^2/Ndof=235.647
+chi^2/Ndof=242.372
+___ itry=1, Curvature[3][0]=-7.65029e+06 ___
+chi^2/Ndof=244.478
+chi^2/Ndof=249.452
+chi^2/Ndof=235.388
+chi^2/Ndof=240.493
+___ itry=1, Curvature[3][1]=411034 ___
+chi^2/Ndof=249.604
+chi^2/Ndof=244.476
+chi^2/Ndof=240.553
+chi^2/Ndof=235.482
+___ itry=1, Curvature[3][2]=180256 ___
+chi^2/Ndof=240.025
+chi^2/Ndof=247
+___ itry=1, Curvature[0][0]=7.05423e+08 ___
+chi^2/Ndof=239.934
+chi^2/Ndof=244.973
+___ itry=1, Curvature[1][1]=1.74261e+06 ___
+chi^2/Ndof=245.08
+chi^2/Ndof=239.979
+___ itry=1, Curvature[2][2]=3.64242e+06 ___
+chi^2/Ndof=246.896
+chi^2/Ndof=237.87
+___ itry=1, Curvature[3][3]=-19900.9 ___
+NEWTON's METHOD: screwy eigenval[i]=-132175, is less than zero
+chi^2/Ndof=230.068
+chi^2/Ndof=238.255
+chi^2/Ndof=235.647
+chi^2/Ndof=242.372
+___ itry=1, Curvature[1][0]=-2.2848e+07 ___
+chi^2/Ndof=235.108
+chi^2/Ndof=243.412
+chi^2/Ndof=230.78
+chi^2/Ndof=237.351
+___ itry=1, Curvature[2][0]=-2.70823e+07 ___
+chi^2/Ndof=235.881
+chi^2/Ndof=240.553
+chi^2/Ndof=230.49
+chi^2/Ndof=235.482
+___ itry=1, Curvature[2][1]=1.00353e+06 ___
+chi^2/Ndof=237.198
+chi^2/Ndof=244.907
+chi^2/Ndof=228.375
+chi^2/Ndof=235.587
+___ itry=1, Curvature[3][0]=-7.75269e+06 ___
+chi^2/Ndof=237.62
+chi^2/Ndof=242.384
+chi^2/Ndof=228.463
+chi^2/Ndof=233.357
+___ itry=1, Curvature[3][1]=405275 ___
+chi^2/Ndof=242.709
+chi^2/Ndof=237.447
+chi^2/Ndof=233.59
+chi^2/Ndof=228.387
+___ itry=1, Curvature[3][2]=183070 ___
+chi^2/Ndof=232.784
+chi^2/Ndof=240.25
+___ itry=1, Curvature[0][0]=7.05717e+08 ___
+chi^2/Ndof=233.042
+chi^2/Ndof=237.87
+___ itry=1, Curvature[1][1]=1.70559e+06 ___
+chi^2/Ndof=238.15
+chi^2/Ndof=232.916
+___ itry=1, Curvature[2][2]=3.63351e+06 ___
+chi^2/Ndof=239.934
+chi^2/Ndof=230.841
+___ itry=1, Curvature[3][3]=-4355.25 ___
+NEWTON's METHOD: screwy eigenval[i]=-117982, is less than zero
+chi^2/Ndof=225.041
+chi^2/Ndof=228.463
+chi^2/Ndof=231.495
+chi^2/Ndof=233.357
+___ itry=1, Curvature[1][0]=-2.4378e+07 ___
+chi^2/Ndof=230.011
+chi^2/Ndof=233.59
+chi^2/Ndof=226.722
+chi^2/Ndof=228.387
+___ itry=1, Curvature[2][0]=-2.99049e+07 ___
+chi^2/Ndof=228.013
+chi^2/Ndof=233.492
+chi^2/Ndof=223.552
+chi^2/Ndof=229.388
+___ itry=1, Curvature[2][1]=1.1144e+06 ___
+chi^2/Ndof=232.439
+chi^2/Ndof=235.388
+chi^2/Ndof=223.954
+chi^2/Ndof=226.296
+___ itry=1, Curvature[3][0]=-9.48024e+06 ___
+chi^2/Ndof=230.068
+chi^2/Ndof=235.647
+chi^2/Ndof=221.184
+chi^2/Ndof=226.913
+___ itry=1, Curvature[3][1]=465977 ___
+chi^2/Ndof=235.108
+chi^2/Ndof=230.78
+chi^2/Ndof=226.258
+chi^2/Ndof=222.017
+___ itry=1, Curvature[3][2]=271166 ___
+chi^2/Ndof=228.189
+chi^2/Ndof=230.841
+___ itry=1, Curvature[0][0]=7.12515e+08 ___
+chi^2/Ndof=225.623
+chi^2/Ndof=231.276
+___ itry=1, Curvature[1][1]=1.85063e+06 ___
+chi^2/Ndof=230.68
+chi^2/Ndof=226.394
+___ itry=1, Curvature[2][2]=4.04996e+06 ___
+chi^2/Ndof=232.784
+chi^2/Ndof=223.974
+___ itry=1, Curvature[3][3]=98190.8 ___
+NEWTON's METHOD: screwy eigenval[i]=-53467.1, is less than zero
+chi^2/Ndof=217.732
+chi^2/Ndof=221.609
+chi^2/Ndof=223.954
+chi^2/Ndof=226.296
+___ itry=1, Curvature[1][0]=-2.39847e+07 ___
+chi^2/Ndof=222.656
+chi^2/Ndof=226.698
+chi^2/Ndof=219.229
+chi^2/Ndof=221.366
+___ itry=1, Curvature[2][0]=-2.97807e+07 ___
+chi^2/Ndof=220.995
+chi^2/Ndof=226.258
+chi^2/Ndof=216.404
+chi^2/Ndof=222.017
+___ itry=1, Curvature[2][1]=1.09469e+06 ___
+chi^2/Ndof=225.041
+chi^2/Ndof=228.463
+chi^2/Ndof=216.505
+chi^2/Ndof=219.311
+___ itry=1, Curvature[3][0]=-9.61797e+06 ___
+chi^2/Ndof=223.014
+chi^2/Ndof=228.375
+chi^2/Ndof=214.074
+chi^2/Ndof=219.583
+___ itry=1, Curvature[3][1]=460399 ___
+chi^2/Ndof=228.013
+chi^2/Ndof=223.552
+chi^2/Ndof=219.106
+chi^2/Ndof=214.733
+___ itry=1, Curvature[3][2]=275735 ___
+chi^2/Ndof=220.765
+chi^2/Ndof=223.885
+___ itry=1, Curvature[0][0]=7.13001e+08 ___
+chi^2/Ndof=218.54
+chi^2/Ndof=223.974
+___ itry=1, Curvature[1][1]=1.81207e+06 ___
+chi^2/Ndof=223.555
+chi^2/Ndof=219.137
+___ itry=1, Curvature[2][2]=4.04231e+06 ___
+chi^2/Ndof=225.623
+chi^2/Ndof=216.756
+___ itry=1, Curvature[3][3]=118727 ___
+NEWTON's METHOD: screwy eigenval[i]=-35760.9, is less than zero
+chi^2/Ndof=210.509
+chi^2/Ndof=214.825
+chi^2/Ndof=216.505
+chi^2/Ndof=219.311
+___ itry=1, Curvature[1][0]=-2.36029e+07 ___
+chi^2/Ndof=215.387
+chi^2/Ndof=219.877
+chi^2/Ndof=211.828
+chi^2/Ndof=214.42
+___ itry=1, Curvature[2][0]=-2.96668e+07 ___
+chi^2/Ndof=214.053
+chi^2/Ndof=219.106
+chi^2/Ndof=209.336
+chi^2/Ndof=214.733
+___ itry=1, Curvature[2][1]=1.07553e+06 ___
+chi^2/Ndof=217.732
+chi^2/Ndof=221.609
+chi^2/Ndof=209.147
+chi^2/Ndof=212.4
+___ itry=1, Curvature[3][0]=-9.76786e+06 ___
+chi^2/Ndof=216.036
+chi^2/Ndof=221.184
+chi^2/Ndof=207.045
+chi^2/Ndof=212.339
+___ itry=1, Curvature[3][1]=455110 ___
+chi^2/Ndof=220.995
+chi^2/Ndof=216.404
+chi^2/Ndof=212.035
+chi^2/Ndof=207.533
+___ itry=1, Curvature[3][2]=280865 ___
+chi^2/Ndof=213.43
+chi^2/Ndof=217.002
+___ itry=1, Curvature[0][0]=7.13612e+08 ___
+chi^2/Ndof=211.535
+chi^2/Ndof=216.756
+___ itry=1, Curvature[1][1]=1.77466e+06 ___
+chi^2/Ndof=216.51
+chi^2/Ndof=211.962
+___ itry=1, Curvature[2][2]=4.03571e+06 ___
+chi^2/Ndof=218.54
+chi^2/Ndof=209.621
+___ itry=1, Curvature[3][3]=140869 ___
+NEWTON's METHOD: screwy eigenval[i]=-16807.5, is less than zero
+chi^2/Ndof=203.372
+chi^2/Ndof=208.111
+chi^2/Ndof=209.147
+chi^2/Ndof=212.4
+___ itry=1, Curvature[1][0]=-2.32324e+07 ___
+chi^2/Ndof=208.206
+chi^2/Ndof=213.127
+chi^2/Ndof=204.518
+chi^2/Ndof=207.547
+___ itry=1, Curvature[2][0]=-2.95634e+07 ___
+chi^2/Ndof=207.188
+chi^2/Ndof=212.035
+chi^2/Ndof=202.348
+chi^2/Ndof=207.533
+___ itry=1, Curvature[2][1]=1.05692e+06 ___
+chi^2/Ndof=210.509
+chi^2/Ndof=214.825
+chi^2/Ndof=201.882
+chi^2/Ndof=205.563
+___ itry=1, Curvature[3][0]=-9.9304e+06 ___
+chi^2/Ndof=209.134
+chi^2/Ndof=214.074
+chi^2/Ndof=200.096
+chi^2/Ndof=205.181
+___ itry=1, Curvature[3][1]=450112 ___
+chi^2/Ndof=214.053
+chi^2/Ndof=209.336
+chi^2/Ndof=205.044
+chi^2/Ndof=200.418
+___ itry=1, Curvature[3][2]=286580 ___
+chi^2/Ndof=206.185
+chi^2/Ndof=210.191
+___ itry=1, Curvature[0][0]=7.1435e+08 ___
+chi^2/Ndof=204.609
+chi^2/Ndof=209.621
+___ itry=1, Curvature[1][1]=1.73836e+06 ___
+chi^2/Ndof=209.543
+chi^2/Ndof=204.87
+___ itry=1, Curvature[2][2]=4.03017e+06 ___
+chi^2/Ndof=211.535
+chi^2/Ndof=202.568
+___ itry=1, Curvature[3][3]=164709 ___
+delx[] = 19.6341 -232.587 84.3978 1706.54 
+Stepped outside min/max, will rescale delx[]
+delx[] = 9.81704 -116.293 42.1989 853.268 
+Stepped outside min/max, will rescale delx[]
+delx[] = 4.90852 -58.1467 21.0995 426.634 
+Stepped outside min/max, will rescale delx[]
+delx[] = 2.45426 -29.0733 10.5497 213.317 
+Stepped outside min/max, will rescale delx[]
+delx[] = 1.22713 -14.5367 5.27486 106.659 
+Stepped outside min/max, will rescale delx[]
+delx[] = 0.613565 -7.26833 2.63743 53.3293 
+Stepped outside min/max, will rescale delx[]

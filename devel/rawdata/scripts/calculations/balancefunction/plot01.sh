@@ -1,0 +1,14 @@
+set multiplot layout 4,2 title "Model Balance Function BF=1.0"; 
+set key noautotitle; set grid; set xlabel "Relative Rapidity"; 
+set ylabel "PiPi Balance Function"; 
+set title "Prior";plot [0.1:1.8][-0.01:0.6] for[i=2:21] "model_run01/prior/pipi_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:1002 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set title "Posterior"; plot [0.1:1.8][-0.01:0.6] for[i=2:21] "model_run01/posterior/pipi_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:22 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set ylabel "PPbar Balance Function"; 
+set title "Prior"; plot [0.1:1.8][-0.01:0.5] for[i=2:21] "model_run01/prior/ppbar_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:1002 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set title "Posterior"; plot [0.1:1.8][-0.01:0.5] for[i=2:21] "model_run01/posterior/ppbar_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:22 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set ylabel "KK Balance Function"; 
+set title "Prior"; plot [0.1:1.8][-0.01:0.25] for[i=2:21] "model_run01/prior/kk_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:1002 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set title "Posterior"; plot [0.1:1.8][-0.01:0.25] for[i=2:21] "model_run01/posterior/kk_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:22 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set ylabel "pK Balance Function"; 
+set title "Prior"; plot [0.1:1.8][-0.05:0.1] for[i=2:21] "model_run01/prior/pk_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17 u 1:1002 lc rgb "black" lw 3 w lines title "Experimental BF"; 
+set title "Posterior"; plot [0.1:1.8][-0.05:0.1] for[i=2:21] "model_run01/posterior/pk_exp.dat" every ::1::17 u 1:i w lines, "" every ::1::17xf u 1:22 lc rgb "black" lw 3 w lines title "Experimental BF";

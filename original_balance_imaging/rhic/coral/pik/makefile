@@ -1,2 +1,0 @@
-kernelmaker : kernelmaker.cc
-	/Developer/usr/bin/g++ -o kernelmaker -fast -I/Users/scottepratt/local/include -I/opt/local/include -L/Users/scottepratt/local/lib -L/opt/local/lib -lcoral -lcoralutils -lgsl -lgslcblas kernelmaker.cc

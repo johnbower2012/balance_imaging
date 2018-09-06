@@ -1,6 +1,0 @@
-int NRADIAL 120
-double RADSTEP 0.5
-int LMAX 6
-bool XSYM true
-bool YSYM true
-bool ZSYM true

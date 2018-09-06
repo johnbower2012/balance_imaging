@@ -1,0 +1,72 @@
+#clear
+set term pdfcairo enh font "Helvetica,24" size 5,8;
+set output "Bcorrected_Model.pdf";
+#set term aqua enh font "Helvetica,20" size 800 500;
+
+set multiplot;                          # get into multiplot mode
+set pointsize 1.5;
+set border lw 3;
+set size 1.0,0.45;
+set lmargin 7;
+set rmargin 1;
+
+set tmargin 0;
+set bmargin 0;
+
+############ LOWER PANEL ##############
+
+set xrange [0:2];
+#set xtics format " ";
+set ytics font "Helvetica,24";
+set xtics format "%g" font "Helvetica,20";
+set xtics 0,0.5;
+set mxtics 5;
+
+set xlabel "{/Symbol D}y"  font "Helvetica,28" offset 0,0.35;
+
+set origin 0.0,0.08;
+set yrange [-0.05:0.35];
+set ytics -1,0.1;
+set mytics 4;
+set ylabel "B({/Symbol D}y)" font "Helvetica,28" offset 1.5,8;
+set key title "Model";
+
+#set label "{/Symbol p}^+{/Symbol p}^-" at 0.1,0.95 font "Helvetica,30" textcolor rgb "#000000";
+
+plot \
+"../model_output/default/I211_J211.dat" using 1:2:3 with errorbars pointtype 10 lw 3 lc rgb "#FF0000" notitle,\
+"../model_output/default/I211_J211.dat" using 1:2:3 with points pointtype 10 lw 3 lc rgb "#FF0000" title "{/Symbol p}^+{/Symbol p}^-",\
+"../model_output/default/I321_J321.dat" using 1:2:3 with errorbars pointtype 4 lw 3 lc rgb "#00FF00" notitle,\
+"../model_output/default/I321_J321.dat" using 1:2:3 with points pointtype 4 lw 3 lc rgb "#00FF00" title "K^+K^-",\
+"../model_output/default/I2212_J2212.dat" using 1:2:3 with errorbars pointtype 6 lw 3 lc rgb "#0000FF" notitle,\
+"../model_output/default/I2212_J2212.dat" using 1:2:3 with points pointtype 6 lw 3 lc rgb "#0000FF" title "pp";
+
+########## UPPER PANEL ###############
+unset label;
+set origin 0.0,0.53;
+set yrange [-0.05:1.0];
+set ytics -1,0.2;
+set xtics format "";
+unset xlabel;
+set mytics 4;
+unset ylabel 
+set key title "Model (corrected)";
+
+plot \
+"../output_posterior_corrected/default/I211_J211.dat" using 1:2:3 with points pointtype 10 lw 3 lc rgb "#FF0000" title "{/Symbol p}^+{/Symbol p}^-",\
+"../output_posterior_corrected/default/I211_J211.dat" using 1:2:3 with errorbars pointtype 10 lw 3 lc rgb "#FF0000" notitle, \
+"../output_posterior_corrected/default/I321_J321.dat" using 1:2:3 with points pointtype 4 lw 3 lc rgb "#00FF00" title "K^+K^-",\
+"../output_posterior_corrected/default/I321_J321.dat" using 1:2:3 with errorbars pointtype 4 lw 3 lc rgb "#00FF00" notitle, \
+"../output_posterior_corrected/default/I2212_J2212.dat" using 1:2:3 with points pointtype 6 lw 3 lc rgb "#0000FF" title "pp",\
+"../output_posterior_corrected/default/I2212_J2212.dat" using 1:2:3 with errorbars pointtype 6 lw 3 lc rgb "#0000FF" notitle;
+
+unset key;
+plot \
+"../model_output/semiperfect/I211_J211.dat" using 1:2 with lines lw 3 lc rgb "#FF0000" notitle, \
+"../model_output/semiperfect/I321_J321.dat" using 1:2 with lines lw 3 lc rgb "#00FF00" notitle, \
+"..//model_output/semiperfect/I2212_J2212.dat" using 1:2:3 with lines lw 3 lc rgb "#0000FF" notitle;
+
+plot \
+"../model_output/perfect/I211_J211.dat" using 1:2 with lines lw 3 lc rgb "#FF0000" notitle, \
+"../model_output/perfect/I321_J321.dat" using 1:2 with lines lw 3 lc rgb "#00FF00" notitle, \
+"../model_output/perfect/I2212_J2212.dat" using 1:2:3 with lines lw 3 lc rgb "#0000FF" notitle;

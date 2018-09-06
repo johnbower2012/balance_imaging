@@ -1,7 +1,0 @@
-int NQMAX 40
-double DELQ 2.0
-double EPSILON 1.0
-int NRMAX 100
-double DELR 1.0
-int KLMAX 0
-bool IDENTICAL true

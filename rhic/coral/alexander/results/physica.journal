@@ -1,0 +1,22 @@
+********************************************************************************
+***                                                                          ***
+*** PHYSICA                      VERSION # 2.92               October   2007 ***
+*** Copyright (C) 1992,...,2007                              Joseph L. Chuma ***
+***                           All rights reserved                            ***
+***                                                                          ***
+***  Enter NEWS to get the latest information on new commands and features   ***
+***  Latest news added on October 23, 2007                                   ***
+***  Journal file: physica.journal                                           ***
+***                                                                          ***
+***            UNAUTHORIZED COMMERCIAL USE IS STRICTLY PROHIBITED            ***
+***                                                                          ***
+*** Physica 3.0 for the Windows environment has been released under the name ***
+*** Extrema. See www.extremasoftware.com                                     ***
+***                                                                          ***
+********************************************************************************
+User: scottepratt   Date: 18-Aug-2008 08:07:01
+ Default graphics hardcopy device: PostScript: colour, paper size A
+ PHYSICA: exec Rosl_steffen.plt
+ *** ERROR in EXECUTE
+     opening file Rosl_steffen.plt
+ PHYSICA: quit

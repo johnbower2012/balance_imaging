@@ -1,5 +1,0 @@
-int NXYZMAX 25
-double DELXYZ 2.0
-bool XSYM true
-bool YSYM true
-bool ZSYM true
