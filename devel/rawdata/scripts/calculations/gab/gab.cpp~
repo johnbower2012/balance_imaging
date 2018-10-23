@@ -16,8 +16,13 @@ double integrate(arma::mat gab, int selection){
 int main(int argc, char* argv[]){
   int CHI=3,PAR=4,COUNT=20,SAM=500;
 
-  std::string chiname="chi.dat";
-  std::string parname="par.dat";
+  std::string dirname;
+  if(argc>1){
+    dirname = argv[1];
+  } 
+
+  std::string chiname=dirname+"chi.dat";
+  std::string parname=dirname+"par.dat";
   
   arma::mat chi=arma::zeros<arma::mat>(CHI,CHI);
   arma::mat par=arma::zeros<arma::mat>(COUNT,PAR);
@@ -39,7 +44,7 @@ int main(int argc, char* argv[]){
       else{ one=2;two=2;}
       for(int j=0;j<COUNT;j++){
 	width = par(j,a);
-	gab(i,1+COUNT*a+j) = 2.0/acos(-1)/(width*cosh(eta/width));
+	gab(i,1+COUNT*a+j) = -chi(one,two)*2.0/acos(-1)/(width*cosh(eta/width));
       }
     }
   }

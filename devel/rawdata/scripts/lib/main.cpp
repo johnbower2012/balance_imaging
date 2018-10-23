@@ -1,0 +1,78 @@
+#include "coshfunc.cpp"
+#include "file.cpp"
+#include<iostream>
+#include<fstream>
+#include<Eigen/Dense>
+#include<string>
+
+int main(int argc, char* argv[]){
+  int 
+    ab=4,
+    nmax=4,
+    n=500,
+    samples=1000;
+  double 
+    x=8;
+
+  Eigen::VectorXd 
+    width(ab);
+  Eigen::MatrixXd 
+    g(ab,nmax+1),
+    G,
+    M(n+1,ab*samples+1),
+    m;
+
+  std::string 
+    infilename = "moments_parameters.dat",
+    outfilename = "wave.dat";
+
+  CDistCosh 
+    dist;
+
+  load_file(infilename, G, 24, 1000);
+  dist.FunctionSet(n,x,samples,ab,nmax,G,M);
+  print_file(outfilename,M);
+
+  /*
+  double sumx=0.0, sumw=0.0,weight;
+  n=100000;
+  for(int sampl=0;sampl<1;sampl++){
+    for(int i=0;i<ab;i++){
+      width(i) = G(sampl,i*(nmax+2));
+      for(int j=0;j<nmax+1;j++){
+	g(i,j) = G(sampl,i*(nmax+2)+1+j);
+      }
+    }
+    dist.Set_WG(width,g);
+    sumx=sumw=0.0;
+    for(int i=0;i<n;i++){
+      dist.GenX(0,x,weight);
+      sumx += x;
+      sumw += weight;
+    }
+    std::cout << sampl << " " << width(0) << " " << sumx/double(n) << " " << sumw/double(n) << std::endl;
+  }
+  */
+
+  /*
+  double sumn=0.0,sum=0.0,dx=x/double(n);
+  for(int i=0;i<samples;i++){
+    for(int k=0;k<ab;k++){
+      sum=sumn=0.0;
+      for(int j=0;j<n+1;j++){
+	sum += M(j,i*ab+1+k);
+      }
+      sum*=dx;
+      for(int j=0;j<nmax+1;j++){
+	sumn += G(i,k*(nmax+2)+1+j)*dist.coshcalc.Z(j);
+      }
+      sumn*=G(i,k*(nmax+2));
+      printf("%d %d %f %f %f\n",i,k,G(i,k*(nmax+2)),sumn,sum);
+    }
+  }
+  */
+
+
+  return 0;
+}
+

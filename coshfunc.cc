@@ -158,7 +158,7 @@ void CCoshExpand::CalcOverlapVec(int n){
 	x.zeros();
 	y.resize(n);
 	y.zeros();
-	arma::mat A;
+p	arma::mat A;
 	A.resize(n,n);
 	A.zeros();
 	int m,mprime,nprime;

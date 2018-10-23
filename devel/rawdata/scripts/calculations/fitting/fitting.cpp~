@@ -13,7 +13,7 @@ arma::vec linear_regression_ls(arma::vec y, arma::mat X);
 arma::mat linear_regression_ls(arma::mat Y, arma::mat X);
 
 int main(int argc, char* argv[]){
-  int points=1000,dimensions=4,observables=12;
+  int points=1000,dimensions=24,observables=12;
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::uniform_real_distribution<double> distribution(-0.5,0.5);
@@ -23,11 +23,13 @@ int main(int argc, char* argv[]){
   arma::vec result = arma::zeros<arma::vec>(points);
   arma::vec beta = arma::zeros<arma::vec>(points);
   std::string plotname;
-  if(argc<2){
-    printf("Improper usage. Enter also 'plotname' on same line.\n");
+  std::string dest_folder;
+  if(argc<3){
+    printf("Improper usage. Enter also 'plotname dest_folder' on same line.\n");
     exit(1);
   } else{
     plotname = argv[1];
+    dest_folder = argv[2];
   }
   
   ifile.open(plotname);
@@ -47,10 +49,12 @@ int main(int argc, char* argv[]){
   X.resize(points,2);
   beta = linear_regression_ls(y,X);
   
-  ofile.open("beta.dat");
+  std::string destfile = dest_folder + "beta.dat";
+  ofile.open(destfile);
   ofile << "#observables(1,2,3...down)parameters(1,2,3...across)" << std::endl;
   for(int i=0;i<observables;i++){
-    for(int j=0;j<1+dimensions;j++){
+    ofile << "0.0";
+    for(int j=1;j<1+dimensions;j++){
       ofile << " " << Beta(i,j);
     }
     ofile << std::endl;

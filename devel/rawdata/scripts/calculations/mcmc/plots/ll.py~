@@ -140,7 +140,7 @@ for ipanel in range (0,npars):
       counts1d = counts1d/float(maxcount)      
       ax.set_yticks([0,0.5,1.0], minor=False)
       ax.tick_params(axis='y',which='both',labelleft='off',labelright='off',labelsize=myfontsize)
-      plt.ylim(0,1.01)
+      plt.ylim(0,1.05)
       plt.xlim(xmin-0.01*(xmax-xmin),xmax+0.01*(xmax-xmin))
       plt.plot(xarray,counts1d,linestyle='-',linewidth=3,color='r')
     

@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
 
 
   double epsilon=1e-8;
-  int parameters = 4;
+  int parameters = 24;
   int observables = 12;
   int model_runs = 1000;
   int exp_runs = 1;
@@ -92,17 +92,22 @@ int main(int argc, char* argv[]){
   arma::vec position = arma::zeros<arma::vec>(parameters);
   arma::vec widths = arma::zeros<arma::vec>(parameters);
 
-  position(0) = 0.8;
-  position(1) = 0.8;
-  position(2) = 0.8;
-  position(3) = 0.8;
-
   for(int i=0;i<parameters;i++){
     //position(i) = fabs(dist(generator));
-    widths(i) = (1.5-0.1)/30.0;
-    range(i,0) = 0.1;
-    range(i,1) = 1.5;
+    if(i%6==0){
+      widths(i) = (1.5-0.1)/10.0;
+      range(i,0) = 0.1;
+      range(i,1) = 1.5;
+      position(i) = 0.8;
+    }else{
+      widths(i) = 1000;
+      range(i,0) = -8000;
+      range(i,1) = 8000;
+      position(i) = 0.0;
+    }      
   }
+
+
   emulator gauss(X,hyp,beta,epsilon);
   MCMC random;
   random.set_observable_count(observables);
@@ -131,7 +136,7 @@ int main(int argc, char* argv[]){
     gauss_mat = gauss.emulate(X_s,Y_model);
     gauss_output.row(i) = gauss_mat.row(0);
     for(int l=0;l<observables;l++){
-      z(l) = gauss_mat(0,parameters+l); 
+      z(l) = gauss_mat(0,parameters+observables*2+l);
     }
     stepped = random.decide(z);
 

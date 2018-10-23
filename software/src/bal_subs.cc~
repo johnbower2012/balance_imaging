@@ -288,12 +288,12 @@ void CBalance::CalcWeights(){
 			}
 		}
 	}
-	/*
+
 	printf("-------  chi   --------\n");
 	gslmatrix->Print(chi);
 	printf("\n------- chi_inv --------\n");
 	gslmatrix->Print(chi_inv);
-	*/
+
 	
 	/*
 	double **A=new double* [3];

@@ -13,7 +13,7 @@ arma::vec linear_regression_ls(arma::vec y, arma::mat X);
 arma::mat linear_regression_ls(arma::mat Y, arma::mat X);
 
 int main(int argc, char* argv[]){
-  int points=1000,dimensions=4,observables=12;
+  int points=1000,dimensions=24,observables=12;
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine generator(seed);
   std::uniform_real_distribution<double> distribution(-0.5,0.5);

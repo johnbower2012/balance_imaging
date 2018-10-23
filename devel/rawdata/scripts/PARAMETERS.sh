@@ -5,6 +5,7 @@
 
 #File location
 EXEC_FILE='exec/parameters.x'
+FOLDER='../model_output/'
 PRIOR_FILE='../model_output/parameter_priors.dat'
 FIXED_FILE='../model_output/fixed_parameters.dat'
 

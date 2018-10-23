@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
   std::string param_name;
   std::string exp_name;
 
-  param=4;
+  param=24;
   files=4;
   obs_file=3;
   observables=files*obs_file;

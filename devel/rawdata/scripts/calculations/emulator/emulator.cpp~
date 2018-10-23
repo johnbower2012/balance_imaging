@@ -15,7 +15,7 @@ double calc_llh(arma::mat target, arma::mat model, int cutoff){
 int main(int argc, char* argv[]){
   int train = 1000;
   int test = 719;
-  int param = 4;
+  int param = 24;
   int observables=12;
   int hp = 3;
   double epsilon=1e-8;
@@ -45,10 +45,18 @@ int main(int argc, char* argv[]){
   load_file(hypName,H);
 
   for(int i=0;i<param;i++){
-    range(i,0) = 0.1;
-    range(i,1) = 1.5;
+    if(i%6==0){
+      range(i,0) = 0.5;
+      range(i,1) = 2.0;
+    }
+    else{
+      range(i,0) = -5;
+      range(i,1) = 5;
+    }
   }
+  range.print();
   X_s = construct_latinhypercube_sampling(test,range);
+
   emulator gauss(X,H,beta,epsilon);
   arma::mat output = gauss.emulate(X_s,Y);
   std::string printname = dest_folder + "test.dat";
@@ -56,17 +64,19 @@ int main(int argc, char* argv[]){
   printname = dest_folder + "train.dat";
   write_trainset(X, Y, printname);
 
-
-  //  arma::mat mllh = arma::zeros<arma::mat>(train,5);
-  // double llh;
   /*
+  arma::mat mllh = arma::zeros<arma::mat>(train,5);
+  double llh;
+  
   std::ofstream ofile;
   ofile.open("likelihood.dat");
   for(int i=0;i<train;i++){
+    arma::mat X_temp = X;
+    arma::mat Y_temp = Y;
     X_s.row(0) = X.row(i);
-    //X.shed_row(INT);
+    X_temp.shed_row(i);
     arma::mat target = Y.row(i);
-    //Y.shed_row(INT);
+    Y_temp.shed_row(i);
 
     emulator gauss(X,H,beta,epsilon);
     arma::mat output = gauss.emulate(X_s,Y);
@@ -89,6 +99,5 @@ int main(int argc, char* argv[]){
   }
   ofile.close();
   */
-
   return 0;
 }

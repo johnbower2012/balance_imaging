@@ -60,7 +60,7 @@ void CBalance::CalcBF(){
 		for(i=0;i<ni;i++){
 			icode=parti0[i].resinfo->code;
 			if(abs(icode)==211 || abs(icode)==321 || abs(icode)==2212 || abs(icode)==2112){
-				if(icode==211){
+				if (icode==211){
 					paircheckplus=true;
 					npiplus+=1;
 				}

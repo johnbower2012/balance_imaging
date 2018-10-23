@@ -13,9 +13,14 @@ void read_file(std::string fileName, arma::mat &file){
   }
   ifile.close();
 }
-void write_file(std::string fileName, arma::mat &file){
+void write_file(std::string fileName, std::vector<std::string> names, arma::mat &file){
   std::ofstream ofile;
+  
   ofile.open(fileName);
+  for(int i=0;i<names.size();i++){
+    ofile << " " << names[i];
+  }
+  ofile << '\n';
   for(int i=0;i<file.n_rows;i++){
     for(int j=0;j<file.n_cols;j++){
       ofile << " " << file(i,j);
@@ -48,12 +53,18 @@ int main(int argc, char* argv[]){
     ifile = argv[4];
     ofile = argv[5];
   }
+  std::vector<std::string> names(4);
+  names[0] = "InvCoshPar_uu_width";
+  names[1] = "InvCoshPar_ud_width";
+  names[2] = "InvCoshPar_us_width";
+  names[3] = "InvCoshPar_ss_width";
+
 
   arma::mat imat = arma::zeros<arma::mat>(irows,cols);
   arma::mat omat = arma::zeros<arma::mat>(orows,cols);
   read_file(ifile,imat);
   extract_rows(imat,omat);
-  write_file(ofile,omat);
+  write_file(ofile,names, omat);
 
   return 0;
 }

@@ -75,13 +75,13 @@ CDistInvCosh::CDistInvCosh(string parsfilename){
 void CDistInvCosh::GenX(int ab,double &x,double &weight){
 	int n,ng=invcoshcalc->ng;
 	x=invcoshcalc->GetRandomXFromInvCosh();
-	double Z=0.0;
+	//	double Z=0.0;
 	weight=0.0;
 	for(n=0;n<=ng;n++){
-		weight+=invcoshcalc->GetG(n,x)*g[ab][n];
-		Z+=invcoshcalc->I(n)*g[ab][n];
+		weight+=invcoshcalc->GetG(n,x/width[ab])*g[ab][n];
+		//Z+=invcoshcalc->I(n)*g[ab][n];
 	}
-	weight=weight/(invcoshcalc->GetG(0,x)*g[ab][0]);
+	weight*=0.5*PI/(invcoshcalc->GetG(0,x));//*g[ab][0]);
 	x*=width[ab];
 }
 

@@ -15,7 +15,7 @@ double calc_llh(arma::mat target, arma::mat model, int cutoff){
 int main(int argc, char* argv[]){
   int train = 1000;
   int test = 719;
-  int param = 4;
+  int param = 24;
   int observables=12;
   int hp = 3;
   double epsilon=1e-8;
@@ -45,21 +45,28 @@ int main(int argc, char* argv[]){
   load_file(hypName,H);
 
   for(int i=0;i<param;i++){
-    range(i,0) = 0.1;
-    range(i,1) = 1.5;
+    if(i%6==0){
+      range(i,0) = 0.5;
+      range(i,1) = 2.0;
+    }
+    else{
+      range(i,0) = -5;
+      range(i,1) = 5;
+    }
   }
+
   X_s = construct_latinhypercube_sampling(test,range);
-  /*
+
   emulator gauss(X,H,beta,epsilon);
   arma::mat output = gauss.emulate(X_s,Y);
   std::string printname = dest_folder + "test.dat";
   write_output(output,param,observables,printname);
   printname = dest_folder + "train.dat";
   write_trainset(X, Y, printname);
-  */
 
-  //  arma::mat mllh = arma::zeros<arma::mat>(train,5);
-  // double llh;
+  /*
+  arma::mat mllh = arma::zeros<arma::mat>(train,5);
+  double llh;
   
   std::ofstream ofile;
   ofile.open("likelihood.dat");
@@ -91,6 +98,6 @@ int main(int argc, char* argv[]){
     printf("llh: %f\n",llh);
   }
   ofile.close();
-
+  */
   return 0;
 }

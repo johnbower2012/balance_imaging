@@ -2,7 +2,7 @@ samples=20
 param=4
 for((i=$1;i<$2;i++))
 do
-    mr=` printf "model_run_posterior%02d/" $i `
+    mr=` printf "data/model_run_posterior%02d/" $i `
     echo "Running for directory ${mr} ..."
     for((j=0;j<$samples;j++))
     do

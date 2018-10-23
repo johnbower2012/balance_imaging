@@ -1,6 +1,6 @@
 SOURCE_FOLDER ../model_output/
 EXP_FOLDER calculations/moments/exp_run00/
 DEST_FOLDER calculations/
-RUNS 20
-LINES 18
+RUNS 1000
+LINES 24
 FILES 4
