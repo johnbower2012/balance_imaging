@@ -1,7 +1,7 @@
 #include<iostream>
 #include<iomanip>
 #include<cmath>
-#include "lib/emulator_class.cpp"
+#include "emulator_class.cpp"
 #include<armadillo>
 
 double calc_llh(arma::mat target, arma::mat model, int cutoff){

@@ -8,7 +8,7 @@ LIBRARY = -L ${BALANCE_LOCAL}/lib -L ${MADAI_GSLPATH}/lib -L ${MADAI_INSTALLDIR}
 
 corallibs :
 	make -C ${RHIC_HOME}/coral install
-	
+
 b3dlibs :
 	make -C ${RHIC_HOME}/b3d2 install
 

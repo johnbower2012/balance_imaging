@@ -10,5 +10,5 @@ double BW_T 100
 double BW_UPERP 0.75
 double BW_LAMBDA_VISC 0.8
 double BARYON_FUDGE 0.75
-bool STAR_ACCEPTANCE_I false
-bool STAR_ACCEPTANCE_J false
+bool STAR_ACCEPTANCE_I true
+bool STAR_ACCEPTANCE_J true

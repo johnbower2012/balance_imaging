@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
       range(i,1) = 5;
     }
   }
-  range.print();
+
   X_s = construct_latinhypercube_sampling(test,range);
 
   emulator gauss(X,H,beta,epsilon);

@@ -6,7 +6,7 @@
 
 #!/bin/bash
 
-EXEC_FILE='exec/collect.x'
+EXEC_FILE='collect.x'
 PARAM_FILE='script_model_parameters.dat'
 NAMES_FILE='script_model_names.dat'
 

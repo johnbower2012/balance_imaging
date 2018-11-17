@@ -1,5 +1,5 @@
 include ../../makefile_defs.mk
-BALANCE_LOCAL = ../../local/include/madai/
+BALANCE_LOCAL = ../../local/
 RHIC_HOME = ${MADAI_HOME}/rhic
 
 INCLUDE = -I ${BALANCE_LOCAL}/include -I ${MADAI_INSTALLDIR}/include/madai -I ${MADAI_GSLPATH}/include -I /usr/include
