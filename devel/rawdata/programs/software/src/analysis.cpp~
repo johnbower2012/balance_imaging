@@ -54,13 +54,12 @@ void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix){
 }
 
 
-void ScaleMatrixColumns(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std, Eigen::MatrixXd &Scaled)
+void ScaleMatrixColumns(Eigen::MatrixXd &Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std)
 {
   int rows = Matrix.rows(),
     cols = Matrix.cols();
   Mean = Eigen::VectorXd::Zero(cols);
   Std = Eigen::VectorXd::Zero(cols);
-  Scaled = Eigen::MatrixXd::Zero(rows,col);
   for(int col=0;col<cols;col++)
     {
       for(int row=0;row<rows;row++)
@@ -76,17 +75,16 @@ void ScaleMatrixColumns(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::Vec
       Std(col) = sqrt(Std(col));
       for(int row=0;row<rows;row++)
 	{
-	  Scaled(row,col) = (Matrix(row,col) - Mean(col))/Std(col);
+	  Matrix(row,col) = (Matrix(row,col) - Mean(col))/Std(col);
 	}
     }
 }
-void ScaleMatrixRows(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std, Eigen::MatrixXd &Scaled)
+void ScaleMatrixRows(Eigen::MatrixXd &Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std)
 {
   int rows = Matrix.rows(),
     cols = Matrix.cols();
   Mean = Eigen::VectorXd::Zero(rows);
   Std = Eigen::VectorXd::Zero(rows);
-  Scaled = Eigen::MatrixXd::Zero(rows,cols);
   for(int row=0;row<rows;row++)
     {
       for(int col=0;col<cols;col++)
@@ -102,7 +100,7 @@ void ScaleMatrixRows(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::Vector
       Std(row) = sqrt(Std(row));
       for(int col=0;col<cols;col++)
 	{
-	  Scaled(row,col) = (Matrix(row,col) - Mean(row))/Std(row);
+	  Matrix(row,col) = (Matrix(row,col) - Mean(row))/Std(row);
 	}
     }
 }

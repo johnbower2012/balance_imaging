@@ -10,8 +10,9 @@
 #include "mcmc.h"
 
 int main(int argc, char* argv[]){
-
-  
+  int rows=20,
+    cols=1;
+  Eigen::MatrixXd 
 
 
 

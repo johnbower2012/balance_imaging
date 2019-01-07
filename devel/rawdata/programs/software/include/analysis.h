@@ -9,6 +9,10 @@ void RemoveRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 void RemoveColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
 void AddOnesRow(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
 void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
+
+void ScaleMatrixColumns(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std, Eigen::MatrixXd &Scaled);
+void ScaleMatrixRows(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Stdd, Eigen::MatrixXd &Scaled);
+
 void AverageColumns(Eigen::VectorXd &average, Eigen::MatrixXd matrix);
 void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix);
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd error, Eigen::MatrixXd matrix);

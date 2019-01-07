@@ -8,8 +8,8 @@ from matplotlib.colors import LogNorm
 plt.rc('text', usetex=False)
 
 # you will likely wish to edit these parameters
-npars=24
-nbins=40
+npars=4
+nbins=60
 mcmcfilename='mcmctrace.csv'
 limitsfilename='mcmc_names.dat'
 outputfilename='mcmc.pdf'
