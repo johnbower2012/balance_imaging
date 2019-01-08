@@ -185,7 +185,7 @@ void LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen:
 	  line.erase(0,delimiter.length());
 	}
 	col=0;
-	while( (pos=line.find(delimiter)) != std::string::npos){
+	while( (pos=line.find(delimiter)) != std::string::npos ){
 	  number=line.substr(0,pos);
 	  if(col==0){
 	  } else if(col==1){
@@ -235,6 +235,51 @@ void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::
     LoadDataFile(folder, filenames[file], delimiter, start, finish, column, Matrix[file]);
   }
 }
+void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::string> expfilenames,
+		     std::vector<Eigen::MatrixXd> &ModelMatrix, std::vector<Eigen::MatrixXd> &ExpMatrix,
+		     Eigen::VectorXd &modeldy, Eigen::VectorXd &expdy,
+		     std::string foldername, std::string delimiter,
+		     int start, int finish)
+{
+  bool removeValue=true;
+  int
+    column=1,
+    modelfiles = modelfilenames.size(),
+    expfiles = expfilenames.size();
+  //Model && Exp Data Matrices
+  Eigen::MatrixXd
+    Dy;
+
+  //Load delta_y
+  LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy);
+  modeldy = Dy.col(0);
+  LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy);
+  expdy = Dy.col(0);
+
+  //Load Model && Exp Data
+  LoadDataFiles(foldername, modelfilenames, delimiter, start, finish, column, ModelMatrix);
+  LoadDataFiles(foldername, expfilenames, delimiter, 0, 1, column, ExpMatrix);
+
+  if(removeValue)
+    {
+      printf("Removing first row of model data...\n");
+      for(int i=0;i<ModelMatrix.size();i++)
+	{
+	  RemoveRow(ModelMatrix[i],0);
+	}
+      }
+  if(removeValue)
+    {
+      printf("Removing first row of exp data...\n");
+      for(int i=0;i<ExpMatrix.size();i++)
+	{
+	  RemoveRow(ExpMatrix[i],0);
+	}
+    }
+}
+
+
+
 void WriteFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimiter){
   std::string line;
   int rows = Matrix.rows(),
@@ -326,6 +371,71 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,Parameters);
 }
+void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab){
+  std::string 
+    outfilename="model_output/wave.dat";
+  int
+    n=500,
+    nmax=Parameters.cols()/ab - 1,
+    samples=Parameters.rows();
+  double x=8;
+  Eigen::MatrixXd 
+    GAB;
+  CDistCosh
+    dist;
+
+  Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
+  if(nmax==0)
+    {
+      for(int i=0;i<ab;i++)
+	{
+	  for(int j=0;j<samples;j++)
+	    {
+	      HC(j,i*2) = Parameters(j,i);
+	      HC(j,i*2+1) = 1.0;
+	    }
+	}
+    }
+  dist.FunctionSet(n,x,
+		   samples,
+		   ab,nmax,
+		   HC,GAB);
+  WriteFile(outfilename,GAB,delimiter);
+}
+void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
+  std::string 
+    outfilename="model_output/wave.dat";
+  Eigen::MatrixXd 
+    GAB,
+    Parameters;
+  LoadFile(infilename, Parameters, delimiter);
+  int
+    n=500,
+    nmax=Parameters.cols()/ab - 1,
+    samples=Parameters.rows();
+  double x=8;
+  CDistCosh
+    dist;
+
+  Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
+  if(nmax==0)
+    {
+      for(int i=0;i<ab;i++)
+	{
+	  for(int j=0;j<samples;j++)
+	    {
+	      HC(j,i*2) = Parameters(j,i);
+	      HC(j,i*2+1) = 1.0;
+	    }
+	}
+    }
+  dist.FunctionSet(n,x,
+		   samples,
+		   ab,nmax,
+		   HC,GAB);
+  WriteFile(outfilename,GAB,delimiter);
+}
+
 void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixXd range){
   int parameters = range.rows();
   int nmax = parameters/ab - 2;

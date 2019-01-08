@@ -60,7 +60,7 @@ void ScaleMatrixColumns(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::Vec
     cols = Matrix.cols();
   Mean = Eigen::VectorXd::Zero(cols);
   Std = Eigen::VectorXd::Zero(cols);
-  Scaled = Eigen::MatrixXd::Zero(rows,col);
+  Scaled = Eigen::MatrixXd::Zero(rows,cols);
   for(int col=0;col<cols;col++)
     {
       for(int row=0;row<rows;row++)

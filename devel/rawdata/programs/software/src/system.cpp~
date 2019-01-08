@@ -326,6 +326,71 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,Parameters);
 }
+void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab){
+  std::string 
+    outfilename="model_output/wave.dat";
+  int
+    n=500,
+    nmax=Parameters.cols()/ab - 1,
+    samples=Parameters.rows();
+  double x=8;
+  Eigen::MatrixXd 
+    GAB;
+  CDistCosh
+    dist;
+
+  Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
+  if(nmax==0)
+    {
+      for(int i=0;i<ab;i++)
+	{
+	  for(int j=0;j<samples;j++)
+	    {
+	      HC(j,i*2) = Parameters(j,i);
+	      HC(j,i*2+1) = 1.0;
+	    }
+	}
+    }
+  dist.FunctionSet(n,x,
+		   samples,
+		   ab,nmax,
+		   HC,GAB);
+  WriteFile(outfilename,GAB,delimiter);
+}
+void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
+  std::string 
+    outfilename="model_output/wave.dat";
+  Eigen::MatrixXd 
+    GAB,
+    Parameters;
+  LoadFile(infilename, Parameters, delimiter);
+  int
+    n=500,
+    nmax=Parameters.cols()/ab - 1,
+    samples=Parameters.rows();
+  double x=8;
+  CDistCosh
+    dist;
+
+  Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
+  if(nmax==0)
+    {
+      for(int i=0;i<ab;i++)
+	{
+	  for(int j=0;j<samples;j++)
+	    {
+	      HC(j,i*2) = Parameters(j,i);
+	      HC(j,i*2+1) = 1.0;
+	    }
+	}
+    }
+  dist.FunctionSet(n,x,
+		   samples,
+		   ab,nmax,
+		   HC,GAB);
+  WriteFile(outfilename,GAB,delimiter);
+}
+
 void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixXd range){
   int parameters = range.rows();
   int nmax = parameters/ab - 2;
