@@ -317,4 +317,18 @@ void ComputeFit(Eigen::MatrixXd ModelZ, Eigen::MatrixXd EmulatorZ, Eigen::Matrix
     outMatrix(i,0) = -0.5*sum;
   }
 }
-  
+void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
+{
+  int
+    rows = inMatrix.rows(),
+    cols = inMatrix.cols(),
+    nrows = rows*4/25;
+  outMatrix = Eigen::MatrixXd::Zero(nrows,cols);
+  for(int row=0;row<nrows;row++)
+    {
+      for(int col=0;col<cols;col++)
+	{
+	  outMatrix(row,col) = inMatrix(row/5 + row*5, col);
+	}
+    }
+}

@@ -251,10 +251,6 @@ void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::s
     Dy;
 
   //Load delta_y
-  LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy);
-  modeldy = Dy.col(0);
-  LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy);
-  expdy = Dy.col(0);
 
   //Load Model && Exp Data
   LoadDataFiles(foldername, modelfilenames, delimiter, start, finish, column, ModelMatrix);
@@ -263,18 +259,34 @@ void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::s
   if(removeValue)
     {
       printf("Removing first row of model data...\n");
+      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy);
+      RemoveRow(Dy,0);
+      modeldy = Dy.col(0);
       for(int i=0;i<ModelMatrix.size();i++)
 	{
 	  RemoveRow(ModelMatrix[i],0);
 	}
       }
+  else
+    {
+      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy);
+      modeldy = Dy.col(0);
+    }
   if(removeValue)
     {
       printf("Removing first row of exp data...\n");
+      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy);
+      RemoveRow(Dy,0);
+      expdy = Dy.col(0);
       for(int i=0;i<ExpMatrix.size();i++)
 	{
 	  RemoveRow(ExpMatrix[i],0);
 	}
+    }
+  else
+    {
+      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy);
+      expdy = Dy.col(0);
     }
 }
 
@@ -376,7 +388,7 @@ void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab
     outfilename="model_output/wave.dat";
   int
     n=500,
-    nmax=Parameters.cols()/ab - 1,
+    nmax=Parameters.cols()/ab - 2,
     samples=Parameters.rows();
   double x=8;
   Eigen::MatrixXd 
@@ -385,7 +397,7 @@ void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab
     dist;
 
   Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
-  if(nmax==0)
+  if(nmax==-1)
     {
       for(int i=0;i<ab;i++)
 	{
@@ -395,6 +407,10 @@ void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab
 	      HC(j,i*2+1) = 1.0;
 	    }
 	}
+    }
+  else
+    {
+      HC = Parameters;
     }
   dist.FunctionSet(n,x,
 		   samples,
@@ -435,7 +451,6 @@ void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
 		   HC,GAB);
   WriteFile(outfilename,GAB,delimiter);
 }
-
 void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixXd range){
   int parameters = range.rows();
   int nmax = parameters/ab - 2;

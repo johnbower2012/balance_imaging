@@ -1,4 +1,4 @@
-UNIFORM InvCoshPar_uu_width 0.5 2.0	$w^{uu}$
-UNIFORM InvCoshPar_ud_width 0.5 2.0	$w^{ud}$
-UNIFORM InvCoshPar_us_width 0.5 2.0	$w^{us}$
-UNIFORM InvCoshPar_ss_width 0.5 2.0	$w^{ss}$
+UNIFORM InvCoshPar_uu_width -1.8 1.8	$w^{uu}$
+UNIFORM InvCoshPar_ud_width -1.8 1.8	$w^{ud}$
+UNIFORM InvCoshPar_us_width -1.8 1.8	$w^{us}$
+UNIFORM InvCoshPar_ss_width -1.8 1.8	$w^{ss}$

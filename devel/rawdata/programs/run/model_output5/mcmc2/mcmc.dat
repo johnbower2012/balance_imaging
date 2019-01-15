@@ -1,0 +1,43 @@
+Scaling Parameters --> N(0,1)
+Removing first row of model data...
+Removing first row of exp data...
+EigenValues:
+    985.64    49.6182    17.0635    15.6229    5.56438    1.85661   0.679592   0.268371  0.0521358 0.00708512 0.00542258  0.0038603
+----------------
+
+ExpZ:
+ -5.05544  -1.04769   2.58186   4.89497 -0.642199  -2.10817   1.81422  -1.37271  0.369489  0.152419   0.14289 0.0752851
+Scaling range.
+8 row:  -0.66684  -0.14376   1.10678 0.0779423     26.529    4.60138    5.71172    3.93426    2.91637    1.46312   0.609467   0.571766  0.0285855 -0.0147382  0.0148249  -0.103198
+MaxLogLH: -328.078818
+MaxLogLH: -276.806761
+MaxLogLH: -221.015771
+MaxLogLH: -174.334214
+MaxLogLH: -127.716808
+MaxLogLH: -52.001312
+MaxLogLH: -5.445237
+MaxLogLH: -3.572279
+MaxLogLH: -3.221479
+MaxLogLH: -3.155862
+MaxLogLH: -2.410825
+MaxLogLH: -2.343102
+10% completed...21.900000% steps accepted
+MaxLogLH: -2.038396
+MaxLogLH: -1.653618
+MaxLogLH: -1.384260
+MaxLogLH: -0.458686
+20% completed...21.200000% steps accepted
+MaxLogLH: -0.314650
+MaxLogLH: -0.296045
+MaxLogLH: -0.204544
+MaxLogLH: -0.171325
+30% completed...21.633333% steps accepted
+40% completed...21.900000% steps accepted
+50% completed...22.180000% steps accepted
+60% completed...21.916667% steps accepted
+70% completed...22.014286% steps accepted
+80% completed...22.450000% steps accepted
+90% completed...22.300000% steps accepted
+100% completed...22.710000% steps accepted
+Percent Acceptance: 22.710000%...
+MaxLLH: -0.171325...

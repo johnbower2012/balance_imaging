@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
       printf("Usage: ./main start end\n");
       return 1;
     }
-
+  int action=1;
   /*************************************
    *    Write Parameters files        *
   *************************************/
@@ -42,11 +42,20 @@ int main(int argc, char* argv[]){
 		      Parameters);
   WriteFile(infilename,Parameters,delimiter);
 
+  Eigen::MatrixXd paramScaled;
+  Eigen::VectorXd paramMean, paramStd;
+  printf("Scaling Parameters --> N(0,1)\n");
+  ScaleMatrixColumns(Parameters, paramMean, paramStd, paramScaled);
+  
+
+
   /*************************************
    *    Construct gab functions       *
   *************************************/
   LoadFile(infilename,Parameters,delimiter);
+  printf("pass\n");
   WriteGABFunctions(Parameters,delimiter,ab);
+  printf("pass\n");
 
   /*************************************
    *   Run Model for output           *
@@ -54,6 +63,8 @@ int main(int argc, char* argv[]){
   //Run Scott's program
   //system("cd ..;pwd; cd src/");
   
+
+
   /*************************************
    *   Load Data for analysis         *
   *************************************/
@@ -69,8 +80,6 @@ int main(int argc, char* argv[]){
 					 "star_KK.dat"};
   //Number of model && exp files
   //data column to be selected from model/exp files
-  bool
-    removeValue = true;
   std::vector<Eigen::MatrixXd> 
     ModelMatrix,
     ExpMatrix;
@@ -83,6 +92,13 @@ int main(int argc, char* argv[]){
 		     modeldy, expdy,
 		     foldername, delimiter,
 		     start, finish);
+  Eigen::MatrixXd holder;
+  for(int i=0;i<4;i++){
+    AddOnesColumn(ModelMatrix[i],holder);
+    holder.col(0) = modeldy;
+    WriteFile(modelfilenames[i],holder,delimiter);
+  }
+    
 
   
   /*************************************
@@ -136,7 +152,7 @@ int main(int argc, char* argv[]){
   //std::cout << "ModelTilde:\n" << ModelTilde << std::endl;
   //std::cout << "ExpTilde:\n" << ExpTilde << std::endl;
   //std::cout << "Covariance:\n" << Covariance << std::endl;
-  std::cout << "EV:\n" << EigenValues.transpose() << std::endl;
+  std::cout << "EigenValues:\n" << EigenValues.transpose() << std::endl;
   //std::cout << "EV:\n" << EigenVectors << std::endl;
   std::cout << "----------------\n" << std::endl;
   //std::cout << "ModelZ:\n" << ModelZ << std::endl;
@@ -154,7 +170,8 @@ int main(int argc, char* argv[]){
   Eigen::MatrixXd 
     plot(finish-start,parameters+observables);
 
-  plot.block(0,0,finish-start,parameters) = Parameters;
+  plot.block(0,0,finish-start,parameters) = paramScaled;
+  //plot.block(0,0,finish-start,parameters) = Parameters;
   plot.block(0,parameters,finish-start,observables) = ModelZ;
   WriteFile("trainplot.dat",plot," ");
 
@@ -162,7 +179,8 @@ int main(int argc, char* argv[]){
   /*************************************
    *   Conduct MCMC Analysis          *
   *************************************/
-  /*
+  if(action==1)
+    {
   int 
     test=finish-start;
   std::vector<std::string> 
@@ -172,68 +190,123 @@ int main(int argc, char* argv[]){
     outMatrix(test,parameters+observables),
     range,
     Beta;
-  Eigen::VectorXd Width(parameters);
+  Eigen::VectorXd
+    Width(parameters),
+    WidthScaled(parameters);
 
   //Load Hyperparameters
   LoadFile("hyperparameters.dat",Hyperparameters," ");
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
   //Create Widths
+  printf("Scaling range.\n");
+  Eigen::MatrixXd rangeScaled;
+  TildeFunction(rangeScaled, paramMean, paramStd, range);
+
   for(int i=0;i<parameters;i++)
     {
-      Width(i) = (range(i,1) - range(i,0))/50.0;
+      WidthScaled(i) = (rangeScaled(i,1) - rangeScaled(i,0))/40.0;
     }
-  //Create & Write Beta matrix
-  linearRegressionLeastSquares(ModelZ,Parameters,Beta);
-  WriteFile("beta.dat",Beta," ");
 
-  emulator emulation(Parameters, Hyperparameters, Beta);
-  MCMC mcmc(ExpZ,range,Width,true);
+  for(int i=0;i<parameters;i++)
+    {
+      Width(i) = (range(i,1) - range(i,0))/75.0;
+    }
+
+  //Create & Write Beta matrix
+  //linearRegressionLeastSquares(ModelZ,Parameters,Beta);
+  linearRegressionLeastSquares(ModelZ,paramScaled,Beta);
+  WriteFile("beta.dat",Beta," ");
+  int row=8;
+  ExpZ = ModelZ.row(row);
+  std::cout << row << " row: " << paramScaled.row(row) << " " << ExpZ << std::endl;
+  emulator emulation(paramScaled, Hyperparameters, Beta);
+  //ExpZ = ModelZ.row(4);
+  MCMC mcmc(ExpZ,rangeScaled,WidthScaled,true);
   mcmc.setPosition();
   int Samples=10000;
   
   Eigen::MatrixXd History;
   mcmc.Run(Samples, History, emulation, ModelZ);
-  Eigen::MatrixXd trace = History.block(0,0,Samples,parameters);
-  WriteCSVFile("mcmctrace.csv",paramNames,trace,",");
-  */
+  Eigen::MatrixXd 
+    trace = History.block(0,0,Samples,parameters),
+    ntrace;
+  Extract5(ntrace,trace);
+  WriteCSVFile("mcmctrace.csv",paramNames,ntrace,",");
+
+}
+
 
   /*************************************
    *   Conduct Fit Analysis           *
   *************************************/
-  /*  
-  for(int row=0;row<10;row++){
-  testX = Parameters.row(row);
-  Eigen::MatrixXd testY_ = ModelZ.row(row),
-    PM = Parameters,
-    MZ = ModelZ;
-  RemoveRow(PM,row);
-  RemoveRow(MZ,row);
-  std::cout << "testX\n" << testX << std::endl;
-  std::cout << "ModelY\n" << testY_ << std::endl;
+  if(action==2)
+    {
+  observables=2;
+  int 
+    test=finish-start;
+  std::vector<std::string> 
+    paramNames;
+  Eigen::MatrixXd 
+    Hyperparameters,
+    range,
+    Beta,
+    testY,
+    print = Eigen::MatrixXd::Zero(finish-start, parameters+observables*4);
 
-  Eigen::MatrixXd Fit;
-  emulator emulation(PM, Hyperparameters, Beta);
-  outMatrix = Eigen::MatrixXd::Zero(1,parameters + observables);
-  emulation.Emulate(testX, MZ, testY);
-  test = 1;
-  outMatrix.block(0,0,test,parameters) = testX;
-  outMatrix.block(0,parameters,test,observables) = testY;
-  std::cout << "WR_testY\n" << testY << std::endl;
-  ComputeFit(testY_,testY,Fit);
-  std::cout << "Fit:\n" << Fit << std::endl;
+  Eigen::VectorXd Width(parameters);
+  //Load Hyperparameters
+  LoadFile("hyperparameters.dat",Hyperparameters," ");
+  //Load Range File
+  LoadParamFile(rangename,paramNames,range,delimiter);
+  printf("Scaling range.\n");
+  Eigen::MatrixXd rangeScaled;
+  TildeFunction(rangeScaled, paramMean, paramStd, range);
 
-  emulation.Emulate_NR(testX, MZ, testY);
-  test = 1;
-  outMatrix.block(0,0,test,parameters) = testX;
-  outMatrix.block(0,parameters,test,observables) = testY;
-  std::cout << "NR_testY\n" << testY << std::endl;
-  ComputeFit(testY_,testY,Fit);
-  std::cout << "Fit:\n" << Fit << std::endl << std::endl;
+  //Create & Write Beta matrix
+  int rows = finish-start;
+  rows=10;
+  for(int row=0;row<rows;row++){
+    //Eigen::MatrixXd testX = Parameters.row(row);
+    Eigen::MatrixXd testX = paramScaled.row(row);
+
+    //Eigen::MatrixXd testY_ = ModelZ.row(row),
+    // PM = Parameters,
+    // MZ = ModelZ;
+    Eigen::MatrixXd testY_ = ModelZ.block(row,0,1,observables),
+      //PM = Parameters,
+      PM = paramScaled,
+      MZ = ModelZ.block(0,0,ModelZ.rows(),observables);
+
+    RemoveRow(PM,row);
+    RemoveRow(MZ,row);
+
+    linearRegressionLeastSquares(MZ,PM,Beta);
+
+    std::cout << std::endl;
+    std::cout << "row " << row << std::endl;
+    std::cout << "testX : " << testX << std::endl;
+    std::cout << "ModelY: " << testY_ << std::endl;
+    print.block(row,0,1,parameters) = testX;
+
+    Eigen::MatrixXd Fit;
+    emulator emulation(PM, Hyperparameters, Beta);
+    emulation.Emulate(testX, MZ, testY);
+    std::cout << "RtestY:" << testY << std::endl;
+    ComputeFit(testY_,testY,Fit);
+    std::cout << "Fit   :" << Fit << std::endl;
+    print.block(row,parameters,1,observables) = testY;
+    print.block(row,parameters+observables,1,observables) = Fit.block(0,1,1,observables);    
+
+    emulation.Emulate_NR(testX, MZ, testY);
+    std::cout << "testY :" << testY << std::endl;
+    ComputeFit(testY_,testY,Fit);
+    std::cout << "Fit   :" << Fit << std::endl << std::endl;
+    print.block(row,parameters,1,observables) = testY;
+    print.block(row,parameters+observables,1,observables) = Fit.block(0,1,1,observables);    
   }
-  */
-
-
+  WriteFile("fit.dat",print,delimiter);
+}
 
   return 0;
 }

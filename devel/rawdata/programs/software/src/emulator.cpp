@@ -213,7 +213,6 @@ void emulator::Emulate_NR(Eigen::MatrixXd testX, Eigen::MatrixXd Y, Eigen::Matri
 
     meanMatrix = KernelS.transpose()*this->KernelInv[ob]*Y.col(ob);
 
-
     if(this->printVariance==true){
       varMatrix = KernelSS - KernelS.transpose()*this->KernelInv[ob]*KernelS;
       L = varMatrix.llt().matrixL();

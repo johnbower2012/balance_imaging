@@ -29,4 +29,6 @@ void MatrixMoments(std::vector<Eigen::MatrixXd> Matrix, Eigen::VectorXd DelX, Ei
 void linearRegressionLeastSquares(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd &Beta);
 void ComputeFit(Eigen::MatrixXd ModelZ, Eigen::MatrixXd EmulatorZ, Eigen::MatrixXd &outMatrix);
 
+void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
+
 #endif
