@@ -328,7 +328,23 @@ void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
     {
       for(int col=0;col<cols;col++)
 	{
-	  outMatrix(row,col) = inMatrix(row/5 + row*5, col);
+	  outMatrix(row,col) = inMatrix(rows/5 + row*5, col);
+	}
+    }
+}
+void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
+{
+  int
+    rows = inMatrix.rows(),
+    cols = inMatrix.cols(),
+    orows = 20,
+    nrows = rows/orows;
+  outMatrix = Eigen::MatrixXd::Zero(orows,cols);
+  for(int row=0;row<orows;row++)
+    {
+      for(int col=0;col<cols;col++)
+	{
+	  outMatrix(row,col) = inMatrix(row*nrows, col);
 	}
     }
 }

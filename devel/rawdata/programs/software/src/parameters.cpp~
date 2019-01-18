@@ -28,4 +28,6 @@ int main(void)
 		      start, finish, ab, 
 		      Parameters);
   WriteFile(infilename,Parameters,delimiter);
+  std::string cmd = "for((i=0;i<1000;i++)); do fn=$(printf "run%04d/" $i); cp -v fixed_parameters.dat $fn; done";
+  system(cmd);
 }

@@ -1,5 +1,5 @@
 ## output file name
-MAIN=parameters
+MAIN=gather
 
 ## suffixes used:
 #.SUFFIXES: .cpp .o .x .h

@@ -30,5 +30,6 @@ void linearRegressionLeastSquares(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::M
 void ComputeFit(Eigen::MatrixXd ModelZ, Eigen::MatrixXd EmulatorZ, Eigen::MatrixXd &outMatrix);
 
 void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
+void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 
 #endif

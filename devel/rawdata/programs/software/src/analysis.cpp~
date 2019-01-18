@@ -260,7 +260,7 @@ void SecondMoment(Eigen::MatrixXd Function, double &Moment){
 void MatrixMoments(std::vector<Eigen::MatrixXd> matrix, Eigen::VectorXd DelX, Eigen::MatrixXd &Obs){
   int files = matrix.size(),
     points = matrix[0].rows(),
-    obs_file = 2,
+    obs_file = 3,
     obs = obs_file*matrix.size(),
     runs = matrix[0].cols();
   double zero, first, second;
@@ -274,10 +274,10 @@ void MatrixMoments(std::vector<Eigen::MatrixXd> matrix, Eigen::VectorXd DelX, Ei
       }
       ZerothMoment(function,zero);
       FirstMoment(function,first);
-      //SecondMoment(function,second);
+      SecondMoment(function,second);
       Obs(file*obs_file, run) = zero;
       Obs(file*obs_file +1, run) = first;
-      //Obs(file*obs_file +2, run) = second;
+      Obs(file*obs_file +2, run) = second;
     }
   }    
 }
@@ -329,6 +329,22 @@ void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
       for(int col=0;col<cols;col++)
 	{
 	  outMatrix(row,col) = inMatrix(row/5 + row*5, col);
+	}
+    }
+}
+void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
+{
+  int
+    rows = inMatrix.rows(),
+    cols = inMatrix.cols(),
+    orows = 20,
+    nrows = rows/orows;
+  outMatrix = Eigen::MatrixXd::Zero(orows,cols);
+  for(int row=0;row<orows;row++)
+    {
+      for(int col=0;col<cols;col++)
+	{
+	  outMatrix(row,col) = inMatrix(row*nrows, col);
 	}
     }
 }

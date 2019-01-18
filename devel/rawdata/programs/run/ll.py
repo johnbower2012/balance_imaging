@@ -9,7 +9,7 @@ plt.rc('text', usetex=False)
 
 # you will likely wish to edit these parameters
 npars=4
-nbins=40
+nbins=20
 mcmcfilename='mcmctrace.csv'
 limitsfilename='mcmc_names.dat'
 outputfilename='mcmc.pdf'

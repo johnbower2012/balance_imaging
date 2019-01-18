@@ -35,6 +35,7 @@ void WriteFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimit
 void WriteCSVFile(std::string filename, std::vector<std::string> header, Eigen::MatrixXd &Matrix,std::string delimiter);
 void WriteParamFile(std::string fileName, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &file);
 void WriteParamFileLoop(std::string filename, std::string folder, int start, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &matrix);
+void WritePosteriorParameterFiles(std::string foldername, std::string filename, std::vector<std::string> Name, std::string paramname, std::string delimiter, int start, int finish);
 void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab);
 /*************************************************************
    loads RangeName file to create parameter files 
@@ -44,7 +45,7 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
    AB denotes how many different quark pairs, uu, ud, us, ss = 4
 *************************************************************/
 void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab, Eigen::MatrixXd &Parameters);
-void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab);
+void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab);
 void WriteGABFunctions(std::string infilename, std::string delimiter, int ab);
 
 

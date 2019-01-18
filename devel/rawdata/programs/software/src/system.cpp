@@ -374,6 +374,13 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,matrix);
 }
+void WritePosteriorParameterFiles(std::string foldername, std::string filename, std::vector<std::string> Name, std::string paramname, std::string delimiter, int start, int finish){
+  Eigen::MatrixXd matrix;
+  
+  LoadFile(filename,matrix,delimiter);
+  MkdirLoop(foldername,start,finish);
+  WriteParamFileLoop(paramname,foldername,start,Name,delimiter,matrix);
+}
 void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab, Eigen::MatrixXd &Parameters){
   std::vector<std::string> Name;
   Eigen::MatrixXd range;
@@ -383,9 +390,7 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,Parameters);
 }
-void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab){
-  std::string 
-    outfilename="model_output/wave.dat";
+void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab){
   int
     n=500,
     nmax=Parameters.cols()/ab - 2,
@@ -399,6 +404,7 @@ void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab
   Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
   if(nmax==-1)
     {
+      nmax=0;
       for(int i=0;i<ab;i++)
 	{
 	  for(int j=0;j<samples;j++)
@@ -407,15 +413,18 @@ void WriteGABFunctions(Eigen::MatrixXd Parameters, std::string delimiter, int ab
 	      HC(j,i*2+1) = 1.0;
 	    }
 	}
+      dist.FunctionSet(n,x,
+		       samples,
+		       ab,nmax,
+		       HC,GAB);
     }
   else
     {
-      HC = Parameters;
+      dist.FunctionSet(n,x,
+		       samples,
+		       ab,nmax,
+		       Parameters,GAB);
     }
-  dist.FunctionSet(n,x,
-		   samples,
-		   ab,nmax,
-		   HC,GAB);
   WriteFile(outfilename,GAB,delimiter);
 }
 void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
