@@ -18,6 +18,7 @@ int main(int argc, char* argv[]){
     }
   std::string 
     foldername = "model_output",
+    delimiter=" ";
   int
     start=atoi(argv[1]),
     finish=atoi(argv[2]),

@@ -404,7 +404,7 @@ void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std:
   Eigen::MatrixXd HC = Eigen::MatrixXd::Zero(samples,2*ab);
   if(nmax==-1)
     {
-      nmax==0;
+      nmax=0;
       for(int i=0;i<ab;i++)
 	{
 	  for(int j=0;j<samples;j++)

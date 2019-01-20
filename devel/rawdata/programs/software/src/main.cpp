@@ -177,12 +177,14 @@ int main(int argc, char* argv[]){
   *************************************/
   Eigen::MatrixXd 
     plot(finish-start,parameters+observables);
+  Eigen::MatrixXd MinMax, ScaledParam;
+  ScaleMatrixColumnsUniform(Parameters,MinMax,ScaledParam);
 
   plot.block(0,0,finish-start,parameters) = Parameters;
   plot.block(0,parameters,finish-start,observables) = ModelZ;
   WriteFile(foldername+"/trainplot.dat",plot," ");
-  //plot.block(0,0,finish-start,parameters) = paramScaled;
-  //WriteFile("trainplotScaled.dat",plot," ");
+  plot.block(0,0,finish-start,parameters) = ScaledParam;
+  WriteFile(foldername+"/scaledtrainplot.dat",plot," ");
 
   /*************************************
    *   Conduct MCMC Analysis          *
@@ -207,66 +209,83 @@ int main(int argc, char* argv[]){
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
   //Create Widths
-  //printf("Scaling range.\n");
-  //Eigen::MatrixXd rangeScaled;
-  //TildeFunction(rangeScaled, paramMean, paramStd, range);
-
-  //for(int i=0;i<parameters;i++)
-  //  {
-  //    WidthScaled(i) = (rangeScaled(i,1) - rangeScaled(i,0))/75.0;
-  //  }
 
   for(int i=0;i<parameters;i++)
     {
+      range(i,1) = 1.0;
+      range(i,0) = 0.0;
       Width(i) = (range(i,1) - range(i,0))/75.0;
     }
-
+  
   //Create & Write Beta matrix
-  RemoveColumn(ModelZ,0);
-  RemoveRow(Hyperparameters,0);
-  observables-=1;
+  //RemoveColumn(ModelZ,0);
+  //RemoveRow(Hyperparameters,0);
+  //observables-=1;
 
-  linearRegressionLeastSquares(ModelZ,Parameters,Beta);
+  //linearRegressionLeastSquares(ModelZ,Parameters,Beta);
+  linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
   //WriteFile("beta.dat",Beta," ");
-  int row=5;
+  int row=52;
   ExpZ = ModelZ.row(row);
   std::cout << row << " row: " << Parameters.row(row) << " " << ExpZ << std::endl;
+  //  std::cout << row << " row: " << ScaledParam.row(row) << " " << ExpZ << std::endl;
   Eigen::MatrixXd Goal = Eigen::MatrixXd::Zero(1,parameters+observables);
   Goal.block(0,0,1,parameters) = Parameters.row(row);
   Goal.block(0,parameters,1,observables) = ExpZ;
   WriteFile(foldername+"/target.dat",Goal,delimiter);
+  Goal.block(0,0,1,parameters) = ScaledParam.row(row);
+  WriteFile(foldername+"/scaledtarget.dat",Goal,delimiter);
 
-  emulator emulation(Parameters, Hyperparameters, Beta);
+  //emulator emulation(Parameters, Hyperparameters, Beta);
+  emulator emulation(ScaledParam, Hyperparameters, Beta);
 
   MCMC mcmc(ExpZ,range,Width,true);
   mcmc.setPosition();
-  int Samples=10000;
-
+  int Samples=100000,
+    samples = finish - start;
+  
   Eigen::MatrixXd History;
   mcmc.Run(Samples, History, emulation, ModelZ);
   Eigen::MatrixXd 
     trace = History.block(0,0,Samples,parameters),
     ntrace,
     posterior;
-  std::string posteriorname = foldername+"/posterior.dat";
+  std::string posteriorname = foldername+"/scaledposterior.dat";
+  Eigen::MatrixXd scaledtrain = Eigen::MatrixXd::Zero(samples,parameters+observables);
+  scaledtrain.block(0,0,samples,parameters) = ScaledParam;
+  scaledtrain.block(0,parameters,samples,observables) = ModelZ;
+  WriteFile(foldername+"/scaledtrain.dat",scaledtrain,delimiter);
+  WriteFile(foldername+"/minmax.dat",MinMax,delimiter);
 
   Extract5(ntrace,trace);
-  ExtractOnly20(posterior,ntrace);
+  WriteCSVFile(foldername+"/scaledmcmctrace.csv",paramNames,ntrace,",");
+
   printf("Writing posterior.dat files...\n");
+
+  ExtractOnly10(posterior,ntrace);
   WriteFile(posteriorname,posterior,delimiter);
-  gabname = foldername + "/posterior_gabfunctions.dat";
-  WriteGABFunctions(gabname,posterior,delimiter,ab);
-  /*
-  posteriorname = "posterior.dat";
-  for(int i=0;i<posterior.rows();i++)
+  for(int i=0,count=posterior.rows();i<count;i++)
     {
-      for(int j=0;j<posterior.cols();j++)
+      for(int j=0;j<parameters;j++)
 	{
-	  posterior(i,j) = posterior(i,j)*paramStd(j) + paramMean(j);
+	  posterior(i,j) = (posterior(i,j)*(MinMax(j,1) - MinMax(j,0)) + MinMax(j,0));
 	}
     }
+  for(int i=0,count=ntrace.rows();i<count;i++)
+    {
+      for(int j=0;j<parameters;j++)
+	{
+	  ntrace(i,j) = (ntrace(i,j)*(MinMax(j,1) - MinMax(j,0)) + MinMax(j,0));
+	}
+    }
+  ExtractOnly10(posterior,ntrace);
+  posteriorname = foldername + "/posterior.dat";
   WriteFile(posteriorname,posterior,delimiter);
-*/
+  //ExtractOnly20(posterior,ntrace);
+  //WriteFile(posteriorname,posterior,delimiter);
+  gabname = foldername + "/posteriorgabfunctions.dat";
+  WriteGABFunctions(gabname,posterior,delimiter,ab);
+
   WriteCSVFile(foldername+"/mcmctrace.csv",paramNames,ntrace,",");
 
 }

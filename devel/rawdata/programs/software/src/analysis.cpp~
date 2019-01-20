@@ -106,6 +106,41 @@ void ScaleMatrixRows(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::Vector
 	}
     }
 }
+void ScaleMatrixColumnsUniform(Eigen::MatrixXd Matrix,Eigen::MatrixXd &MinMax, Eigen::MatrixXd &Scaled)
+{
+  int rows = Matrix.rows(),
+    cols = Matrix.cols();
+  MinMax = Eigen::MatrixXd::Zero(cols,2);
+  Scaled = Eigen::MatrixXd::Zero(rows,cols);
+  for(int col=0;col<cols;col++)
+    {
+      MinMax(col,0) = Matrix.col(col).minCoeff();
+      MinMax(col,1) = Matrix.col(col).maxCoeff();
+
+      for(int row=0;row<rows;row++)
+	{
+	  Scaled(row,col) = (Matrix(row,col) - MinMax(col,0))/(MinMax(col,1) - MinMax(col,0));
+	}
+    }
+}
+void ScaleMatrixRowsUniform(Eigen::MatrixXd Matrix,Eigen::MatrixXd &MinMax, Eigen::MatrixXd &Scaled)
+{
+  int rows = Matrix.rows(),
+    cols = Matrix.cols();
+  MinMax = Eigen::MatrixXd::Zero(rows,2);
+  Scaled = Eigen::MatrixXd::Zero(rows,cols);
+  for(int row=0;row<rows;row++)
+    {
+      MinMax(row,0) = Matrix.row(row).minCoeff();
+      MinMax(row,1) = Matrix.row(row).maxCoeff();
+
+      for(int col=0;col<cols;col++)
+	{
+	  Scaled(row,col) = (Matrix(row,col) - MinMax(row,0))/(MinMax(row,1) - MinMax(row,0));
+	}
+    }
+}
+
 void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
@@ -276,8 +311,8 @@ void MatrixMoments(std::vector<Eigen::MatrixXd> matrix, Eigen::VectorXd DelX, Ei
       FirstMoment(function,first);
       SecondMoment(function,second);
       Obs(file*obs_file, run) = zero;
-      Obs(file*obs_file +1, run) = first;
-      Obs(file*obs_file +2, run) = second;
+      Obs(file*obs_file +0, run) = first;
+      Obs(file*obs_file +1, run) = second;
     }
   }    
 }
@@ -328,7 +363,23 @@ void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
     {
       for(int col=0;col<cols;col++)
 	{
-	  outMatrix(row,col) = inMatrix(row/5 + row*5, col);
+	  outMatrix(row,col) = inMatrix(rows/5 + row*5, col);
+	}
+    }
+}
+void ExtractOnly10(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
+{
+  int
+    rows = inMatrix.rows(),
+    cols = inMatrix.cols(),
+    orows = 10,
+    nrows = rows/orows;
+  outMatrix = Eigen::MatrixXd::Zero(orows,cols);
+  for(int row=0;row<orows;row++)
+    {
+      for(int col=0;col<cols;col++)
+	{
+	  outMatrix(row,col) = inMatrix(row*nrows, col);
 	}
     }
 }

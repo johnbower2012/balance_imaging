@@ -1,5 +1,5 @@
 ## output file name
-MAIN=gather
+MAIN=posterior
 
 ## suffixes used:
 #.SUFFIXES: .cpp .o .x .h

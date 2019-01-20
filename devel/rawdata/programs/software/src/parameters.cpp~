@@ -9,8 +9,14 @@
 #include "emulator.h"
 #include "mcmc.h"
 
-int main(void)
+int main(int argc, char* argv[])
 {
+  if(argc!=3)
+    {
+      printf("Usage: ./parameters start finish\n");
+      return 1;
+    }
+
   std::string 
     foldername="model_output",
     writefilename="parameters.dat",
@@ -19,8 +25,8 @@ int main(void)
     delimiter=" ";
   //start, finish for model runs to use
   int
-    start=0,
-    finish=1000,
+    start=atoi(argv[1]),
+    finish=atoi(argv[2]),
     ab=4;
   Eigen::MatrixXd Parameters;
 
@@ -28,6 +34,6 @@ int main(void)
 		      start, finish, ab, 
 		      Parameters);
   WriteFile(infilename,Parameters,delimiter);
-  std::string cmd = "for((i=0;i<1000;i++)); do fn=$(printf "run%04d/" $i); cp -v fixed_parameters.dat $fn; done";
-  system(cmd);
+  std::string cmd = "for((i="+std::to_string(start)+";i<"+std::to_string(finish)+";i++)); do fn=$(printf '"+foldername+"/run%04d/' $i); cp -v "+foldername+"/fixed_parameters.dat $fn; done";
+  system(cmd.c_str());
 }
