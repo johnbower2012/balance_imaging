@@ -5,6 +5,7 @@
 #include<random>
 #include<chrono>
 #include "emulator.h"
+#include "coshfunc.h"
 
 class MCMC{
  public:
@@ -42,11 +43,15 @@ class MCMC{
   double uniform();
 
   void step();
+  void step(CCosh dist, Eigen::MatrixXd MinMax);
   double getLogLikelihood();
-  double getLogLikelihood(Eigen::MatrixXd Z);
-  bool decide(Eigen::MatrixXd Z);
+  double getLogLikelihoodGaussian(Eigen::MatrixXd Z);
+  bool decideGaussian(Eigen::MatrixXd Z);
+  double getLogLikelihoodLorentzian(Eigen::MatrixXd Z);
+  bool decideLorentzian(Eigen::MatrixXd Z);
 
   void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y);
+  void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y, Eigen::MatrixXd MinMax);
 };
 
 #endif

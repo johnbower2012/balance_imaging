@@ -19,17 +19,6 @@ void RemoveColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove){
 
   matrix.conservativeResize(numRows,numCols);
 }
-void AverageColumns(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
-  int rows = matrix.rows(),
-    cols = matrix.cols();
-  average = Eigen::VectorXd::Zero(cols);
-  for(int col=0;col<cols;col++){
-    for(int row=0;row<rows;row++){
-      average(col) += matrix(row,col);
-    }
-    average(col) /= rows;
-  }
-}
 void AddOnesRow(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
@@ -52,7 +41,6 @@ void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix){
     }
   }
 }
-
 
 void ScaleMatrixColumns(Eigen::MatrixXd Matrix,Eigen::VectorXd &Mean, Eigen::VectorXd &Std, Eigen::MatrixXd &Scaled)
 {
@@ -140,7 +128,17 @@ void ScaleMatrixRowsUniform(Eigen::MatrixXd Matrix,Eigen::MatrixXd &MinMax, Eige
 	}
     }
 }
-
+void AverageColumns(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
+  int rows = matrix.rows(),
+    cols = matrix.cols();
+  average = Eigen::VectorXd::Zero(cols);
+  for(int col=0;col<cols;col++){
+    for(int row=0;row<rows;row++){
+      average(col) += matrix(row,col);
+    }
+    average(col) /= rows;
+  }
+}
 void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
@@ -152,6 +150,102 @@ void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
     average(row) /= cols;
   }
 }
+void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::MatrixXd B)
+{
+  int 
+    rows = A.rows(),
+    cols = A.cols();
+  if(B.rows() != rows || B.cols() != cols)
+    {
+      printf("SumInQuadrature Failed. Either A.rows != B.rows or A.cols != B.cols\n");
+      printf("A.rows=%d. A.cols=%d. B.rows=%d. B.cols=%d\n",rows,cols,(int)B.rows(),(int)B.cols());
+      exit(1);
+    }
+  sum = Eigen::MatrixXd::Zero(rows,cols);
+  for(int i=0;i<rows;i++)
+    {
+      for(int j=0;j<cols;j++)
+	{
+	  sum(i,j) = sqrt(A(i,j)*A(i,j) + B(i,j)*B(i,j));
+	}
+    }
+}
+void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::VectorXd b)
+{
+  int 
+    rows = A.rows(),
+    cols = A.cols();
+  if(b.size() != rows)
+    {
+      printf("SumInQuadrature Failed. A.rows != b.size\n");
+      printf("A.rows=%d. A.cols=%d. B.size=%d\n",rows,cols,(int) b.size());
+      exit(1);
+    }
+  sum = Eigen::MatrixXd::Zero(rows,cols);
+  for(int i=0;i<rows;i++)
+    {
+      for(int j=0;j<cols;j++)
+	{
+	  sum(i,j) = sqrt(A(i,j)*A(i,j) + b(i)*b(i));
+	}
+    }
+}
+void SumInQuadrature(Eigen::VectorXd &sum, Eigen::VectorXd a, Eigen::VectorXd b)
+{
+  int 
+    rows = a.size();
+  if(b.size() != rows)
+    {
+      printf("SumInQuadrature Failed. a.size != b.size\n");
+      printf("a.size=%d. b.size=%d\n",rows,(int)b.size());
+      exit(1);
+    }
+
+  sum = Eigen::VectorXd::Zero(rows);
+  for(int i=0;i<rows;i++)
+    {
+      sum(i) = sqrt(a(i)*a(i) + b(i)*b(i));
+    }
+}
+void CalculatePercentageError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, double fraction)
+{
+  Error = fraction*ExpObs.col(0);
+}
+void CalculateError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, int obs)
+{
+  Error = Eigen::VectorXd::Zero(ExpObs.rows());
+    for(int i=0;i<obs;i++)
+    {
+      Error(i*3) = 0.03*ExpObs(i*3,0) + 0.005;
+      Error(i*3+1) = 0.01*ExpObs(i*3,0); 
+      Error(i*3+2) = 0.01*ExpObs(i*3,0); 
+    }
+}
+void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs)
+{
+  int
+    obs = Obs.rows(),
+    samples = Obs.cols();
+  Eigen::MatrixXd
+    covariance;
+  Eigen::VectorXd
+    mean;
+  CovarianceFunction(covariance, mean, Obs);
+  Error = Eigen::MatrixXd::Zero(obs,samples);
+  for(int samp=0;samp<samples;samp++)
+    {
+      for(int col1=0;col1<obs;col1++)
+	{
+	  Error(col1,samp) = 0.0;
+	  for(int col2=0;col2<obs;col2++)
+	    {
+	      Error(col1,samp) += covariance(col1,col2)/(Obs(col1,samp)*Obs(col2,samp));
+	    }
+	  Error(col1,samp) /= (Obs(col1,samp)*Obs(col1,samp));
+	  Error(col1,samp) = sqrt(Error(col1,samp));
+	}
+    }
+}
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd error, Eigen::MatrixXd matrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
@@ -162,7 +256,40 @@ void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd
     }
   }
 }
-void CovarianceFunction(Eigen::MatrixXd &cov, Eigen::MatrixXd matrix){
+void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd matrix){
+  int rows = matrix.rows(),
+    cols = matrix.cols();
+  tilde = Eigen::MatrixXd::Zero(rows,cols);
+  for(int row=0;row<rows;row++){
+    for(int col=0;col<cols;col++){
+      tilde(row,col) = (matrix(row,col) - mean(row))/error(row,col);
+    }
+  }
+}
+void CovarianceFunction(Eigen::MatrixXd &cov, Eigen::VectorXd &mean, Eigen::MatrixXd matrix){
+  int rows=matrix.rows(),
+    cols=matrix.cols();
+  cov = Eigen::MatrixXd::Zero(rows,rows);
+  mean = Eigen::VectorXd::Zero(cols);
+  for(int row=0;row<rows;row++)
+    {
+      mean(row) = 0.0;
+      for(int col=0;col<cols;col++)
+	{
+	  mean(row) += matrix(row,col);
+	}
+      mean(row) /= (double) cols;
+    }
+  for(int row1=0;row1<rows;row1++){
+    for(int row2=0;row2<rows;row2++){
+      for(int col=0;col<cols;col++){
+	cov(row1,row2) += (matrix(row1,col) - mean(row1))*(matrix(row2,col) - mean(row2));
+      }
+      cov(row1,row2) /= (double) cols;
+    }
+  }
+}
+void CovarianceFunction_NoMean(Eigen::MatrixXd &cov, Eigen::MatrixXd matrix){
   int rows=matrix.rows(),
     cols=matrix.cols();
   cov = Eigen::MatrixXd::Zero(rows,rows);
@@ -252,70 +379,105 @@ void EigenSort(Eigen::VectorXd &eigval, Eigen::MatrixXd &eigvec){
   eigvec = eigsort;
 }
 
-
-void ZerothMoment(Eigen::MatrixXd Function, double &Moment){
+void ZerothMoment(Eigen::MatrixXd Function, double &Moment, double &MomentError){
   int points=Function.rows()-1;
-  double f=0,dx=0;
-  Moment=0;
+  double f=0,dx=0,error=0;
+  Moment = MomentError = 0;
   for(int point=0;point<points;point++){
+    error = (Function(point+1,2) + Function(point,2))/2.0;
     f = (Function(point+1,1) + Function(point,1))/2.0;
     dx = Function(point+1,0) - Function(point,0);
     Moment += f*dx;
+    MomentError += error*dx;
   }
 }
-void FirstMoment(Eigen::MatrixXd Function, double &Moment){
+void FirstMoment(Eigen::MatrixXd Function, double &Moment, double &MomentError){
   int points=Function.rows()-1;
-  double f=0,x=0,dx=0,
-    zero=0;
-  Moment=0;
+  double f=0,x=0,dx=0,error=0;  //zero=0,zeroerror=0;
+  Moment = MomentError = 0;
   for(int point=0;point<points;point++){
+    error = (Function(point+1,2) + Function(point,2))/2.0;
     f = (Function(point+1,1) + Function(point,1))/2.0;
     x = (Function(point+1,0) + Function(point,0))/2.0;    
     dx = Function(point+1,0) - Function(point,0);
+    MomentError += error*x*dx;
     Moment += f*x*dx;
   }
-  ZerothMoment(Function,zero);
+  //ZerothMoment(Function,zero,zeroerror);
   //  Moment /= zero;
 }
-void SecondMoment(Eigen::MatrixXd Function, double &Moment){
+void SecondMoment(Eigen::MatrixXd Function, double &Moment, double &MomentError){
   int points=Function.rows()-1;
-  double f=0,x=0,dx=0,
-    zero=0, first=0;
-  ZerothMoment(Function,zero);
-  FirstMoment(Function,first);
-  Moment=0;
+  double f=0,x=0,dx=0,error=0,
+    zero=0,zeroerror=0,
+    first=0,firsterror=0,
+    m2=0,s0=0,
+    sp1=0,sp0=0;
+  //ZerothMoment(Function,zero,zeroerror);
+  FirstMoment(Function,first,firsterror);
+  if(first != 0.0)
+    {
+      sp1 = firsterror/first;
+      sp1 *= sp1;
+    }
+  else
+    {
+      sp1 = 1.0;
+    }
+  Moment = MomentError = 0;
   for(int point=0;point<points;point++){
+    error = (Function(point+1,2) + Function(point,2))/2.0;
     f = (Function(point+1,1) + Function(point,1))/2.0;
     x = (Function(point+1,0) + Function(point,0))/2.0;    
     dx = Function(point+1,0) - Function(point,0);
-    Moment += f*(x-first)*(x-first)*dx;
+    m2 = f*(x-first)*(x-first)*dx;
+    Moment += m2;
+    if(f != 0.0)
+      {
+	sp0 = error/f;
+	sp0 *= sp0;
+      }
+    else
+      {
+	sp0 = 0.0;
+      }
+    MomentError += m2*sqrt(2.0*(sp1) + sp0);
   }
   //  Moment /= zero;
 }
-void MatrixMoments(std::vector<Eigen::MatrixXd> matrix, Eigen::VectorXd DelX, Eigen::MatrixXd &Obs){
+void MatrixMoments(std::vector<Eigen::MatrixXd> matrix, std::vector<Eigen::MatrixXd> matrixerror, Eigen::VectorXd DelX, Eigen::MatrixXd &Obs, Eigen::MatrixXd &ObsError){
   int files = matrix.size(),
     points = matrix[0].rows(),
     obs_file = 3,
     obs = obs_file*matrix.size(),
     runs = matrix[0].cols();
-  double zero, first, second;
-  Eigen::MatrixXd function = Eigen::MatrixXd::Zero(points,2);
+  double zero, first, second,
+    zeroerror, firsterror, seconderror;
+  Eigen::MatrixXd function = Eigen::MatrixXd::Zero(points,3);
   Obs = Eigen::MatrixXd::Zero(obs,runs);
+  ObsError = Eigen::MatrixXd::Zero(obs,runs);
   for(int file=0;file<files;file++){
     for(int run=0;run<runs;run++){
       for(int point=0;point<points;point++){
 	function(point,0) = DelX(point);
 	function(point,1) = matrix[file](point,run);
+	function(point,2) = matrixerror[file](point,run);
       }
-      ZerothMoment(function,zero);
-      FirstMoment(function,first);
-      SecondMoment(function,second);
+      ZerothMoment(function,zero,zeroerror);
+      FirstMoment(function,first,firsterror);
+      SecondMoment(function,second,seconderror);
+
       Obs(file*obs_file, run) = zero;
       Obs(file*obs_file +1, run) = first;
       Obs(file*obs_file +2, run) = second;
+
+      ObsError(file*obs_file, run) = zeroerror;
+      ObsError(file*obs_file +1, run) = firsterror;
+      ObsError(file*obs_file +2, run) = seconderror;
     }
   }    
 }
+
 void linearRegressionLeastSquares(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd &Beta){
   int points = Y.rows();
   int parameters = X.cols();
@@ -336,6 +498,31 @@ void linearRegressionLeastSquares(Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::M
     Beta.row(j) = beta;
   }
 }
+void ConstructHyperparameters(Eigen::MatrixXd Matrix,Eigen::MatrixXd &HyperParameters)
+{
+  int rows = Matrix.rows(),
+    cols = Matrix.cols();
+  HyperParameters = Eigen::MatrixXd::Zero(cols,3);
+  for(int col=0;col<cols;col++)
+    {
+      HyperParameters(col,0) = 0.5*(Matrix.col(col).maxCoeff() - Matrix.col(col).minCoeff());
+      HyperParameters(col,1) = 0.35;
+      HyperParameters(col,2) = 0.05*HyperParameters(col,0);
+    }
+}
+void ConstructWidths(Eigen::VectorXd &Widths, Eigen::MatrixXd &Range, int parameters, double fraction)
+{
+  Range = Eigen::MatrixXd::Zero(parameters,2);
+  Widths = Eigen::VectorXd::Zero(parameters);
+
+  for(int i=0;i<parameters;i++)
+    {
+      Range(i,1) = 1.0;
+      Range(i,0) = 0.0;
+      Widths(i) = fraction*(Range(i,1) - Range(i,0));
+    }
+}
+
 void ComputeFit(Eigen::MatrixXd ModelZ, Eigen::MatrixXd EmulatorZ, Eigen::MatrixXd &outMatrix){
   int samples = ModelZ.rows(),
     obs = ModelZ.cols();
@@ -398,4 +585,144 @@ void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
 	  outMatrix(row,col) = inMatrix(row*nrows, col);
 	}
     }
+}
+void ConductModelAnalysis(std::string foldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ)
+{
+  //Model BF filenames
+  std::vector<std::string> modelfilenames={"I211_J211.dat",
+					   "I2212_J2212.dat",
+					   "I321_J2212.dat",
+					   "I321_J321.dat"};
+  //EXP quark filenames
+  std::vector<std::string> expfilenames={"star_pipi.dat",
+					 "star_ppbar.dat",
+					 "star_pK.dat",
+					 "star_KK.dat"};
+  //Number of model && exp files
+  //data column to be selected from model/exp files
+  std::vector<Eigen::MatrixXd> 
+    ModelMatrix,
+    ModelError,
+    ExpMatrix,
+    ExpError;
+  Eigen::VectorXd
+    modeldy,
+    expdy;
+
+  LoadMEDataFiles(modelfilenames, expfilenames,
+		  ModelMatrix, ExpMatrix,
+		  ModelError, ExpError,
+		  modeldy, expdy,
+		  foldername, delimiter,
+		  start, finish);
+
+  Eigen::MatrixXd holder;
+  int numBF = expfilenames.size();
+  for(int i=0;i<numBF;i++){
+    AddOnesColumn(ModelMatrix[i],holder);
+    holder.col(0) = modeldy;
+    WriteFile(foldername+"/"+modelfilenames[i],holder,delimiter);
+  }
+
+  Eigen::MatrixXd
+    ModelObs,
+    ModelObsError,
+    ModelVarError,
+    ModelTotalError,
+
+    ExpObs,
+    ExpObsError,
+    ExpTotalError,
+
+    ModelTilde,
+    ExpTilde,
+
+    Covariance,
+    EigenVectors;
+  Eigen::VectorXd
+    ExpPercError,
+
+    Error,
+    Mean,
+
+    EigenValues;
+
+  //Calculate Model & Exp Moments
+  //Calc Error from given model/exp error values
+  MatrixMoments(ModelMatrix,ModelError,modeldy,ModelObs,ModelObsError);
+  MatrixMoments(ExpMatrix,ExpError,expdy,ExpObs,ExpObsError);
+  WriteFile("modelobserror.dat",ModelObsError,delimiter);
+  WriteFile("expobserror.dat",ExpObsError,delimiter);
+
+  int 
+    observables = ModelObs.rows();
+
+  //Calculate Error for y --> y~
+  //Calculate Error in a specified format (see function for detals)
+  //CalculateError(Error,ExpObs,numBF);
+
+  //Assume percentage of exp to as error
+  double 
+    percentage = 0.05;
+  CalculatePercentageError(ExpPercError, ExpObs, percentage);
+  std::cout << ExpPercError << std::endl;
+  SumInQuadrature(ExpTotalError, ExpObsError, ExpPercError);
+  WriteFile("expmomenterror.dat",ExpTotalError," ");
+
+  //calculator error from variance of moments
+  //  then sum over covariances as fraction of given moment sample value
+  CalculateError_Variance(ModelVarError, ModelObs);
+  WriteFile("modelvarerror.dat",ModelVarError," ");
+  SumInQuadrature(ModelTotalError, ModelObsError, ModelVarError);
+  WriteFile("modelmomenterror.dat",ModelTotalError," ");
+
+  //Calculate y-tilde for Model & Exp
+  AverageRows(Mean,ModelObs);
+  //TildeFunction(ModelTilde,Mean,Error,ModelObs);
+  //TildeFunction(ExpTilde,Mean,Error,ExpObs);
+  TildeFunction(ModelTilde,Mean,ModelTotalError,ModelObs);
+  TildeFunction(ExpTilde,Mean,ExpTotalError,ExpObs);
+
+  //Calculate Covariance of ModelTilde and related eigenvectors
+  CovarianceFunction_NoMean(Covariance,ModelTilde);
+  printf("pass\n");
+  WriteFile("covariance.dat",Covariance," ");
+  WriteFile("modeltilde.dat",ModelTilde," ");
+  EigenSolve(EigenValues,EigenVectors,Covariance);
+  printf("pass\n");
+  EigenSort(EigenValues,EigenVectors);
+  printf("pass\n");
+
+  //Calculate Principle Components of y-tilde
+  ModelZ = ModelTilde.transpose()*EigenVectors;
+  ExpZ = ExpTilde.transpose()*EigenVectors;
+
+  Eigen::MatrixXd
+    EigenV=Eigen::MatrixXd::Zero(1,observables),
+    MeanM=Eigen::MatrixXd::Zero(1,observables),
+    ErrorM=Eigen::MatrixXd::Zero(1,observables);
+    
+
+  //Write out data files
+  WriteFile(foldername+"/modelmoments.dat",ModelObs," ");
+  WriteFile(foldername+"/expmoments.dat",ExpObs," ");
+
+  MeanM.row(0) = Mean;
+  ErrorM.row(0) = Error;
+  WriteFile(foldername+"/mean.dat",MeanM," ");
+  WriteFile(foldername+"/error.dat",ErrorM," ");
+
+  WriteFile(foldername+"/modeltilde.dat",ModelTilde," ");
+  WriteFile(foldername+"/exptilde.dat",ExpTilde," ");
+
+  WriteFile(foldername+"/expz.dat",ExpZ," ");
+  WriteFile(foldername+"/modelz.dat",ModelZ," ");
+
+  EigenV.row(0) = EigenValues;
+  WriteFile(foldername+"/eigvec.dat",EigenVectors," ");
+  WriteFile(foldername+"/eigval.dat",EigenV," ");
+
+  std::cout << "EigenValues:\n" << EigenValues.transpose() << std::endl;
+  std::cout << "----------------" << std::endl;
+  std::cout << "ExpZ:\n" << ExpZ << std::endl;
 }

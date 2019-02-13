@@ -1,0 +1,23 @@
+unset key; 
+set multiplot layout 2,2;
+set xrange[0.15:1.6];
+
+set ylabel font ",20";
+set ylabel "PiPi Balance Function";
+plot for[i=2:201] "I211_J211.dat" u 1:i lc rgb 'red' w l, for[i=2:21] "posterior/I211_J211.dat" u 1:i lc rgb 'blue' w l, "I211_J211.dat" u 1:7 lw 3 lc rgb 'black' w l
+
+set ylabel font ",20";
+set ylabel "PPbar Balance Function";
+plot for[i=2:201] "I2212_J2212.dat" u 1:i lc rgb 'red' w l, for[i=2:21] "posterior/I2212_J2212.dat" u 1:i lc rgb 'blue' w l, "I2212_J2212.dat" u 1:7 lw 3 lc rgb 'black' w l
+
+set ylabel font ",20";
+set ylabel "pK Balance Function";
+set xlabel font ",20";
+set xlabel "Rapidity";
+plot for[i=2:201] "I321_J2212.dat" u 1:i lc rgb 'red' w l, for[i=2:21] "posterior/I321_J2212.dat" u 1:i lc rgb 'blue' w l, "I321_J2212.dat" u 1:7 lw 3 lc rgb 'black' w l
+
+set ylabel font ",20";
+set ylabel "KK Balance Function";
+set xlabel font ",20";
+set xlabel "Rapidity";
+plot for[i=2:201] "I321_J321.dat" u 1:i lc rgb 'red' w l, for[i=2:21] "posterior/I321_J321.dat" u 1:i lc rgb 'blue' w l, "I321_J321.dat" u 1:7 lw 3 lc rgb 'black' w l

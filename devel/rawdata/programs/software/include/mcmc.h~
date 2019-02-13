@@ -5,6 +5,7 @@
 #include<random>
 #include<chrono>
 #include "emulator.h"
+#include "coshfunc.h"
 
 class MCMC{
  public:
@@ -25,8 +26,9 @@ class MCMC{
   std::normal_distribution<double> normal_dist;
   std::uniform_real_distribution<double> uniform_dist;
 
+  bool NR;
   MCMC();
-  MCMC(Eigen::MatrixXd newTargetValue, Eigen::MatrixXd newRange, Eigen::VectorXd newWidths);
+  MCMC(Eigen::MatrixXd newTargetValue, Eigen::MatrixXd newRange, Eigen::VectorXd newWidths, bool NR);
 
   void setTargetValue(Eigen::MatrixXd newTargetValue);
   void setRange(Eigen::MatrixXd newRange);
@@ -41,11 +43,13 @@ class MCMC{
   double uniform();
 
   void step();
+  void step(CCosh dist, Eigen::MatrixXd MinMax);
   double getLogLikelihood();
   double getLogLikelihood(Eigen::MatrixXd Z);
   bool decide(Eigen::MatrixXd Z);
 
   void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y);
+  void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y, Eigen::MatrixXd MinMax);
 };
 
 #endif

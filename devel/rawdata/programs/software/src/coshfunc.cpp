@@ -35,7 +35,6 @@ CCosh::CCosh(int nmaxset){
   this->A = Eigen::MatrixXd::Zero(nmax+1,nmax+1);
   this->Z = Eigen::VectorXd::Zero(nmax+1);
   Eigen::MatrixXd K;
-
   this->A(0,0)=1.0;
   this->Z(0) = A(0,0)*I(0);
   for(n=1;n<=nmax;n++){

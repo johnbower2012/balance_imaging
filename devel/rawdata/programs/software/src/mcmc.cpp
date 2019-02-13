@@ -63,7 +63,7 @@ double MCMC::uniform(){
 
 /*STEP--
 **************/
-double MCMC::getLogLikelihood(Eigen::MatrixXd Z){
+double MCMC::getLogLikelihoodGaussian(Eigen::MatrixXd Z){
   double z=0.0, diff=0.0;
   for(int i=0;i<this->obsCount;i++){
     diff = (Z(0,i) - this->targetValue(0,i));
@@ -72,12 +72,42 @@ double MCMC::getLogLikelihood(Eigen::MatrixXd Z){
   z *= 0.5;
   return -z;
 }
+double MCMC::getLogLikelihoodLorentzian(Eigen::MatrixXd Z){
+  double z=0.0, diff=0.0, width=0.25;
+  for(int i=0;i<this->obsCount;i++){
+    diff = (Z(0,i) - this->targetValue(0,i));
+    z += diff*diff;
+  }
+  z += 0.25*width*width;
+  return -log(z);
+}
 void MCMC::step(){
   for(int i=0;i<this->paramCount;i++){
     testPosition(0,i) = Position(0,i) + normal()*this->Widths(i);
   }
 }
-bool MCMC::decide(Eigen::MatrixXd Z){
+void MCMC::step(CCosh dist, Eigen::MatrixXd MinMax){
+  int 
+    ab=4,
+    nmax = dist.nmax;
+  for(int i=0;i<this->paramCount;i++){
+    this->testPosition(0,i) = Position(0,i) + normal()*this->Widths(i);
+  }
+  for(int i=0;i<this->paramCount;i++){
+    this->testPosition(0,i) = (this->testPosition(0,i)*(MinMax(i,1) - MinMax(i,0)) + MinMax(i,0));
+  }
+  for(int j=0;j<ab;j++){
+    this->testPosition(0,j*(nmax+2)+1) = 1.0/this->testPosition(0,j*(nmax+2));
+    for(int k=1;k<nmax+1;k++){
+      this->testPosition(0,j*(nmax+2)+1) -= this->testPosition(0,j*(nmax+2)+k+1)*dist.Z(k);
+    }
+    this->testPosition(0,j*(nmax+2)+1) /= (dist.Z(0));
+  }
+  for(int i=0;i<this->paramCount;i++){
+    this->testPosition(0,i) = (this->testPosition(0,i) - MinMax(i,0))/(MinMax(i,1) - MinMax(i,0));
+  }
+}
+bool MCMC::decideGaussian(Eigen::MatrixXd Z){
   double random, LH, ratio;
   for(int i=0;i<paramCount;i++){
     if(this->testPosition(0,i) < this->Range(i,0)){
@@ -86,7 +116,7 @@ bool MCMC::decide(Eigen::MatrixXd Z){
       return false;
     }
   }
-  LH = this->getLogLikelihood(Z);
+  LH = this->getLogLikelihoodGaussian(Z);
 
   ratio = LH - this->Likelihood;
   if(ratio>0){
@@ -112,23 +142,64 @@ bool MCMC::decide(Eigen::MatrixXd Z){
     }
   }
 }
-void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y){
+bool MCMC::decideLorentzian(Eigen::MatrixXd Z){
+  double random, LH, ratio;
+  for(int i=0;i<paramCount;i++){
+    if(this->testPosition(0,i) < this->Range(i,0)){
+      return false;
+    } else if(this->testPosition(0,i) > this->Range(i,1)){
+      return false;
+    }
+  }
+  LH = this->getLogLikelihoodLorentzian(Z);
+
+  ratio = LH - this->Likelihood;
+  if(ratio>0){
+    this->Position = this->testPosition;
+    this->Likelihood = LH;
+    if(this->Likelihood > this->maxLogLikelihood){
+      this->maxLogLikelihood = this->Likelihood;
+      printf("MaxLogLH: %f\n",this->maxLogLikelihood);
+    }
+    return true;
+  }else{
+    random = uniform();
+    if(log(random)<ratio){
+      this->Position = this->testPosition;
+      this->Likelihood = LH;
+      if(this->Likelihood > this->maxLogLikelihood){
+	this->maxLogLikelihood = this->Likelihood;
+	printf("MaxLogLH: %f\n",this->maxLogLikelihood);
+      }
+      return true;
+    }else{
+      return false;
+    }
+  }
+}
+void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y, Eigen::MatrixXd MinMax){
   Eigen::MatrixXd testValue;
   bool takeStep=false;
-  int print=Samples/10,
-    percent=0;
-  double acceptedSteps = 0.0;
+  int 
+    print=Samples/10,
+    percent=0,
+    ab=4,
+    nmax = obsEmulator.paramCount/ab - 2;
 
+  double acceptedSteps = 0.0;
+  CCosh dist(nmax);
   History = Eigen::MatrixXd::Zero(Samples,this->paramCount+this->obsCount);
 
   for(int step=0;step<Samples;step++){
-    this->step();
+    //this->step();
+    this->step(dist,MinMax);
     if(this->NR==true){
       obsEmulator.Emulate_NR(this->testPosition,Y,testValue);
     }else{
       obsEmulator.Emulate(this->testPosition,Y,testValue);
     }      
-    takeStep = this->decide(testValue);
+    takeStep = this->decideGaussian(testValue);
+    //takeStep = this->decideLorentzian(testValue);
     History.block(step,0,1,this->paramCount) = this->Position;
     History.block(step,this->paramCount,1,this->obsCount) = testValue;
 
@@ -145,7 +216,5 @@ void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eige
   printf("MaxLLH: %f...\n",this->maxLogLikelihood);
 }
     
-
-    
-  
-  
+/*RUN--
+***************/

@@ -142,7 +142,7 @@ CInvCoshCalc::CInvCoshCalc(int ngset){
 		for(m=0;m<=n;m++)
 			a(n,m)=a(n,m)/sqrt(norm);
 	}
-	seed=12;
+	seed=1234;
 	rng=mt19937(seed);
 	uniform_dist=uniform_real_distribution<double>(0,1);
 	// to reset seed, xxx.invcoshcalc.rng=mt19937(newseed);

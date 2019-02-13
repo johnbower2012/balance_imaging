@@ -8,7 +8,7 @@ from matplotlib.colors import LogNorm
 plt.rc('text', usetex=False)
 
 # you will likely wish to edit these parameters
-npars=20
+npars=12
 nbins=40
 mcmcfilename='scaledmcmctrace.csv'
 limitsfilename='mcmc_names.dat'

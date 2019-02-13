@@ -22,10 +22,11 @@ void PrintFormattedFile(std::string filename,std::string delimiter);
 
 void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimiter);
 void LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen::MatrixXd &Matrix,std::string delimiter);
-void LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix);
-void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix);
+void LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix, Eigen::MatrixXd &MatrixError);
+void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix, std::vector<Eigen::MatrixXd> &MatrixError);
 void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::string> expfilenames,
 		     std::vector<Eigen::MatrixXd> &ModelMatrix, std::vector<Eigen::MatrixXd> &ExpMatrix,
+		     std::vector<Eigen::MatrixXd> &ModelError, std::vector<Eigen::MatrixXd> &ExpError,
 		     Eigen::VectorXd &modeldy, Eigen::VectorXd &expdy,
 		     std::string foldername, std::string delimiter,
 		     int start, int finish);
