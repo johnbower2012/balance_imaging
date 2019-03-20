@@ -26,9 +26,11 @@ void SumInQuadrature(Eigen::VectorXd &sum, Eigen::VectorXd a, Eigen::VectorXd b)
 void CalculatePercentageError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, double fraction);
 void CalculateError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, int obs);
 void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs);
+void CalculateError_Variance(Eigen::VectorXd &Error, Eigen::MatrixXd Obs);
 
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd error, Eigen::MatrixXd matrix);
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd matrix);
+void ReverseTildeFunction(Eigen::MatrixXd tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd &matrix);
 void CovarianceFunction(Eigen::MatrixXd &cov, Eigen::VectorXd &mean, Eigen::MatrixXd matrix);
 void CovarianceFunction_NoMean(Eigen::MatrixXd &cov, Eigen::MatrixXd matrix);
 
@@ -51,6 +53,6 @@ void Extract5(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 void ExtractOnly10(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 
-void ConductModelAnalysis(std::string foldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ);
+void ConductModelAnalysis(std::string infoldername, std::string outfoldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ);
 
 #endif

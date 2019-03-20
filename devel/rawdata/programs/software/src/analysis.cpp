@@ -178,7 +178,7 @@ void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::VectorXd b)
   if(b.size() != rows)
     {
       printf("SumInQuadrature Failed. A.rows != b.size\n");
-      printf("A.rows=%d. A.cols=%d. B.size=%d\n",rows,cols,(int) b.size());
+      printf("A.rows=%d. A.cols=%d. b.size=%d\n",rows,cols,(int) b.size());
       exit(1);
     }
   sum = Eigen::MatrixXd::Zero(rows,cols);
@@ -187,6 +187,7 @@ void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::VectorXd b)
       for(int j=0;j<cols;j++)
 	{
 	  sum(i,j) = sqrt(A(i,j)*A(i,j) + b(i)*b(i));
+	  if(sum(i,j) == 0.0) sum(i,j) = 10e-5;
 	}
     }
 }
@@ -231,6 +232,7 @@ void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs)
   Eigen::VectorXd
     mean;
   CovarianceFunction(covariance, mean, Obs);
+  WriteFile("coverror.dat",covariance," ");
   Error = Eigen::MatrixXd::Zero(obs,samples);
   for(int samp=0;samp<samples;samp++)
     {
@@ -239,11 +241,38 @@ void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs)
 	  Error(col1,samp) = 0.0;
 	  for(int col2=0;col2<obs;col2++)
 	    {
-	      Error(col1,samp) += covariance(col1,col2)/(Obs(col1,samp)*Obs(col2,samp));
+	      //Error(col1,samp) += covariance(col1,col2)/(Obs(col1,samp)*Obs(col2,samp));
+	      Error(col1,samp) += covariance(col1,col2)/(mean(col1)*mean(col2));
 	    }
-	  Error(col1,samp) /= (Obs(col1,samp)*Obs(col1,samp));
+	  //Error(col1,samp) *= (Obs(col1,samp)*Obs(col1,samp));
+	  Error(col1,samp) *= (mean(col1)*mean(col1));
 	  Error(col1,samp) = sqrt(Error(col1,samp));
 	}
+    }
+}
+void CalculateError_Variance(Eigen::VectorXd &Error, Eigen::MatrixXd Obs)
+{
+  int
+    obs = Obs.rows(),
+    samples = Obs.cols();
+  Eigen::MatrixXd
+    covariance;
+  Eigen::VectorXd
+    mean;
+  CovarianceFunction(covariance, mean, Obs);
+  WriteFile("coverror.dat",covariance," ");
+  Error = Eigen::VectorXd::Zero(obs);
+  for(int col1=0;col1<obs;col1++)
+    {
+      Error(col1) = 0.0;
+      for(int col2=0;col2<obs;col2++)
+	{
+	  //Error(col1) += covariance(col1,col2)/(mean(col1)*mean(col2));
+	  //Error(col1) += covariance(col1,col2);
+	}
+      //Error(col1) *= (mean(col1)*mean(col1));
+      //Error(col1) = sqrt(Error(col1));
+      Error(col1) = sqrt(covariance(col1,col1));
     }
 }
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd error, Eigen::MatrixXd matrix){
@@ -266,11 +295,21 @@ void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::MatrixXd
     }
   }
 }
+void ReverseTildeFunction(Eigen::MatrixXd tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd &matrix){
+  int rows = tilde.rows(),
+    cols = tilde.cols();
+  matrix = Eigen::MatrixXd::Zero(rows,cols);
+  for(int row=0;row<rows;row++){
+    for(int col=0;col<cols;col++){
+      matrix(row,col) = tilde(row,col)*error(row,col) + mean(row);
+    }
+  }
+}
 void CovarianceFunction(Eigen::MatrixXd &cov, Eigen::VectorXd &mean, Eigen::MatrixXd matrix){
   int rows=matrix.rows(),
     cols=matrix.cols();
   cov = Eigen::MatrixXd::Zero(rows,rows);
-  mean = Eigen::VectorXd::Zero(cols);
+  mean = Eigen::VectorXd::Zero(rows);
   for(int row=0;row<rows;row++)
     {
       mean(row) = 0.0;
@@ -586,7 +625,7 @@ void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
 	}
     }
 }
-void ConductModelAnalysis(std::string foldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ)
+void ConductModelAnalysis(std::string infoldername, std::string outfoldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ)
 {
   //Model BF filenames
   std::vector<std::string> modelfilenames={"I211_J211.dat",
@@ -607,15 +646,27 @@ void ConductModelAnalysis(std::string foldername, std::string delimiter, int sta
     ExpError;
   Eigen::VectorXd
     modeldy,
-    expdy;
-
+    expdy,
+    Iexperror_vec;
+  Eigen::MatrixXd
+    TotalError,
+    Imodel,
+    Imodelerror,
+    Iexp,
+    Iexperror;
   LoadMEDataFiles(modelfilenames, expfilenames,
 		  ModelMatrix, ExpMatrix,
 		  ModelError, ExpError,
 		  modeldy, expdy,
-		  foldername, delimiter,
+		  infoldername, delimiter,
 		  start, finish);
 
+  //SumInQuadrature(TotalError,ModelError[0].transpose(),ExpError[0]);
+  //WriteFile("expe.dat",Iexperror," ");
+  //WriteFile("mode.dat",Imodelerror," ");
+  //WriteFile("e.dat",TotalError," ");
+
+  /*
   Eigen::MatrixXd holder;
   int numBF = expfilenames.size();
   for(int i=0;i<numBF;i++){
@@ -623,7 +674,7 @@ void ConductModelAnalysis(std::string foldername, std::string delimiter, int sta
     holder.col(0) = modeldy;
     WriteFile(foldername+"/"+modelfilenames[i],holder,delimiter);
   }
-
+  */
   Eigen::MatrixXd
     ModelObs,
     ModelObsError,
@@ -641,76 +692,176 @@ void ConductModelAnalysis(std::string foldername, std::string delimiter, int sta
     EigenVectors;
   Eigen::VectorXd
     ExpPercError,
+    ModelVarErrorV,
 
     Error,
     Mean,
 
     EigenValues;
-
+  /*
   //Calculate Model & Exp Moments
   //Calc Error from given model/exp error values
   MatrixMoments(ModelMatrix,ModelError,modeldy,ModelObs,ModelObsError);
-  MatrixMoments(ExpMatrix,ExpError,expdy,ExpObs,ExpObsError);
   WriteFile("modelobserror.dat",ModelObsError,delimiter);
+  MatrixMoments(ExpMatrix,ExpError,expdy,ExpObs,ExpObsError);
   WriteFile("expobserror.dat",ExpObsError,delimiter);
 
   int 
     observables = ModelObs.rows();
 
   //Calculate Error for y --> y~
-  //Calculate Error in a specified format (see function for detals)
-  //CalculateError(Error,ExpObs,numBF);
+  */
+  /***********************************************
+   ******** Take percent of area of m0    ********
+   ***********************************************/ 
+  /*
+  CalculateError(Error,ExpObs,numBF);
+  TildeFunction(ModelTilde,Mean,Error,ModelObs);
+  TildeFunction(ExpTilde,Mean,Error,ExpObs);
+  */
 
-  //Assume percentage of exp to as error
+  /***********************************************
+   ******** Add BF error & % of mean      ********
+   ***********************************************/ 
+  /*
   double 
     percentage = 0.05;
   CalculatePercentageError(ExpPercError, ExpObs, percentage);
-  std::cout << ExpPercError << std::endl;
   SumInQuadrature(ExpTotalError, ExpObsError, ExpPercError);
   WriteFile("expmomenterror.dat",ExpTotalError," ");
 
-  //calculator error from variance of moments
-  //  then sum over covariances as fraction of given moment sample value
-  CalculateError_Variance(ModelVarError, ModelObs);
-  WriteFile("modelvarerror.dat",ModelVarError," ");
-  SumInQuadrature(ModelTotalError, ModelObsError, ModelVarError);
+  CalculatePercentageError(ModelVarErrorV, ModelObs, percentage);
+  SumInQuadrature(ModelTotalError, ModelObsError, ModelVarErrorV);
   WriteFile("modelmomenterror.dat",ModelTotalError," ");
 
-  //Calculate y-tilde for Model & Exp
   AverageRows(Mean,ModelObs);
-  //TildeFunction(ModelTilde,Mean,Error,ModelObs);
-  //TildeFunction(ExpTilde,Mean,Error,ExpObs);
   TildeFunction(ModelTilde,Mean,ModelTotalError,ModelObs);
   TildeFunction(ExpTilde,Mean,ExpTotalError,ExpObs);
+  */
 
-  //Calculate Covariance of ModelTilde and related eigenvectors
-  CovarianceFunction_NoMean(Covariance,ModelTilde);
-  printf("pass\n");
-  WriteFile("covariance.dat",Covariance," ");
-  WriteFile("modeltilde.dat",ModelTilde," ");
-  EigenSolve(EigenValues,EigenVectors,Covariance);
-  printf("pass\n");
-  EigenSort(EigenValues,EigenVectors);
-  printf("pass\n");
 
-  //Calculate Principle Components of y-tilde
-  ModelZ = ModelTilde.transpose()*EigenVectors;
-  ExpZ = ExpTilde.transpose()*EigenVectors;
-
+  /************************************************
+   ******* y --> y* = (y.T-ybar.T)V/sigma   *******
+   ******* y* --> y~ = (y~.T - y~bar.T)V*   *******
+   ************************************************/ 
+  /*
+  int 
+    samples = ModelObs.cols();
   Eigen::MatrixXd
-    EigenV=Eigen::MatrixXd::Zero(1,observables),
-    MeanM=Eigen::MatrixXd::Zero(1,observables),
-    ErrorM=Eigen::MatrixXd::Zero(1,observables);
-    
+    ModelObsStar = ModelObs,
+    ExpObsStar = ExpObs,
+    CovarianceStar;
 
+  CovarianceFunction(Covariance,Mean,ModelObs);
+  EigenSolve(EigenValues,EigenVectors,Covariance);
+  for(int i=0;i<observables;i++)
+    {
+      for(int j=0;j<samples;j++)
+	{
+	  ModelObsStar(i,j) = (ModelObs(i,j) - Mean(i));
+	}
+    }
+  ModelObsStar = ModelObsStar.transpose()*EigenVectors;
+  double percentage = 0.05;
+  for(int i=0;i<samples;i++)
+    {
+      for(int j=0;j<observables;j++)
+	{
+	  ModelObsStar(i,j) /= percentage*sqrt(EigenValues(j));
+	}
+    }
+  std::cout << EigenValues.transpose() << std::endl;
+  std::cout << "COV\n" << Covariance << std::endl;
+  CovarianceFunction(Covariance,Mean,ModelObsStar.transpose());
+  std::cout << EigenValues.transpose() << std::endl;
+  std::cout << "COV\n" << Covariance << std::endl;
+  */
+  //Calculate Covariance of ModelTilde and related eigenvectors
+  Eigen::MatrixXd
+    ModelOut,
+    ExpOut;
+  int pc=3;
+  ModelZ.resize(200,pc*4);
+  ExpZ.resize(1,pc*4);
+  for(int func=0;func<4;func++){
+    std::string funcs=std::to_string(func);
+    Imodel = ModelMatrix[func];
+    Imodelerror = ModelError[func];
+    Iexp = ExpMatrix[func].block(0,0,17,1);
+    Iexperror = ExpError[func].block(0,0,17,1);
+
+    int
+      observables = Imodel.rows();
+
+    Iexperror_vec = Iexperror.col(0);
+
+    SumInQuadrature(TotalError,Imodelerror,Iexperror_vec);
+
+    AverageRows(Mean,Imodel);
+
+    TildeFunction(ModelTilde,Mean,TotalError,Imodel);
+    TildeFunction(ExpTilde,Mean,TotalError,Iexp);
+    WriteFile(outfoldername+"/mean"+funcs+".dat",Mean," ");
+    WriteFile(outfoldername+"/totalerror"+funcs+".dat",TotalError," ");
+    WriteFile(outfoldername+"/modeltilde"+funcs+".dat",ModelTilde," ");
+    WriteFile(outfoldername+"/exptilde"+funcs+".dat",ExpTilde," ");
+
+    CovarianceFunction_NoMean(Covariance,ModelTilde);
+    WriteFile(outfoldername+"/covariance"+funcs+".dat",Covariance," ");
+
+    EigenSolve(EigenValues,EigenVectors,Covariance);
+    EigenSort(EigenValues,EigenVectors);
+
+    //Calculate Principle Components of y-tilde
+    ModelOut = ModelTilde.transpose()*EigenVectors;
+    ExpOut = ExpTilde.transpose()*EigenVectors;
+    WriteFile(outfoldername+"/eigenvectors"+funcs+".dat",EigenVectors," ");
+    WriteFile(outfoldername+"/eigenvalues"+funcs+".dat",EigenValues," ");
+    std::cout << "function: " << modelfilenames[func] << std::endl;
+    std::cout << "  EigenValues:\n  " << EigenValues.transpose() << std::endl;
+    std::cout << "----------------\n" << std::endl;
+
+
+    ModelZ.block(0,pc*func,200,pc) = ModelOut.block(0,0,200,pc);
+    ExpZ.block(0,pc*func,1,pc) = ExpOut.block(0,0,1,pc);
+
+
+    /*
+    Eigen::MatrixXd
+      print = Eigen::MatrixXd::Zero(17,201),
+      recon;
+    print.block(0,0,17,1) = modeldy;
+    print.block(0,1,17,200) = Imodel;
+    WriteFile("I"+funcs+".dat",print," ");
+
+    ModelOut.block(0,pc,200,observables-pc) = Eigen::MatrixXd::Zero(200,observables-pc);
+
+    recon = ModelOut*EigenVectors.inverse();
+    ModelOut = recon.transpose();
+
+    ReverseTildeFunction(ModelOut,Mean,TotalError,recon);
+    print.block(0,0,17,1) = modeldy;
+    print.block(0,1,17,200) = recon;
+
+    WriteFile("recon"+funcs+".dat",print," ");
+    */
+  }
+  
+  // Eigen::MatrixXd
+  //  EigenV=Eigen::MatrixXd::Zero(1,observables),
+  //  MeanM=Eigen::MatrixXd::Zero(1,observables),
+  //  ErrorM=Eigen::MatrixXd::Zero(1,observables);
+  
   //Write out data files
-  WriteFile(foldername+"/modelmoments.dat",ModelObs," ");
-  WriteFile(foldername+"/expmoments.dat",ExpObs," ");
-
+  //WriteFile(foldername+"/modelmoments.dat",ModelObs," ");
+  //WriteFile(foldername+"/expmoments.dat",ExpObs," ");
+  /*
   MeanM.row(0) = Mean;
-  ErrorM.row(0) = Error;
+  //ErrorM.row(0) = Error;
   WriteFile(foldername+"/mean.dat",MeanM," ");
-  WriteFile(foldername+"/error.dat",ErrorM," ");
+  //WriteFile(foldername+"/error.dat",ErrorM," ");
+  WriteFile(foldername+"/experror.dat",ExpTotalError," ");
+  WriteFile(foldername+"/modelerror.dat",ModelTotalError," ");
 
   WriteFile(foldername+"/modeltilde.dat",ModelTilde," ");
   WriteFile(foldername+"/exptilde.dat",ExpTilde," ");
@@ -721,8 +872,6 @@ void ConductModelAnalysis(std::string foldername, std::string delimiter, int sta
   EigenV.row(0) = EigenValues;
   WriteFile(foldername+"/eigvec.dat",EigenVectors," ");
   WriteFile(foldername+"/eigval.dat",EigenV," ");
+  */
 
-  std::cout << "EigenValues:\n" << EigenValues.transpose() << std::endl;
-  std::cout << "----------------" << std::endl;
-  std::cout << "ExpZ:\n" << ExpZ << std::endl;
 }

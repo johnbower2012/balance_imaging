@@ -1,5 +1,0 @@
-Use lorenzian for mcmc (1+0.5dz1^2)/(1+0.5dz2^2)
-
-s0 = 0.03m0 + 0.005
-s1 = 0.01m0
-s2 = 0.01m0

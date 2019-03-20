@@ -22,12 +22,13 @@ int main(int argc, char* argv[]){
    *    Write Parameters files        *
   *************************************/
   std::string 
-    foldername="model_output",                       //foldername = model BF location
+    infoldername="model_output",                     //infoldername = model BF location
+    outfoldername="stat_output",                     //outfoldername = write destination
     writefilename="parameters.dat",                  //writefilename = paramfile name, should default to parameters.dat
-    rangename=foldername+"/parameter_priors.dat",    //rangename = rangefile for parameters and paramnames to LCHsample for model run
-    infilename=foldername+"/moments_parameters.dat", //output parameters used for model runs
+    rangename=infoldername+"/parameter_priors.dat",    //rangename = rangefile for parameters and paramnames to LCHsample for model run
+    infilename=outfoldername+"/moments_parameters.dat", //output parameters used for model runs
     delimiter=" ",                                   //delimiter for writing and reading files
-    gabname=foldername+"/gabfunctions.dat";          //write prior gab functions, in order eta, uu0, ud0, us0, ss0, uu1, ud1, ...
+    gabname=outfoldername+"/gabfunctions.dat";          //write prior gab functions, in order eta, uu0, ud0, us0, ss0, uu1, ud1, ...
 
   //start, finish for model runs to use
   int
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]){
     ab=4;
   Eigen::MatrixXd Parameters;
 
-  WriteParameterFiles(rangename, foldername, writefilename, delimiter,
+  WriteParameterFiles(rangename, infoldername, writefilename, delimiter,
 		      start, finish, ab, 
 		      Parameters);
   WriteFile(infilename,Parameters,delimiter);
@@ -62,11 +63,12 @@ int main(int argc, char* argv[]){
     ModelZ,
     ExpZ;
 
-  ConductModelAnalysis(foldername, delimiter, start, finish, ModelZ, ExpZ);
+  ConductModelAnalysis(infoldername, outfoldername, delimiter, start, finish, ModelZ, ExpZ);
 
   /*************************************
    *   Plot ModelZ w/ Params          *
   *************************************/
+
   int 
     parameters=Parameters.cols(),
     observables=ModelZ.cols();
@@ -77,22 +79,22 @@ int main(int argc, char* argv[]){
   plot.block(0,parameters,finish-start,observables) = ModelZ;
 
   plot.block(0,0,finish-start,parameters) = Parameters;
-  WriteFile(foldername+"/trainplot.dat",plot," ");
+  WriteFile(outfoldername+"/trainplot.dat",plot," ");
   plot.block(0,0,finish-start,parameters) = ScaledParam;
-  WriteFile(foldername+"/scaledtrainplot.dat",plot," ");
-
+  WriteFile(outfoldername+"/scaledtrainplot.dat",plot," ");
+  WriteFile(outfoldername+"/scaledmoments_parameters.dat",ScaledParam," ");
 
   /*************************************
    *   Conduct MCMC Analysis          *
   *************************************/
   if(action==1)
     {
-  int 
-    test=finish-start;
-  double
-    fraction=1.0/225.0;
-  std::vector<std::string> 
-    paramNames;
+      int 
+	test=finish-start;
+      double
+	fraction=1.0/300.0;
+      std::vector<std::string> 
+	paramNames;
   Eigen::MatrixXd 
     Hyperparameters,
     outMatrix(test,parameters+observables),
@@ -104,26 +106,26 @@ int main(int argc, char* argv[]){
   //Load Hyperparameters
   //LoadFile("hyperparameters.dat",Hyperparameters," ");
   ConstructHyperparameters(ModelZ,Hyperparameters);
-  WriteFile(foldername+"/hyperparameters.dat",Hyperparameters,delimiter);
+  WriteFile(outfoldername+"/hyperparameters.dat",Hyperparameters,delimiter);
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
   //Create Widths
   ConstructWidths(Width,range,parameters,fraction);
   
   linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
-  WriteFile(foldername+"/scaledbeta.dat",Beta," ");
-  /*
-  int row=5;
+  WriteFile(outfoldername+"/scaledbeta.dat",Beta," ");
+
+  int row=50;
   ExpZ = ModelZ.row(row);
   std::cout << row << " row: " << ScaledParam.row(row) << " " << ExpZ << std::endl;
-
+  
   Eigen::MatrixXd Goal = Eigen::MatrixXd::Zero(1,parameters+observables);
   Goal.block(0,0,1,parameters) = Parameters.row(row);
   Goal.block(0,parameters,1,observables) = ExpZ;
-  WriteFile(foldername+"/target.dat",Goal,delimiter);
+  WriteFile(outfoldername+"/target.dat",Goal,delimiter);
   Goal.block(0,0,1,parameters) = ScaledParam.row(row);
-  WriteFile(foldername+"/scaledtarget.dat",Goal,delimiter);
-  */
+  WriteFile(outfoldername+"/scaledtarget.dat",Goal,delimiter);
+
   emulator emulation(ScaledParam, Hyperparameters, Beta);
 
   MCMC mcmc(ExpZ,range,Width,true);
@@ -139,15 +141,14 @@ int main(int argc, char* argv[]){
     ntrace,
     posterior;
 
-  std::string posteriorname = foldername+"/scaledposterior.dat";
-  WriteFile(foldername+"/minmax.dat",MinMax,delimiter);
+  std::string posteriorname = outfoldername+"/scaledposterior.dat";
+  WriteFile(outfoldername+"/minmax.dat",MinMax,delimiter);
 
   Extract5(ntrace,trace);
-  WriteCSVFile(foldername+"/scaledmcmctrace.csv",paramNames,ntrace,",");
-
-  printf("Writing posterior.dat files...\n");
+  WriteCSVFile(outfoldername+"/scaledmcmctrace.csv",paramNames,ntrace,",");
 
   ExtractOnly20(posterior,ntrace);
+  printf("Writing posterior.dat files...\n");  
   WriteFile(posteriorname,posterior,delimiter);
   for(int i=0,count=posterior.rows();i<count;i++)
     {
@@ -164,14 +165,22 @@ int main(int argc, char* argv[]){
 	}
     }
 
-  posteriorname = foldername + "/posterior.dat";
+  posteriorname = outfoldername + "/posterior.dat";
   ExtractOnly20(posterior,ntrace);
   WriteFile(posteriorname,posterior,delimiter);
 
-  gabname = foldername + "/posteriorgabfunctions.dat";
+  gabname = outfoldername + "/posteriorgabfunctions.dat";
   WriteGABFunctions(gabname,posterior,delimiter,ab);
 
-  WriteCSVFile(foldername+"/mcmctrace.csv",paramNames,ntrace,",");
+  WriteCSVFile(outfoldername+"/mcmctrace.csv",paramNames,ntrace,",");
+  
+  Eigen::VectorXd
+    avg = Eigen::VectorXd::Zero(observables);
+  AverageColumns(avg,ntrace);
+  Eigen::MatrixXd
+    Avg = Eigen::MatrixXd::Zero(1,observables);
+  Avg.row(0) = avg;
+  WriteFile(outfoldername+"/mcmcmean.dat",Avg,delimiter);
 }
 
 
@@ -180,8 +189,7 @@ int main(int argc, char* argv[]){
   *************************************/
   if(action==2)
     {
-      /*
-  observables=2;
+
   int 
     test=finish-start;
   std::vector<std::string> 
@@ -194,31 +202,29 @@ int main(int argc, char* argv[]){
     print = Eigen::MatrixXd::Zero(finish-start, parameters+observables*4);
 
   Eigen::VectorXd Width(parameters);
-  //Load Hyperparameters
-  LoadFile("hyperparameters.dat",Hyperparameters," ");
 
-  //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
   //printf("Scaling range.\n");
 
   //Create & Write Beta matrix
   int rows = finish-start;
-  rows=10;
+
   for(int row=0;row<rows;row++){
     //Eigen::MatrixXd testX = Parameters.row(row);
-    Eigen::MatrixXd testX = paramScaled.row(row);
+    Eigen::MatrixXd testX = ScaledParam.row(row);
 
     //Eigen::MatrixXd testY_ = ModelZ.row(row),
     // PM = Parameters,
     // MZ = ModelZ;
-    Eigen::MatrixXd testY_ = ModelZ.block(row,1,1,observables),
+    Eigen::MatrixXd testY_ = ModelZ.block(row,0,1,observables),
       //PM = Parameters,
-      PM = paramScaled,
-      MZ = ModelZ.block(0,1,ModelZ.rows(),observables);
+      PM = ScaledParam,
+      MZ = ModelZ;
 
     RemoveRow(PM,row);
     RemoveRow(MZ,row);
-
+    //Load Hyperparameters
+    ConstructHyperparameters(MZ,Hyperparameters);
 
     linearRegressionLeastSquares(MZ,PM,Beta);
 
@@ -241,11 +247,11 @@ int main(int argc, char* argv[]){
     std::cout << "testY :" << testY << std::endl;
     ComputeFit(testY_,testY,Fit);
     std::cout << "Fit   :" << Fit << std::endl << std::endl;
-    print.block(row,parameters,1,observables) = testY;
-    print.block(row,parameters+observables,1,observables) = Fit.block(0,1,1,observables);    
+    print.block(row,parameters+2*observables,1,observables) = testY;
+    print.block(row,parameters+3*observables,1,observables) = Fit.block(0,1,1,observables);    
   }
-  WriteFile(foldername+"/fit.dat",print,delimiter);
-      */
+  WriteFile(infoldername+"/fit.dat",print,delimiter);
+
 }
 
   return 0;

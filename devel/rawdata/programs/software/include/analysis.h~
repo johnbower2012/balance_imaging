@@ -19,11 +19,18 @@ void ScaleMatrixRowsUniform(Eigen::MatrixXd Matrix,Eigen::MatrixXd &MinMax, Eige
 void AverageColumns(Eigen::VectorXd &average, Eigen::MatrixXd matrix);
 void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix);
 
+void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::MatrixXd B);
+void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::VectorXd b);
+void SumInQuadrature(Eigen::VectorXd &sum, Eigen::VectorXd a, Eigen::VectorXd b);
+
 void CalculatePercentageError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, double fraction);
 void CalculateError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, int obs);
+void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs);
 void CalculateError_Variance(Eigen::VectorXd &Error, Eigen::MatrixXd Obs);
 
 void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::VectorXd error, Eigen::MatrixXd matrix);
+void TildeFunction(Eigen::MatrixXd &tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd matrix);
+void ReverseTildeFunction(Eigen::MatrixXd tilde, Eigen::VectorXd mean, Eigen::MatrixXd error, Eigen::MatrixXd &matrix);
 void CovarianceFunction(Eigen::MatrixXd &cov, Eigen::VectorXd &mean, Eigen::MatrixXd matrix);
 void CovarianceFunction_NoMean(Eigen::MatrixXd &cov, Eigen::MatrixXd matrix);
 

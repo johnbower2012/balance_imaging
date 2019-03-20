@@ -33,6 +33,7 @@ void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::s
 
 
 void WriteFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimiter);
+void WriteFile(std::string filename, Eigen::VectorXd &Vector,std::string delimiter);
 void WriteCSVFile(std::string filename, std::vector<std::string> header, Eigen::MatrixXd &Matrix,std::string delimiter);
 void WriteParamFile(std::string fileName, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &file);
 void WriteParamFileLoop(std::string filename, std::string folder, int start, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &matrix);
