@@ -545,7 +545,7 @@ void ConstructHyperparameters(Eigen::MatrixXd Matrix,Eigen::MatrixXd &HyperParam
   for(int col=0;col<cols;col++)
     {
       HyperParameters(col,0) = 0.5*(Matrix.col(col).maxCoeff() - Matrix.col(col).minCoeff());
-      HyperParameters(col,1) = 0.35;
+      HyperParameters(col,1) = 0.45;
       HyperParameters(col,2) = 0.05*HyperParameters(col,0);
     }
 }
@@ -801,13 +801,13 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
 
     TildeFunction(ModelTilde,Mean,TotalError,Imodel);
     TildeFunction(ExpTilde,Mean,TotalError,Iexp);
-    WriteFile(outfoldername+"mean"+funcs+".dat",Mean," ");
-    WriteFile(outfoldername+"totalerror"+funcs+".dat",TotalError," ");
-    WriteFile(outfoldername+"modeltilde"+funcs+".dat",ModelTilde," ");
-    WriteFile(outfoldername+"exptilde"+funcs+".dat",ExpTilde," ");
+    WriteFile(outfoldername+"/mean"+funcs+".dat",Mean," ");
+    WriteFile(outfoldername+"/totalerror"+funcs+".dat",TotalError," ");
+    WriteFile(outfoldername+"/modeltilde"+funcs+".dat",ModelTilde," ");
+    WriteFile(outfoldername+"/exptilde"+funcs+".dat",ExpTilde," ");
 
     CovarianceFunction_NoMean(Covariance,ModelTilde);
-    WriteFile(outfoldername+"covariance"+funcs+".dat",Covariance," ");
+    WriteFile(outfoldername+"/covariance"+funcs+".dat",Covariance," ");
 
     EigenSolve(EigenValues,EigenVectors,Covariance);
     EigenSort(EigenValues,EigenVectors);
@@ -815,8 +815,8 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     //Calculate Principle Components of y-tilde
     ModelOut = ModelTilde.transpose()*EigenVectors;
     ExpOut = ExpTilde.transpose()*EigenVectors;
-    WriteFile(outfoldername+"eigenvectors"+funcs+".dat",EigenVectors," ");
-    WriteFile(outfoldername+"eigenvalues"+funcs+".dat",EigenValues," ");
+    WriteFile(outfoldername+"/eigenvectors"+funcs+".dat",EigenVectors," ");
+    WriteFile(outfoldername+"/eigenvalues"+funcs+".dat",EigenValues," ");
     std::cout << "function: " << modelfilenames[func] << std::endl;
     std::cout << "  EigenValues:\n  " << EigenValues.transpose() << std::endl;
     std::cout << "----------------\n" << std::endl;

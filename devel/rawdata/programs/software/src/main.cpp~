@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
       printf("Usage: ./main start end\n");
       return 1;
     }
-  int action=1; //1 = mcmc, 2 = test emulator
+  int action=1; //1 = mcmc, 2 = test emulator, 3 = test emulator
 
   /*************************************
    *    Write Parameters files        *
@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
     start=atoi(argv[1]),
     finish=atoi(argv[2]),
     ab=4;
+
   Eigen::MatrixXd Parameters;
 
   WriteParameterFiles(rangename, infoldername, writefilename, delimiter,
@@ -68,7 +69,10 @@ int main(int argc, char* argv[]){
   /*************************************
    *   Plot ModelZ w/ Params          *
   *************************************/
-
+  //for(int i=ab-1;i>-1;i--)
+  //  {
+  //    RemoveColumn(Parameters,1+i*3);
+  //  }
   int 
     parameters=Parameters.cols(),
     observables=ModelZ.cols();
@@ -92,7 +96,7 @@ int main(int argc, char* argv[]){
       int 
 	test=finish-start;
       double
-	fraction=1.0/300.0;
+	fraction=1.0/250.0;
       std::vector<std::string> 
 	paramNames;
   Eigen::MatrixXd 
@@ -109,13 +113,20 @@ int main(int argc, char* argv[]){
   WriteFile(outfoldername+"/hyperparameters.dat",Hyperparameters,delimiter);
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
+
+  //for(int i=ab-1;i>-1;i--)
+  //  {
+  //    RemoveRow(range,i*3+1);
+  //    std::cout << i*3+1 << std::endl;
+  //  }
+
   //Create Widths
   ConstructWidths(Width,range,parameters,fraction);
-  
+
   linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
   WriteFile(outfoldername+"/scaledbeta.dat",Beta," ");
 
-  int row=50;
+  int row=5;
   ExpZ = ModelZ.row(row);
   std::cout << row << " row: " << ScaledParam.row(row) << " " << ExpZ << std::endl;
   
@@ -127,8 +138,8 @@ int main(int argc, char* argv[]){
   WriteFile(outfoldername+"/scaledtarget.dat",Goal,delimiter);
 
   emulator emulation(ScaledParam, Hyperparameters, Beta);
-
-  MCMC mcmc(ExpZ,range,Width,true);
+  bool regression=false;
+  MCMC mcmc(ExpZ,range,Width,regression);
   mcmc.setPosition();
   int NSamples=100000,
     samples = finish - start;
@@ -164,7 +175,25 @@ int main(int argc, char* argv[]){
 	  ntrace(i,j) = (ntrace(i,j)*(MinMax(j,1) - MinMax(j,0)) + MinMax(j,0));
 	}
     }
-
+  /*
+  parameters += 4;
+  Eigen::MatrixXd
+    fullposterior = Eigen::MatrixXd::Zero(posterior.rows(),parameters),
+    fullntrace = Eigen::MatrixXd::Zero(ntrace.rows(),parameters);
+  int nmax=1;
+  CCosh dist(5);
+  for(int i=0;i<posterior.rows();i++){
+    for(int j=0;j<ab;j++){
+      fullposterior(i,j*(nmax+2)) = posterior(i,j*(nmax+2));
+      fullposterior(i,j*(nmax+2)+2) = posterior(i,j*(nmax+2)+2);
+      fullposterior(i,j*(nmax+2)+1) = 1.0/fullposterior(i,j*(nmax+2));
+      for(int k=1;k<nmax+1;k++){
+	fullposterior(i,j*(nmax+2)+1) -= fullposterior(i,j*(nmax+2)+k+1)*dist.Z(k);
+      }
+      fullposterior(i,j*(nmax+2)+1) /= (dist.Z(0));
+    }
+  }      
+  */
   posteriorname = outfoldername + "/posterior.dat";
   ExtractOnly20(posterior,ntrace);
   WriteFile(posteriorname,posterior,delimiter);
@@ -251,8 +280,60 @@ int main(int argc, char* argv[]){
     print.block(row,parameters+3*observables,1,observables) = Fit.block(0,1,1,observables);    
   }
   WriteFile(infoldername+"/fit.dat",print,delimiter);
+    }
+  Eigen::MatrixXd
+    print = Eigen::MatrixXd::Zero(200,parameters+observables);
 
-}
+  if(action==3)
+    {
+      for(int i=ab-1;i>-1;i--)
+	{
+	  RemoveColumn(ScaledParam,1+i*3);
+	}
+      parameters = ScaledParam.cols();
+      for(int i=0;i<200;i++){
+	int 
+	  test=finish-start;
+	std::vector<std::string> 
+	  paramNames;
+	Eigen::MatrixXd 
+	  Hyperparameters,
+	  outMatrix(test,parameters+observables),
+	  Beta;
+	Eigen::VectorXd
+	  Width;
+  
+      //Load Hyperparameters
+      //LoadFile("hyperparameters.dat",Hyperparameters," ");
+      int row=i,
+	samples = ModelZ.rows();
+      Eigen::MatrixXd
+	testX = ScaledParam.row(row),
+	Fit,
+
+	testY = ModelZ.row(row),
+	trainY = ModelZ,
+	trainX= ScaledParam;
+
+      RemoveRow(trainX,row);
+      RemoveRow(trainY,row);
+
+      ConstructHyperparameters(trainY,Hyperparameters);  
+      linearRegressionLeastSquares(trainY,trainX,Beta);
+
+      emulator emulation(trainX, Hyperparameters, Beta);
+      emulation.Emulate(testX,trainY,outMatrix);
+
+      print.block(row,0,1,parameters) = testX;
+      print.block(row,parameters,1,observables) = outMatrix;
+      std::cout << i << ":" << std::endl;
+      std::cout << testY << std::endl;
+      std::cout << outMatrix << std::endl;
+
+      }  
+  WriteFile("outMatrix.dat",print," ");
+    }
+
 
   return 0;
 }
