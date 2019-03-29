@@ -1,0 +1,10 @@
+int START 0
+int FINISH 200
+int ACTION 1
+int QUARK_PAIRS 4
+string MODEL_FOLDER model_output
+string OUTPUT_FOLDER stat_output
+string PARAM_FILE parameters.dat
+string PARAM_RANGE_FILE parameter_priors.dat
+string PARAMS_FILE parameters_lhc.dat
+string QUARK_FUNC_FILE gabfunctions.dat

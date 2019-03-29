@@ -407,7 +407,7 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
 }
 void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab){
   int
-    n=500,
+    n=80,
     nmax=Parameters.cols()/ab - 2,
     samples=Parameters.rows();
   double x=8;

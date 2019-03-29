@@ -19,70 +19,7 @@ CCosh::CCosh(){
   this->nmax=-1;
 }
 CCosh::CCosh(int nmaxset){
-  this->nmax=nmaxset;
-
-  Eigen::VectorXd x,y,ytest;
-  int n,nprime,m,mprime;
-  double norm,overlap;
-  this->I.resize(2*nmax+2);
-  this->I(0)=0.5*PI;
-  this->I(1)=1.0;
-
-  for(n=2;n<=2*nmax+1;n++){
-    this->I(n)=this->I(n-2)*double(n-1)/double(n);
-  }
-  
-  this->A = Eigen::MatrixXd::Zero(nmax+1,nmax+1);
-  this->Z = Eigen::VectorXd::Zero(nmax+1);
-  Eigen::MatrixXd K;
-  this->A(0,0)=1.0;
-  this->Z(0) = A(0,0)*I(0);
-  for(n=1;n<=nmax;n++){
-    this->A(n,n)=1.0;
-    K = Eigen::MatrixXd::Zero(n,n);
-    x = Eigen::VectorXd::Zero(n);
-    y = Eigen::VectorXd::Zero(n);
-    ytest = Eigen::VectorXd::Zero(n);
-    for(nprime=0;nprime<n;nprime++){
-      for(m=0;m<n;m++){
-	K(nprime,m)=0.0;
-	for(mprime=0;mprime<=nprime;mprime++){
-	  K(nprime,m)+=this->I(m+mprime+1)*this->A(nprime,mprime);
-	}
-      }
-    }
-    for(nprime=0;nprime<n;nprime++){
-      y(nprime)=0.0;
-      for(mprime=0;mprime<=nprime;mprime++)
-	y(nprime)+=this->I(n+mprime+1)*this->A(nprime,mprime);
-    }
-    x = K.colPivHouseholderQr().solve(y);
-    for(m=0;m<n;m++)
-      this->A(n,m)=-x(m);
-    norm=0.0;
-    for(m=0;m<=n;m++){
-      for(mprime=0;mprime<=n;mprime++){
-	norm+=this->A(n,m)*this->A(n,mprime)*this->I(m+mprime+1);
-      }
-    }
-    if(norm<0.0){
-      printf("norm(%d)=%g\n",n,norm);
-      printf("negative norm, try making nmax smaller\n");
-      exit(1);
-    }
-    x=x/sqrt(norm);
-    y=y/sqrt(norm);
-    //ytest=K*x-y;                                                                                                              
-    //ytest.print("ytest:");                                                                                                    
-    for(m=0;m<=n;m++){
-      this->A(n,m)=this->A(n,m)/sqrt(norm);
-      this->Z(n) += this->A(n,m)*this->I(m);
-    }
-   }
-
-  this->seed = 123456;
-  this->rng = std::mt19937(seed);
-  this->uniform_dist = std::uniform_real_distribution<double>(0,1);
+  this->Set_NMax(nmaxset);
 }
 void CCosh::Set_NMax(int nmaxset){
   this->nmax=nmaxset;

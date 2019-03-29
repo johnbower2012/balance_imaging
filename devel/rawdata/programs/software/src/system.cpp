@@ -382,12 +382,10 @@ void WriteParamFileLoop(std::string filename, std::string folder, int start,std:
 void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab){
   std::vector<std::string> Name;
   Eigen::MatrixXd range,matrix;
-  
   LoadParamFile(rangename,Name,range,delimiter);
   LHCSampling(matrix,finish-start,ab,range);
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,matrix);
-  
 }
 void WritePosteriorParameterFiles(std::string foldername, std::string filename, std::vector<std::string> Name, std::string paramname, std::string delimiter, int start, int finish){
   Eigen::MatrixXd matrix;
@@ -399,7 +397,6 @@ void WritePosteriorParameterFiles(std::string foldername, std::string filename, 
 void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab, Eigen::MatrixXd &Parameters){
   std::vector<std::string> Name;
   Eigen::MatrixXd range;
-  
   LoadParamFile(rangename,Name,range,delimiter);
   LHCSampling(Parameters,finish-start,ab,range);
   MkdirLoop(foldername,start,finish);
@@ -407,7 +404,7 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
 }
 void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab){
   int
-    n=500,
+    n=80,
     nmax=Parameters.cols()/ab - 2,
     samples=Parameters.rows();
   double x=8;
@@ -537,6 +534,7 @@ void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixX
       hypercube(j,i) = init + dx*hypercube(j,i);
     }
   }
+
   if(nmax>-1){
     CCosh dist(nmax);
     for(int i=0;i<samples;i++){

@@ -545,7 +545,7 @@ void ConstructHyperparameters(Eigen::MatrixXd Matrix,Eigen::MatrixXd &HyperParam
   for(int col=0;col<cols;col++)
     {
       HyperParameters(col,0) = 0.5*(Matrix.col(col).maxCoeff() - Matrix.col(col).minCoeff());
-      HyperParameters(col,1) = 0.35;
+      HyperParameters(col,1) = 0.45;
       HyperParameters(col,2) = 0.05*HyperParameters(col,0);
     }
 }
@@ -780,9 +780,11 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
   Eigen::MatrixXd
     ModelOut,
     ExpOut;
-  int pc=3;
-  ModelZ.resize(200,pc*4);
-  ExpZ.resize(1,pc*4);
+  int pc=3,
+    samples = finish - start,
+    ab=4;
+  ModelZ.resize(samples,pc*ab);
+  ExpZ.resize(1,pc*ab);
   for(int func=0;func<4;func++){
     std::string funcs=std::to_string(func);
     Imodel = ModelMatrix[func];
@@ -822,7 +824,7 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     std::cout << "----------------\n" << std::endl;
 
 
-    ModelZ.block(0,pc*func,200,pc) = ModelOut.block(0,0,200,pc);
+    ModelZ.block(0,pc*func,samples,pc) = ModelOut.block(0,0,samples,pc);
     ExpZ.block(0,pc*func,1,pc) = ExpOut.block(0,0,1,pc);
 
 

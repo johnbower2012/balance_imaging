@@ -98,7 +98,7 @@ void MCMC::step(CCosh dist, Eigen::MatrixXd MinMax){
   }
   for(int j=0;j<ab;j++){
     this->testPosition(0,j*(nmax+2)+1) = 1.0/this->testPosition(0,j*(nmax+2));
-    for(int k=1;k<nmax+1;k++){
+p    for(int k=1;k<nmax+1;k++){
       this->testPosition(0,j*(nmax+2)+1) -= this->testPosition(0,j*(nmax+2)+k+1)*dist.Z(k);
     }
     this->testPosition(0,j*(nmax+2)+1) /= (dist.Z(0));
@@ -191,15 +191,15 @@ void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eige
   History = Eigen::MatrixXd::Zero(Samples,this->paramCount+this->obsCount);
 
   for(int step=0;step<Samples;step++){
-    //this->step();
-    this->step(dist,MinMax);
+    this->step();
+    //this->step(dist,MinMax);
     if(this->NR==true){
       obsEmulator.Emulate_NR(this->testPosition,Y,testValue);
     }else{
       obsEmulator.Emulate(this->testPosition,Y,testValue);
     }      
-    //takeStep = this->decideGaussian(testValue);
-    takeStep = this->decideLorentzian(testValue);
+    takeStep = this->decideGaussian(testValue);
+    //takeStep = this->decideLorentzian(testValue);
     History.block(step,0,1,this->paramCount) = this->Position;
     History.block(step,this->paramCount,1,this->obsCount) = testValue;
 

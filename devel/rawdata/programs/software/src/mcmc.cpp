@@ -191,8 +191,8 @@ void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eige
   History = Eigen::MatrixXd::Zero(Samples,this->paramCount+this->obsCount);
 
   for(int step=0;step<Samples;step++){
-    //this->step();
-    this->step(dist,MinMax);
+    this->step();
+    //this->step(dist,MinMax);
     if(this->NR==true){
       obsEmulator.Emulate_NR(this->testPosition,Y,testValue);
     }else{

@@ -8,39 +8,37 @@
 #include "coshfunc.h"
 #include "emulator.h"
 #include "mcmc.h"
+#include "parametermap.h"
 
 int main(int argc, char* argv[]){
-  //Check that usage is proper: enter the model output to use
-  if(argc != 3)
-    {
-      printf("Usage: ./main start end\n");
-      return 1;
-    }
-  int action=1; //1 = mcmc, 2 = test emulator, 3 = test emulator
+  CParameterMap info;
+  string runname = "run.dat";
+  info.ReadParsFromFile(runname);
+  info.PrintPars();
+  int
+    start = info.getI("START",0),
+    finish = info.getI("FINISH",200),
+    action = info.getI("ACTION",1),
+    ab = info.getI("QUARK_PAIRS",4);
 
   /*************************************
    *    Write Parameters files        *
   *************************************/
   std::string 
-    infoldername="model_output",                     //infoldername = model BF location
-    outfoldername="stat_output",                     //outfoldername = write destination
-    writefilename="parameters.dat",                  //writefilename = paramfile name, should default to parameters.dat
-    rangename=infoldername+"/parameter_priors.dat",    //rangename = rangefile for parameters and paramnames to LCHsample for model run
-    infilename=outfoldername+"/moments_parameters.dat", //output parameters used for model runs
-    delimiter=" ",                                   //delimiter for writing and reading files
-    gabname=outfoldername+"/gabfunctions.dat";          //write prior gab functions, in order eta, uu0, ud0, us0, ss0, uu1, ud1, ...
-
-  //start, finish for model runs to use
-  int
-    start=atoi(argv[1]),
-    finish=atoi(argv[2]),
-    ab=4;
+    infoldername=info.getS("MODEL_FOLDER","model_folder"),          //infoldername = model BF location
+    outfoldername=info.getS("OUTPUT_FOLDER","stat_output"),         //outfoldername = write destination
+    writefilename=info.getS("PARAM_FILE","parameters.dat"),         //writefilename = paramfile name, should default to parameters.dat
+    rangename=infoldername+"/"+info.getS("PARAM_RANGE_FILE","parameter_priors.dat"),    //rangename = rangefile for parameters and paramnames to LCHsample for model run
+    infilename=outfoldername+"/"+info.getS("PARAMS_FILE","parameters_lch.dat"), //output parameters used for model runs
+    delimiter=" ",   //delimiter for writing and reading files
+    gabname=outfoldername+"/"+info.getS("QUARK_FUNC_FILE","gabfunctions.dat");  //write prior gab functions, in order eta, uu0, ud0, us0, ss0, uu1, ud1, ...
 
   Eigen::MatrixXd Parameters;
 
   WriteParameterFiles(rangename, infoldername, writefilename, delimiter,
 		      start, finish, ab, 
 		      Parameters);
+
   WriteFile(infilename,Parameters,delimiter);
 
   /*************************************
@@ -73,16 +71,22 @@ int main(int argc, char* argv[]){
   //  {
   //    RemoveColumn(Parameters,1+i*3);
   //  }
+
   int 
     parameters=Parameters.cols(),
-    observables=ModelZ.cols();
+    observables=ModelZ.cols(),
+    samples=finish-start;
+
   Eigen::MatrixXd 
     plot(finish-start,parameters+observables);
   Eigen::MatrixXd MinMax, ScaledParam;
+
   ScaleMatrixColumnsUniform(Parameters,MinMax,ScaledParam);
+
   plot.block(0,parameters,finish-start,observables) = ModelZ;
 
   plot.block(0,0,finish-start,parameters) = Parameters;
+
   WriteFile(outfoldername+"/trainplot.dat",plot," ");
   plot.block(0,0,finish-start,parameters) = ScaledParam;
   WriteFile(outfoldername+"/scaledtrainplot.dat",plot," ");
@@ -106,7 +110,7 @@ int main(int argc, char* argv[]){
     Beta;
   Eigen::VectorXd
     Width;
-  
+
   //Load Hyperparameters
   //LoadFile("hyperparameters.dat",Hyperparameters," ");
   ConstructHyperparameters(ModelZ,Hyperparameters);
@@ -114,19 +118,20 @@ int main(int argc, char* argv[]){
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
 
-  //for(int i=ab-1;i>-1;i--)
-  //  {
-  //    RemoveRow(range,i*3+1);
-  //    std::cout << i*3+1 << std::endl;
-  //  }
+  for(int i=ab-1;i>-1;i--)
+    {
+      RemoveRow(MinMax,i*3+1);
+      RemoveRow(range,i*3+1);
+      RemoveColumn(ScaledParam,i*3+1);
+    }
 
   //Create Widths
   ConstructWidths(Width,range,parameters,fraction);
-
+  
   linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
   WriteFile(outfoldername+"/scaledbeta.dat",Beta," ");
 
-  int row=5;
+  int row=50;
   ExpZ = ModelZ.row(row);
   std::cout << row << " row: " << ScaledParam.row(row) << " " << ExpZ << std::endl;
   
@@ -134,6 +139,9 @@ int main(int argc, char* argv[]){
   Goal.block(0,0,1,parameters) = Parameters.row(row);
   Goal.block(0,parameters,1,observables) = ExpZ;
   WriteFile(outfoldername+"/target.dat",Goal,delimiter);
+
+  parameters = ScaledParam.cols();
+  Goal = Eigen::MatrixXd::Zero(1,parameters+observables);
   Goal.block(0,0,1,parameters) = ScaledParam.row(row);
   WriteFile(outfoldername+"/scaledtarget.dat",Goal,delimiter);
 
@@ -141,8 +149,7 @@ int main(int argc, char* argv[]){
   bool regression=false;
   MCMC mcmc(ExpZ,range,Width,regression);
   mcmc.setPosition();
-  int NSamples=100000,
-    samples = finish - start;
+  int NSamples=100000;
 
   Eigen::MatrixXd History;
   printf("Step width fraction: %f\n",fraction);
@@ -175,17 +182,18 @@ int main(int argc, char* argv[]){
 	  ntrace(i,j) = (ntrace(i,j)*(MinMax(j,1) - MinMax(j,0)) + MinMax(j,0));
 	}
     }
-  /*
+  
   parameters += 4;
   Eigen::MatrixXd
     fullposterior = Eigen::MatrixXd::Zero(posterior.rows(),parameters),
     fullntrace = Eigen::MatrixXd::Zero(ntrace.rows(),parameters);
   int nmax=1;
+
   CCosh dist(5);
   for(int i=0;i<posterior.rows();i++){
     for(int j=0;j<ab;j++){
-      fullposterior(i,j*(nmax+2)) = posterior(i,j*(nmax+2));
-      fullposterior(i,j*(nmax+2)+2) = posterior(i,j*(nmax+2)+2);
+      fullposterior(i,j*(nmax+2)) = posterior(i,j*(nmax+1));
+      fullposterior(i,j*(nmax+2)+2) = posterior(i,j*(nmax+1)+1);
       fullposterior(i,j*(nmax+2)+1) = 1.0/fullposterior(i,j*(nmax+2));
       for(int k=1;k<nmax+1;k++){
 	fullposterior(i,j*(nmax+2)+1) -= fullposterior(i,j*(nmax+2)+k+1)*dist.Z(k);
@@ -193,21 +201,21 @@ int main(int argc, char* argv[]){
       fullposterior(i,j*(nmax+2)+1) /= (dist.Z(0));
     }
   }      
-  */
+
   posteriorname = outfoldername + "/posterior.dat";
   ExtractOnly20(posterior,ntrace);
   WriteFile(posteriorname,posterior,delimiter);
 
   gabname = outfoldername + "/posteriorgabfunctions.dat";
-  WriteGABFunctions(gabname,posterior,delimiter,ab);
+  WriteGABFunctions(gabname,fullposterior,delimiter,ab);
 
   WriteCSVFile(outfoldername+"/mcmctrace.csv",paramNames,ntrace,",");
   
   Eigen::VectorXd
-    avg = Eigen::VectorXd::Zero(observables);
+    avg = Eigen::VectorXd::Zero(parameters-4);
   AverageColumns(avg,ntrace);
   Eigen::MatrixXd
-    Avg = Eigen::MatrixXd::Zero(1,observables);
+    Avg = Eigen::MatrixXd::Zero(1,parameters-4);
   Avg.row(0) = avg;
   WriteFile(outfoldername+"/mcmcmean.dat",Avg,delimiter);
 }
@@ -216,82 +224,17 @@ int main(int argc, char* argv[]){
   /*************************************
    *   Conduct Fit Analysis           *
   *************************************/
-  if(action==2)
-    {
-
-  int 
-    test=finish-start;
-  std::vector<std::string> 
-    paramNames;
-  Eigen::MatrixXd 
-    Hyperparameters,
-    range,
-    Beta,
-    testY,
-    print = Eigen::MatrixXd::Zero(finish-start, parameters+observables*4);
-
-  Eigen::VectorXd Width(parameters);
-
-  LoadParamFile(rangename,paramNames,range,delimiter);
-  //printf("Scaling range.\n");
-
-  //Create & Write Beta matrix
-  int rows = finish-start;
-
-  for(int row=0;row<rows;row++){
-    //Eigen::MatrixXd testX = Parameters.row(row);
-    Eigen::MatrixXd testX = ScaledParam.row(row);
-
-    //Eigen::MatrixXd testY_ = ModelZ.row(row),
-    // PM = Parameters,
-    // MZ = ModelZ;
-    Eigen::MatrixXd testY_ = ModelZ.block(row,0,1,observables),
-      //PM = Parameters,
-      PM = ScaledParam,
-      MZ = ModelZ;
-
-    RemoveRow(PM,row);
-    RemoveRow(MZ,row);
-    //Load Hyperparameters
-    ConstructHyperparameters(MZ,Hyperparameters);
-
-    linearRegressionLeastSquares(MZ,PM,Beta);
-
-    std::cout << std::endl;
-    std::cout << "row " << row << std::endl;
-    std::cout << "testX : " << testX << std::endl;
-    std::cout << "ModelY: " << testY_ << std::endl;
-    print.block(row,0,1,parameters) = testX;
-
-    Eigen::MatrixXd Fit;
-    emulator emulation(PM, Hyperparameters, Beta);
-    emulation.Emulate(testX, MZ, testY);
-    std::cout << "RtestY:" << testY << std::endl;
-    ComputeFit(testY_,testY,Fit);
-    std::cout << "Fit   :" << Fit << std::endl;
-    print.block(row,parameters,1,observables) = testY;
-    print.block(row,parameters+observables,1,observables) = Fit.block(0,1,1,observables);    
-
-    emulation.Emulate_NR(testX, MZ, testY);
-    std::cout << "testY :" << testY << std::endl;
-    ComputeFit(testY_,testY,Fit);
-    std::cout << "Fit   :" << Fit << std::endl << std::endl;
-    print.block(row,parameters+2*observables,1,observables) = testY;
-    print.block(row,parameters+3*observables,1,observables) = Fit.block(0,1,1,observables);    
-  }
-  WriteFile(infoldername+"/fit.dat",print,delimiter);
-    }
   Eigen::MatrixXd
-    print = Eigen::MatrixXd::Zero(200,parameters+observables);
+    print = Eigen::MatrixXd::Zero(finish-start,parameters+observables);
 
-  if(action==3)
+  if(action==2)
     {
       for(int i=ab-1;i>-1;i--)
 	{
 	  RemoveColumn(ScaledParam,1+i*3);
 	}
       parameters = ScaledParam.cols();
-      for(int i=0;i<200;i++){
+      for(int i=0;i<finish-start;i++){
 	int 
 	  test=finish-start;
 	std::vector<std::string> 
@@ -305,7 +248,7 @@ int main(int argc, char* argv[]){
   
       //Load Hyperparameters
       //LoadFile("hyperparameters.dat",Hyperparameters," ");
-      int row=i,
+	int row=i;
 	samples = ModelZ.rows();
       Eigen::MatrixXd
 	testX = ScaledParam.row(row),
@@ -322,7 +265,7 @@ int main(int argc, char* argv[]){
       linearRegressionLeastSquares(trainY,trainX,Beta);
 
       emulator emulation(trainX, Hyperparameters, Beta);
-      emulation.Emulate(testX,trainY,outMatrix);
+      emulation.Emulate_NR(testX,trainY,outMatrix);
 
       print.block(row,0,1,parameters) = testX;
       print.block(row,parameters,1,observables) = outMatrix;

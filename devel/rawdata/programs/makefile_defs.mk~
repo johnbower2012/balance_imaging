@@ -1,5 +1,5 @@
 ## output file name
-MAIN=gab
+MAIN=main
 
 ## suffixes used:
 #.SUFFIXES: .cpp .o .x .h
