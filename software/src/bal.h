@@ -49,6 +49,8 @@ public:
 	int GetAB(int a,int b);
 	void SetRho(); // Sets dN/dy for each species
 	void WriteBF(); // Writes Balance Functions vs. Dely
+	void WriteBFVar(); // Creates BFVar File
+	void WriteBFVar(int NSamples); // Appends var to file with current samples used
 	void WriteG(); // Writes Balance Function Numerator vs. Dely
 	void PrintBF(); // Prints Balance Functions vs. Dely on Screen
 	void PrintG(); // Prints Correlations vs. Dely on Screen
@@ -72,6 +74,7 @@ public:
 	double **chi,**chi_inv,**mu,**g_q; // these are correlations and are [3][3] matrices
 	double ***wB; // these are weights[ires][jres][ab]
 	double **bf,**bf_had,**bf_qgp,**bf_resdecay; // this is the BF[idely] for specific ICODE,JCODE
+	double **bf_mean, **bf_sq; // used for calculating variance of BF points
 	double **bf_phi,**bf_had_phi,**bf_qgp_phi,**bf_resdecay_phi; // same for BF[idelphi]
 	double ***bf_rplane,***bf_had_rplane,***bf_qgp_rplane,***bf_resdecay_rplane,*denom,*denom_phi,**denom_rplane;
 	double *rhoj,*rhoi;

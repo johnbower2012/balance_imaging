@@ -18,7 +18,7 @@ void CBalance::CalcBF(){
 	int isample,ab;
 	double DELPHI=PI/double(NPHIBINS);
 	CResInfo *resinfoi,*resinfoj;
-
+	WriteBFVar();
 	Mixed.resize(NBAL);
 	sigmaN.resize(NBAL);
 	sigmaE.resize(NBAL);
@@ -37,7 +37,7 @@ void CBalance::CalcBF(){
 	for(ibal=0;ibal<NBAL;ibal++){
 		normalization[ibal]=v2[ibal]=v2s[ibal]=v2c[ibal]=cosdphi[ibal]=rhoi[ibal]=rhoj[ibal]=0.0;
 		for(ibin=0;ibin<NBINS;ibin++)
-			bf[ibal][ibin]=bf_had[ibal][ibin]=bf_resdecay[ibal][ibin]=bf_qgp[ibal][ibin]=0.0;
+			bf[ibal][ibin]=bf_mean[ibal][ibin]=bf_sq[ibal][ibin]=bf_had[ibal][ibin]=bf_resdecay[ibal][ibin]=bf_qgp[ibal][ibin]=0.0;
 		for(iphibin=0;iphibin<NPHIBINS;iphibin++)
 			bf_phi[ibal][iphibin]=bf_had_phi[ibal][iphibin]=bf_resdecay_phi[ibal][iphibin]=bf_qgp_phi[ibal][iphibin]=0.0;
 	}
@@ -153,15 +153,28 @@ void CBalance::CalcBF(){
 				}
 			}
 		}
-		if(10*(isample+1)%NSAMPLE==0)
+		for(ibal=0;ibal<NBAL;ibal++){
+		  double Denom = denom[ibal]*DELY;
+		  if(Denom!=0.0){
+		    for(ibin=0;ibin<NBINS;ibin++){
+		      double BF=bf_had[ibal][ibin]+bf_qgp[ibal][ibin]+bf_resdecay[ibal][ibin];
+		      BF = BF/Denom;
+		      bf_mean[ibal][ibin] += BF;
+		      bf_sq[ibal][ibin] += BF*BF;
+		    }
+		  }
+		}
+		if(10*(isample+1)%NSAMPLE==0){
 			printf("finished %g percent\n",(isample+1)*100.0/double(NSAMPLE));
+			WriteBFVar(isample+1);
+		}
+		
 	}
 	// NORMALIZE BFs
 	meanpt_pion=meanpt[0]/mult[0];
 	meanpt_kaon=meanpt[1]/mult[1];
 	meanpt_proton=meanpt[2]/mult[2];
-	printf("<pt>= %g for pions, %g for kaons, %g for nucleons\n",
-	meanpt_pion,meanpt_kaon,meanpt_proton);
+	printf("<pt>= %g for pions, %g for kaons, %g for nucleons\n",meanpt_pion,meanpt_kaon,meanpt_proton);
 
 	double deltaE,deltaN,Ebar,d ,SN;
 	for(ibal=0;ibal<NBAL;ibal++){

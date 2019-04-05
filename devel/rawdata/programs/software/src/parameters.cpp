@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
     foldername="model_output",
     writefilename="parameters.dat",
     rangename=foldername+"/parameter_priors.dat",
-    infilename=foldername+"/moments_parameters.dat",
+    infilename=foldername+"/parameters_lch.dat",
+    gabname=foldername+"/gabfunctions.dat",
     delimiter=" ";
   //start, finish for model runs to use
   int
@@ -34,6 +35,7 @@ int main(int argc, char* argv[])
 		      start, finish, ab, 
 		      Parameters);
   WriteFile(infilename,Parameters,delimiter);
+  WriteGABFunctions(gabname,Parameters,delimiter,ab);
   std::string cmd = "for((i="+std::to_string(start)+";i<"+std::to_string(finish)+";i++)); do fn=$(printf '"+foldername+"/run%04d/' $i); cp -v "+foldername+"/fixed_parameters.dat $fn; done";
   system(cmd.c_str());
 }

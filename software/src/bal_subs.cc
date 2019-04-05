@@ -72,6 +72,8 @@ void CBalance::InitBFArrays(){
 	if(bf!=NULL){
 		for(ibal=0;ibal<NBAL;ibal++){
 			delete [] bf[ibal];
+			delete [] bf_mean[ibal];
+			delete [] bf_sq[ibal];
 			delete [] bf_had[ibal];
 			delete [] bf_qgp[ibal];
 			delete [] bf_resdecay[ibal];
@@ -81,6 +83,8 @@ void CBalance::InitBFArrays(){
 			delete [] bf_resdecay_phi[ibal];
 		}
 		delete [] bf;
+		delete [] bf_mean;
+		delete [] bf_sq;
 		delete [] bf_had;
 		delete [] bf_qgp;
 		delete [] bf_resdecay;
@@ -121,17 +125,21 @@ void CBalance::InitBFArrays(){
 	NBINS=lrint((acceptance_i->ETAMAX+acceptance_j->ETAMAX)/DELY);
 	denom=new double[NBAL];
 	bf=new double*[NBAL];
+	bf_mean=new double*[NBAL];
+	bf_sq=new double*[NBAL];
 	bf_had=new double*[NBAL];
 	bf_qgp=new double*[NBAL];
 	bf_resdecay=new double*[NBAL];
 	for(ibal=0;ibal<NBAL;ibal++){
 		denom[ibal]=0.0;
 		bf[ibal]=new double[NBINS];
+		bf_mean[ibal]=new double[NBINS];
+		bf_sq[ibal]=new double[NBINS];
 		bf_had[ibal]=new double[NBINS];
 		bf_qgp[ibal]=new double[NBINS];
 		bf_resdecay[ibal]=new double[NBINS];
 		for(ibin=0;ibin<NBINS;ibin++){
-			bf[ibal][ibin]=bf_had[ibal][ibin]=bf_qgp[ibal][ibin]=bf_resdecay[ibal][ibin]=0.0;
+			bf[ibal][ibin]=bf_mean[ibal][ibin]=bf_sq[ibal][ibin]=bf_had[ibal][ibin]=bf_qgp[ibal][ibin]=bf_resdecay[ibal][ibin]=0.0;
 		}
 	}
 	NPHIBINS=36;
@@ -518,6 +526,65 @@ void CBalance::PrintBF(){
 			for(ibin=0;ibin<NBINS;ibin++){
 				printf("%5.3f %7.4f\n",DELY*(0.5+ibin),bf[ibal][ibin]);
 			}
+		}
+	}
+}
+void CBalance::WriteBFVar(){
+	int ibin,iphi,iplane,ibal;
+	string dirname,filename,command;
+	FILE *fptr;
+	char ijname[60];
+	dirname="model_output/"+PARSDIRNAME;
+	command="mkdir -p "+dirname;
+	system(command.c_str());
+	for(ibal=0;ibal<NBAL;ibal++){
+		if(ALLCHARGES[ibal] || (abs(ICODE[ibal])!=2112 && abs(JCODE[ibal])!=2112)){
+			if(!ALLCHARGES[ibal])
+			  sprintf(ijname,"I%d_J%d_var.dat",abs(ICODE[ibal]),abs(JCODE[ibal]));
+			else
+				sprintf(ijname,"allcharges_var.dat");
+			dirname="model_output/"+PARSDIRNAME;
+			command="mkdir -p "+dirname;
+			system(command.c_str());
+			filename=dirname+"/"+string(ijname);
+			fptr=fopen(filename.c_str(),"w");
+			fprintf(fptr,"# ICODE=%d, JCODE=%d\n",ICODE[ibal],JCODE[ibal]);
+			fprintf(fptr,"# Normalized GAUSSIAN BF, SIGMA_GAUSS=%g\n",SIGMA_GAUSS);
+			fprintf(fptr,"# NSAMPLE=%d, Tblast=%g, UPERPblast(x,y)=(%g,%g)\n",NSAMPLE,T,UPERPX,UPERPY);
+			fprintf(fptr,"# BARYON_FUDGE=%g\n",BARYON_FUDGE);
+			fprintf(fptr,"# ------- normalization=%g -----------------\n",normalization[ibal]);
+			fprintf(fptr,"#dely    NSamples   BF_Var\n");
+			fclose(fptr);
+		}
+	}
+}
+void CBalance::WriteBFVar(int Samples){
+	int ibin,iphi,iplane,ibal;
+	string dirname,filename,command;
+	double mean,sq,den;
+	FILE *fptr;
+	char ijname[60];
+	dirname="model_output/"+PARSDIRNAME;
+	command="mkdir -p "+dirname;
+	system(command.c_str());
+	for(ibal=0;ibal<NBAL;ibal++){
+		if(ALLCHARGES[ibal] || (abs(ICODE[ibal])!=2112 && abs(JCODE[ibal])!=2112)){
+			if(!ALLCHARGES[ibal])
+			  sprintf(ijname,"I%d_J%d_var.dat",abs(ICODE[ibal]),abs(JCODE[ibal]));
+			else
+				sprintf(ijname,"allcharges_var.dat");
+			dirname="model_output/"+PARSDIRNAME;
+			command="mkdir -p "+dirname;
+			system(command.c_str());
+			filename=dirname+"/"+string(ijname);
+			fptr=fopen(filename.c_str(),"a");
+			den=denom[ibal]*DELY;
+			for(ibin=0;ibin<NBINS;ibin++){
+			  mean = bf_mean[ibal][ibin]/(double) Samples;
+			  sq = bf_sq[ibal][ibin]/(double) Samples;
+			  fprintf(fptr,"%5.3f  %7.4f %7.4f %7.4f %d\n",DELY*(0.5+ibin),mean,sq,sqrt(sq-mean*mean),Samples);
+			}
+			fclose(fptr);
 		}
 	}
 }
