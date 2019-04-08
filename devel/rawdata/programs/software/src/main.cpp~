@@ -61,7 +61,6 @@ int main(int argc, char* argv[]){
   Eigen::MatrixXd 
     ModelZ,
     ExpZ;
-
   ConductModelAnalysis(infoldername, outfoldername, delimiter, start, finish, ModelZ, ExpZ);
 
   /*************************************

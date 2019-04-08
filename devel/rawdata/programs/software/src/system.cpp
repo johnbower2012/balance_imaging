@@ -204,7 +204,7 @@ void LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen:
     printf("Unable to open file.\n");
   }
 }
-void LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix, Eigen::MatrixXd &MatrixError){
+void LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix, Eigen::MatrixXd &MatrixError,Eigen::MatrixXd &MatrixVar){
   Eigen::MatrixXd matrix;
   char buffer[100];
   std::fstream fileOpen;
@@ -218,6 +218,7 @@ void LoadDataFile(std::string folder, std::string filename, std::string delimite
     cols=finish-start;
   Matrix=Eigen::MatrixXd::Zero(rows,cols);
   MatrixError=Eigen::MatrixXd::Zero(rows,cols);
+  MatrixVar=Eigen::MatrixXd::Zero(rows,cols);
 
   for(int i=0;i<cols;i++){
     sprintf(buffer,"%s/run%04d/%s",folder.c_str(),i+start,filename.c_str());
@@ -226,20 +227,25 @@ void LoadDataFile(std::string folder, std::string filename, std::string delimite
     for(int j=0;j<rows;j++){
       Matrix(j,i) = matrix(j,column);
       MatrixError(j,i) = matrix(j,2);
+      if(matrix.cols()==4){
+	MatrixVar(j,i) = matrix(j,3);
+      }
     }	
   }
 }
-void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix, std::vector<Eigen::MatrixXd> &MatrixError){
+void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix, std::vector<Eigen::MatrixXd> &MatrixError,std::vector<Eigen::MatrixXd> &MatrixVar){
   int files=filenames.size();
   Matrix = std::vector<Eigen::MatrixXd> (files);
   MatrixError = std::vector<Eigen::MatrixXd> (files);
+  MatrixVar = std::vector<Eigen::MatrixXd> (files);
   for(int file=0;file<files;file++){
-    LoadDataFile(folder, filenames[file], delimiter, start, finish, column, Matrix[file], MatrixError[file]);
+    LoadDataFile(folder, filenames[file], delimiter, start, finish, column, Matrix[file], MatrixError[file], MatrixVar[file]);
   }
 }
 void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::string> expfilenames,
 		     std::vector<Eigen::MatrixXd> &ModelMatrix, std::vector<Eigen::MatrixXd> &ExpMatrix,
 		     std::vector<Eigen::MatrixXd> &ModelError, std::vector<Eigen::MatrixXd> &ExpError,
+		     std::vector<Eigen::MatrixXd> &ModelVar, std::vector<Eigen::MatrixXd> &ExpVar,
 		     Eigen::VectorXd &modeldy, Eigen::VectorXd &expdy,
 		     std::string foldername, std::string delimiter,
 		     int start, int finish)
@@ -251,40 +257,42 @@ void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::s
     expfiles = expfilenames.size();
   //Model && Exp Data Matrices
   Eigen::MatrixXd
-    Dy,matrix;
+    Dy,matrix,matrix2;
 
   //Load Model && Exp Data
-  LoadDataFiles(foldername, modelfilenames, delimiter, start, finish, column, ModelMatrix, ModelError);
-  LoadDataFiles(foldername, expfilenames, delimiter, 0, 1, column, ExpMatrix, ExpError);
+  LoadDataFiles(foldername, modelfilenames, delimiter, start, finish, column, ModelMatrix, ModelError, ModelVar);
+  LoadDataFiles(foldername, expfilenames, delimiter, 0, 1, column, ExpMatrix, ExpError, ExpVar);
 
   if(removeValue)
     {
       printf("Removing first row of model data...\n");
-      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy,matrix);
+      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy,matrix,matrix2);
       RemoveRow(Dy,0);
       modeldy = Dy.col(0);
       for(int i=0;i<ModelMatrix.size();i++)
 	{
 	  RemoveRow(ModelMatrix[i],0);
 	  RemoveRow(ModelError[i],0);
+	  RemoveRow(ModelVar[i],0);
 	}
 
       printf("Removing first row of exp data...\n");
-      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy,matrix);
+      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy,matrix,matrix2);
       RemoveRow(Dy,0);
       expdy = Dy.col(0);
       for(int i=0;i<ExpMatrix.size();i++)
 	{
 	  RemoveRow(ExpMatrix[i],0);
 	  RemoveRow(ExpError[i],0);
+	  RemoveRow(ExpVar[i],0);
 	}
       }
   else
     {
-      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy,matrix);
+      LoadDataFile(foldername, modelfilenames[0], delimiter, 0, 1, 0, Dy,matrix,matrix2);
       modeldy = Dy.col(0);
 
-      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy,matrix);
+      LoadDataFile(foldername, expfilenames[0], delimiter, 0, 1, 0, Dy,matrix,matrix2);
       expdy = Dy.col(0);
 
     }

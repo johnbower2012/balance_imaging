@@ -642,8 +642,10 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
   std::vector<Eigen::MatrixXd> 
     ModelMatrix,
     ModelError,
+    ModelVar,
     ExpMatrix,
-    ExpError;
+    ExpError,
+    ExpVar;
   Eigen::VectorXd
     modeldy,
     expdy,
@@ -652,11 +654,13 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     TotalError,
     Imodel,
     Imodelerror,
+    Imodelvar,
     Iexp,
     Iexperror;
   LoadMEDataFiles(modelfilenames, expfilenames,
 		  ModelMatrix, ExpMatrix,
 		  ModelError, ExpError,
+		  ModelVar, ExpVar,
 		  modeldy, expdy,
 		  infoldername, delimiter,
 		  start, finish);
@@ -689,7 +693,9 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     ExpTilde,
 
     Covariance,
-    EigenVectors;
+    EigenVectors,
+
+    Placeholder;
   Eigen::VectorXd
     ExpPercError,
     ModelVarErrorV,
@@ -785,19 +791,21 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     ab=4;
   ModelZ.resize(samples,pc*ab);
   ExpZ.resize(1,pc*ab);
+
   for(int func=0;func<4;func++){
     std::string funcs=std::to_string(func);
     Imodel = ModelMatrix[func];
     Imodelerror = ModelError[func];
+    Imodelvar = ModelVar[func];
     Iexp = ExpMatrix[func].block(0,0,17,1);
     Iexperror = ExpError[func].block(0,0,17,1);
 
     int
       observables = Imodel.rows();
-
     Iexperror_vec = Iexperror.col(0);
-
-    SumInQuadrature(TotalError,Imodelerror,Iexperror_vec);
+    
+    SumInQuadrature(Placeholder,Imodelerror,Imodelvar);
+    SumInQuadrature(TotalError,Placeholder,Iexperror_vec);
 
     AverageRows(Mean,Imodel);
 

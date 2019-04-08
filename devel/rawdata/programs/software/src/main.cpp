@@ -130,7 +130,7 @@ int main(int argc, char* argv[]){
   linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
   WriteFile(outfoldername+"/scaledbeta.dat",Beta," ");
 
-  int row=50;
+  int row=5;
   ExpZ = ModelZ.row(row);
   std::cout << row << " row: " << ScaledParam.row(row) << " " << ExpZ << std::endl;
   
