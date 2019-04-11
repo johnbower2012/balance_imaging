@@ -1,11 +1,33 @@
 #include "system.h"
 
-void Mkdir(char folder[100]){
+bool BothAreSpaces(char lhs, char rhs){ 
+  return (lhs == rhs) && (lhs == ' '); 
+}
+void RemoveSpaces(std::string& str){
+  std::string::iterator new_end = std::unique(str.begin(), str.end(), BothAreSpaces);
+  str.erase(new_end, str.end()); 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+CSystem::CSystem(){
+  this->delimiter = " ";
+}
+CSystem::CSystem(std::string Delimiter){
+  this->delimiter = Delimiter;
+}
+void CSystem::setDelimiter(std::string Delimiter){
+  this->delimiter = Delimiter;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+void CSystem::Mkdir(std::string folder){
   char command[150];
-  sprintf(command,"if [ ! -d %s ]; then mkdir -p %s; fi",folder,folder);
+  sprintf(command,"if [ ! -d %s ]; then mkdir -p %s; fi",folder.c_str(),folder.c_str());
   system (command);
 }
-void MkdirLoop(std::string folder,int start, int finish){
+void CSystem::MkdirLoop(std::string folder,int start, int finish){
   char command[150],fold[120];
   for(int i=start;i<finish;i++){
     sprintf(fold,"%s/run%04d",folder.c_str(),i);
@@ -13,18 +35,12 @@ void MkdirLoop(std::string folder,int start, int finish){
     system (command);
   }
 }
-void Touch(char file[100]){
+void CSystem::Touch(std::string file){
   char command[150];
-  sprintf(command,"if [ ! -f %s ]; then touch %s; fi",file,file);
+  sprintf(command,"if [ ! -f %s ]; then touch %s; fi",file.c_str(),file.c_str());
   system (command);
 }
-
-bool BothAreSpaces(char lhs, char rhs) { return (lhs == rhs) && (lhs == ' '); }
-void RemoveSpaces(std::string& str){
-  std::string::iterator new_end = std::unique(str.begin(), str.end(), BothAreSpaces);
-  str.erase(new_end, str.end()); 
-}
-void PrintFile(std::string filename){
+void CSystem::PrintFile(std::string filename){
   std::string line;
   std::fstream myfile(filename,std::ios::in);
   if(myfile.is_open()){
@@ -36,21 +52,21 @@ void PrintFile(std::string filename){
     printf("Unable to open file.\n");
   }
 }
-void PrintFormattedFile(std::string filename,std::string delimiter){
+void CSystem::PrintFormattedFile(std::string filename){
   std::string line;
   std::fstream myfile(filename,std::ios::in);
   if(myfile.is_open()){
     while(getline(myfile,line)){
       if(line[0]!='#' && line!="\0"){
 	RemoveSpaces(line);
-	if(line.length()<delimiter.length()){
+	if(line.length()<this->delimiter.length()){
 	}else{
-	  if(line.substr(line.length()-delimiter.length(),line.length()) != delimiter){
-	    line.append(delimiter);
+	  if(line.substr(line.length()-this->delimiter.length(),line.length()) != this->delimiter){
+	    line.append(this->delimiter);
 	  }
 	}
-	if(line.find(delimiter) == 0){
-	  line.erase(0,delimiter.length());
+	if(line.find(this->delimiter) == 0){
+	  line.erase(0,this->delimiter.length());
 	}
 	printf("%s\n",line.c_str());
       }
@@ -60,7 +76,7 @@ void PrintFormattedFile(std::string filename,std::string delimiter){
     printf("Unable to open file.\n");
   }
 }
-void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimiter){
+Eigen::MatrixXd CSystem::LoadFile(std::string filename){
   std::string line,
     number;
   std::size_t pos,length;
@@ -68,23 +84,24 @@ void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimite
   int rows=0,row=0,
     cols=0,col=0,
     max=0;
+  Eigen::MatrixXd Matrix;
 
   if(myfile.is_open()){
     while(getline(myfile,line)){
       cols=0;
       if( line[0]!='#' && line!="\0" ){
 	RemoveSpaces(line);
-	if(line.length()<delimiter.length()){
+	if(line.length()<this->delimiter.length()){
 	}else{
-	  if(line.substr(line.length()-delimiter.length(),line.length()) != delimiter){
-	    line.append(delimiter);
+	  if(line.substr(line.length()-this->delimiter.length(),line.length()) != this->delimiter){
+	    line.append(this->delimiter);
 	  }
 	}
-	if(line.find(delimiter) == 0){
-	  line.erase(0,delimiter.length());
+	if(line.find(this->delimiter) == 0){
+	  line.erase(0,this->delimiter.length());
 	}
-	while( (pos=line.find(delimiter)) != std::string::npos){
-	  line.erase(0,pos+delimiter.length());
+	while( (pos=line.find(this->delimiter)) != std::string::npos){
+	  line.erase(0,pos+this->delimiter.length());
 	  cols++;
 	}
 	if(cols>max){
@@ -97,6 +114,7 @@ void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimite
     myfile.close();
   }else{
     printf("Unable to open %s.\n",filename.c_str());
+    exit(1);
   }
 
   Matrix = Eigen::MatrixXd::Zero(rows,cols);
@@ -105,20 +123,20 @@ void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimite
     while(getline(myfile,line)){
       if(line[0]!='#' && line!="\0"){
 	RemoveSpaces(line);
-	if(line.length()<delimiter.length()){
+	if(line.length()<this->delimiter.length()){
 	}else{
-	  if(line.substr(line.length()-delimiter.length(),line.length()) != delimiter){
-	    line.append(delimiter);
+	  if(line.substr(line.length()-this->delimiter.length(),line.length()) != this->delimiter){
+	    line.append(this->delimiter);
 	  }
 	}
-	if(line.find(delimiter) == 0){
-	  line.erase(0,delimiter.length());
+	if(line.find(this->delimiter) == 0){
+	  line.erase(0,this->delimiter.length());
 	}
 	col=0;
-	while( (pos=line.find(delimiter)) != std::string::npos){
-	  number=line.substr(0,pos+delimiter.length());
+	while( (pos=line.find(this->delimiter)) != std::string::npos){
+	  number=line.substr(0,pos+this->delimiter.length());
 	  Matrix(row,col) = std::stof( number );
-	  line.erase(0,pos+delimiter.length());
+	  line.erase(0,pos+this->delimiter.length());
 	  col++;
 	}
 	row++;
@@ -127,9 +145,80 @@ void LoadFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimite
     myfile.close();
   }else{
     printf("Unable to open %s.\n",filename.c_str());
+    exit(1);
   }
+  return Matrix;
 }
-void LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen::MatrixXd &Matrix,std::string delimiter){
+std::vector<Eigen::MatrixXd> CSystem::LoadFiles(std::string folder, std::string filename, int start, int finish){
+  std::vector<Eigen::MatrixXd> loadMatrix = std::vector<Eigen::MatrixXd> (finish-start);
+  char buffer[100];
+  std::string line, file;
+
+  for(int i=start;i<finish;i++){
+    sprintf(buffer,"%s/run%04d/%s",folder.c_str(),i,filename.c_str());
+    file=buffer;
+    loadMatrix[i]=this->LoadFile(file);
+  }
+
+  return loadMatrix;
+}
+
+void CSystem::WriteFile(std::string filename, Eigen::MatrixXd &Matrix){
+  std::string line;
+  int rows = Matrix.rows(),
+    cols = Matrix.cols();
+  std::fstream ofile(filename,std::ios::out);
+  if(ofile.is_open()){
+    for(int row=0;row<rows;row++){
+      for(int col=0;col<cols;col++){
+	ofile << Matrix(row,col) << this->delimiter;
+      }
+      ofile << "\n";
+    }
+    ofile.close();
+  }else{
+    printf("Unable to open %s.\n",filename.c_str());
+  }  
+}
+void CSystem::WriteFile(std::string filename, Eigen::VectorXd &Vector){
+  std::string line;
+  int rows = Vector.size();
+  std::fstream ofile(filename,std::ios::out);
+  if(ofile.is_open()){
+    for(int row=0;row<rows;row++){
+      ofile << Vector(row) << this->delimiter;
+    }
+    ofile << "\n";
+    ofile.close();
+  }else{
+    printf("Unable to open %s.\n",filename.c_str());
+  }  
+}
+void CSystem::WriteCSVFile(std::string filename, std::vector<std::string> header, Eigen::MatrixXd &Matrix){
+  std::string line;
+  int rows = Matrix.rows(),
+    cols = Matrix.cols();
+  std::fstream ofile(filename,std::ios::out);
+  if(ofile.is_open()){
+    for(int col=0;col<cols-1;col++){
+      ofile << "'" << header[col] << "',";
+    }
+    ofile << "'" << header[cols-1] << "'\n";
+    for(int row=0;row<rows;row++){
+      for(int col=0;col<cols-1;col++){
+	ofile << Matrix(row,col) << ",";
+      }
+      ofile << Matrix(row,cols-1) << "\n";
+    }
+    ofile.close();
+  }else{
+    printf("Unable to open %s.\n",filename.c_str());
+  }  
+}
+
+
+/*
+void CSystem::LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen::MatrixXd &Matrix,std::string delimiter){
   std::string line,
     number;
   std::size_t pos,length;
@@ -204,7 +293,7 @@ void LoadParamFile(std::string filename, std::vector<std::string> &Names, Eigen:
     printf("Unable to open file.\n");
   }
 }
-void LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix, Eigen::MatrixXd &MatrixError,Eigen::MatrixXd &MatrixVar){
+void CSystem::LoadDataFile(std::string folder, std::string filename, std::string delimiter, int start, int finish, int column, Eigen::MatrixXd &Matrix, Eigen::MatrixXd &MatrixError,Eigen::MatrixXd &MatrixVar){
   Eigen::MatrixXd matrix;
   char buffer[100];
   std::fstream fileOpen;
@@ -233,7 +322,8 @@ void LoadDataFile(std::string folder, std::string filename, std::string delimite
     }	
   }
 }
-void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix, std::vector<Eigen::MatrixXd> &MatrixError,std::vector<Eigen::MatrixXd> &MatrixVar){
+
+void CSystem::LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::string delimiter, int start, int finish, int column, std::vector<Eigen::MatrixXd> &Matrix, std::vector<Eigen::MatrixXd> &MatrixError,std::vector<Eigen::MatrixXd> &MatrixVar){
   int files=filenames.size();
   Matrix = std::vector<Eigen::MatrixXd> (files);
   MatrixError = std::vector<Eigen::MatrixXd> (files);
@@ -242,7 +332,7 @@ void LoadDataFiles(std::string folder, std::vector<std::string> filenames, std::
     LoadDataFile(folder, filenames[file], delimiter, start, finish, column, Matrix[file], MatrixError[file], MatrixVar[file]);
   }
 }
-void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::string> expfilenames,
+void CSystem::LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::string> expfilenames,
 		     std::vector<Eigen::MatrixXd> &ModelMatrix, std::vector<Eigen::MatrixXd> &ExpMatrix,
 		     std::vector<Eigen::MatrixXd> &ModelError, std::vector<Eigen::MatrixXd> &ExpError,
 		     std::vector<Eigen::MatrixXd> &ModelVar, std::vector<Eigen::MatrixXd> &ExpVar,
@@ -298,61 +388,7 @@ void LoadMEDataFiles(std::vector<std::string> modelfilenames, std::vector<std::s
     }
 }
 
-
-
-void WriteFile(std::string filename, Eigen::MatrixXd &Matrix,std::string delimiter){
-  std::string line;
-  int rows = Matrix.rows(),
-    cols = Matrix.cols();
-  std::fstream ofile(filename,std::ios::out);
-  if(ofile.is_open()){
-    for(int row=0;row<rows;row++){
-      for(int col=0;col<cols;col++){
-	ofile << Matrix(row,col) << delimiter;
-      }
-      ofile << "\n";
-    }
-    ofile.close();
-  }else{
-    printf("Unable to open %s.\n",filename.c_str());
-  }  
-}
-void WriteFile(std::string filename, Eigen::VectorXd &Vector,std::string delimiter){
-  std::string line;
-  int rows = Vector.size();
-  std::fstream ofile(filename,std::ios::out);
-  if(ofile.is_open()){
-    for(int row=0;row<rows;row++){
-      ofile << Vector(row) << delimiter;
-    }
-    ofile << "\n";
-    ofile.close();
-  }else{
-    printf("Unable to open %s.\n",filename.c_str());
-  }  
-}
-void WriteCSVFile(std::string filename, std::vector<std::string> header, Eigen::MatrixXd &Matrix,std::string delimiter){
-  std::string line;
-  int rows = Matrix.rows(),
-    cols = Matrix.cols();
-  std::fstream ofile(filename,std::ios::out);
-  if(ofile.is_open()){
-    for(int col=0;col<cols-1;col++){
-      ofile << "'" << header[col] << "',";
-    }
-    ofile << "'" << header[cols-1] << "'\n";
-    for(int row=0;row<rows;row++){
-      for(int col=0;col<cols-1;col++){
-	ofile << Matrix(row,col) << delimiter;
-      }
-      ofile << Matrix(row,cols-1) << "\n";
-    }
-    ofile.close();
-  }else{
-    printf("Unable to open %s.\n",filename.c_str());
-  }  
-}
-void WriteParamFile(std::string fileName, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &file){
+void CSystem::WriteParamFile(std::string fileName, std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &file){
   int rows = file.rows();
   int cols = file.cols();
   std::fstream ofile(fileName,std::ios::out);
@@ -369,7 +405,7 @@ void WriteParamFile(std::string fileName, std::vector<std::string> &header, std:
     printf("Unable to open %s.\n",fileName.c_str());
   }
 }
-void WriteParamFileLoop(std::string filename, std::string folder, int start,std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &matrix){
+void CSystem::WriteParamFileLoop(std::string filename, std::string folder, int start,std::vector<std::string> &header, std::string delimiter, Eigen::MatrixXd &matrix){
   int rows = matrix.rows();
   int cols = matrix.cols();
   std::fstream ofile;
@@ -387,7 +423,7 @@ void WriteParamFileLoop(std::string filename, std::string folder, int start,std:
     }
   }
 }
-void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab){
+void CSystem::WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab){
   std::vector<std::string> Name;
   Eigen::MatrixXd range,matrix;
   LoadParamFile(rangename,Name,range,delimiter);
@@ -395,14 +431,14 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,matrix);
 }
-void WritePosteriorParameterFiles(std::string foldername, std::string filename, std::vector<std::string> Name, std::string paramname, std::string delimiter, int start, int finish){
+void CSystem::WritePosteriorParameterFiles(std::string foldername, std::string filename, std::vector<std::string> Name, std::string paramname, std::string delimiter, int start, int finish){
   Eigen::MatrixXd matrix;
   
   LoadFile(filename,matrix,delimiter);
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(paramname,foldername,start,Name,delimiter,matrix);
 }
-void WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab, Eigen::MatrixXd &Parameters){
+void CSystem::WriteParameterFiles(std::string rangename, std::string foldername, std::string filename, std::string delimiter, int start, int finish, int ab, Eigen::MatrixXd &Parameters){
   std::vector<std::string> Name;
   Eigen::MatrixXd range;
   LoadParamFile(rangename,Name,range,delimiter);
@@ -410,7 +446,7 @@ void WriteParameterFiles(std::string rangename, std::string foldername, std::str
   MkdirLoop(foldername,start,finish);
   WriteParamFileLoop(filename,foldername,start,Name,delimiter,Parameters);
 }
-void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab){
+void CSystem::WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std::string delimiter, int ab){
   int
     n=80,
     nmax=Parameters.cols()/ab - 2,
@@ -461,7 +497,7 @@ void WriteGABFunctions(std::string outfilename, Eigen::MatrixXd Parameters, std:
     }
   WriteFile(outfilename,GAB,delimiter);
 }
-void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
+void CSystem::WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
   std::string 
     outfilename="model_output/wave.dat";
   Eigen::MatrixXd 
@@ -514,7 +550,7 @@ void WriteGABFunctions(std::string infilename, std::string delimiter, int ab){
     }
   WriteFile(outfilename,GAB,delimiter);
 }
-void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixXd range){
+void CSystem::LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixXd range){
   int parameters = range.rows();
   int nmax = parameters/ab - 2;
 
@@ -556,3 +592,4 @@ void LHCSampling(Eigen::MatrixXd &hypercube, int samples, int ab, Eigen::MatrixX
     }
   }
 }
+*/

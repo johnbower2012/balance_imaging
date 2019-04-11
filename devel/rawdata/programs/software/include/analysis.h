@@ -6,8 +6,36 @@
 #include<iostream>
 #include "system.h"
 
+class CAnalysis{
+ public:
+  Eigen::MatrixXd Data;
+  Eigen::MatrixXd Tilde;
+  Eigen::MatrixXd Z;
+
+  Eigen::VectorXd Mean;
+  Eigen::MatrixXd Error;
+
+  Eigen::MatrixXd Covariance;
+
+  Eigen::VectorXd EigenValues;
+  Eigen::MatrixXd EigenVectors;  
+
+  CAnalysis();
+
+  void ComputeMean();
+  void SumErrorInQuadrature(Eigen::MatrixXd Error2);
+  void SumErrorInQuadrature(Eigen::VectorXd error2);
+  void ComputeTilde();
+  void InvertTilde();
+  void ComputeCovariance();
+  void EigenSolve();
+  void EigenSort();
+  void ComputeZ();
+};
+
 void RemoveRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove);
 void RemoveColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove);
+
 void AddOnesRow(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
 void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
 
@@ -22,7 +50,7 @@ void AverageRows(Eigen::VectorXd &average, Eigen::MatrixXd matrix);
 void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::MatrixXd B);
 void SumInQuadrature(Eigen::MatrixXd &sum, Eigen::MatrixXd A, Eigen::VectorXd b);
 void SumInQuadrature(Eigen::VectorXd &sum, Eigen::VectorXd a, Eigen::VectorXd b);
-
+/*
 void CalculatePercentageError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, double fraction);
 void CalculateError(Eigen::VectorXd &Error, Eigen::MatrixXd ExpObs, int obs);
 void CalculateError_Variance(Eigen::MatrixXd &Error, Eigen::MatrixXd Obs);
@@ -54,5 +82,5 @@ void ExtractOnly10(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix);
 
 void ConductModelAnalysis(std::string infoldername, std::string outfoldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ);
-
+*/
 #endif

@@ -1,68 +1,193 @@
 #include "mcmc.h"
 
-/*SETUP--
-***************/
-MCMC::MCMC(){
-  this->maxLogLikelihood = -std::numeric_limits<double>::infinity();
-  this->Likelihood = maxLogLikelihood;
-  this->normal_dist = std::normal_distribution<double>(0.0,1.0);
-  this->uniform_dist = std::uniform_real_distribution<double>(0.0,1.0);
-
-  this->setSeed(1);
-}
-MCMC::MCMC(Eigen::MatrixXd newTargetValue, Eigen::MatrixXd newRange, Eigen::VectorXd newWidths, bool nR){
-  this->NR = nR;
-  this->maxLogLikelihood = -std::numeric_limits<double>::infinity();
-  this->Likelihood = maxLogLikelihood;
-  this->setSeed(1);
-  this->targetValue = newTargetValue;
-  this->obsCount = this->targetValue.cols();
-  this->Range = newRange;
-  this->paramCount = this->Range.rows();
-  this->Position = Eigen::MatrixXd::Zero(1,paramCount);
-  this->testPosition = Eigen::MatrixXd::Zero(1,paramCount);
-  this->Widths = newWidths;
-}
-void MCMC::setTargetValue(Eigen::MatrixXd newTargetValue){
-  this->targetValue = newTargetValue;
-  this->obsCount = this->targetValue.cols();
-}
-void MCMC::setRange(Eigen::MatrixXd newRange){
-  this->Range = newRange;
-  this->paramCount = this->Range.rows();
-  this->Position = Eigen::MatrixXd::Zero(1,paramCount);
-  this->testPosition = Eigen::MatrixXd::Zero(1,paramCount);
-}
-void MCMC::setPosition(Eigen::MatrixXd newPosition){
-  this->Position = newPosition;
-}
-void MCMC::setPosition(){
-  for(int i=0;i<this->paramCount;i++){
-    this->Position(0,i) = (this->Range(i,0) + this->Range(i,1))/2.0;
-  }
-}
-void MCMC::setWidths(Eigen::VectorXd newWidths){
-  this->Widths = newWidths;
-}
-
 /*RANDOM--
 ***************/
-void MCMC::setSeed(unsigned seed){
-  this->generator.seed(seed);
-}
-void MCMC::setSeedClock(){
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+CRandom::CRandom(){
+  this->seed = std::chrono::system_clock::now().time_since_epoch().count();
   generator.seed(seed);
 }
-double MCMC::normal(){
+CRandom::CRandom(unsigned Seed){
+  this->seed = Seed;
+  generator.seed(this->seed);
+}
+void CRandom::setSeed(unsigned Seed){
+  this->seed = Seed;
+  this->generator.seed(this->seed);
+}
+void CRandom::setSeedClock(){
+  this->seed = std::chrono::system_clock::now().time_since_epoch().count();
+  generator.seed(seed);
+}
+double CRandom::normal(){
   return this->normal_dist(generator);
 }
-double MCMC::uniform(){
+double CRandom::uniform(){
   return this->uniform_dist(generator);
 }
 
+
+
+/*SETUP--
+***************/
+CMCMC::CMCMC(){
+  this->maxLogLikelihood = -std::numeric_limits<double>::infinity();
+  this->Likelihood = 0.0;
+}
+CMCMC::CMCMC(Eigen::MatrixXd newRange, Eigen::VectorXd newWidths){
+  this->maxLogLikelihood = -std::numeric_limits<double>::infinity();
+  this->Likelihood = 0.0;
+  this->random.setSeedClock();
+
+  this->Range = newRange;
+  this->Widths = newWidths;
+
+  this->paramCount = this->Range.rows();
+  this->setPosition();
+}
+void CMCMC::Construct(Eigen::MatrixXd newRange, Eigen::VectorXd newWidths){
+  this->maxLogLikelihood = -std::numeric_limits<double>::infinity();
+  this->Likelihood = 0.0;
+  this->random.setSeedClock();
+
+  this->Range = newRange;
+  this->Widths = newWidths;
+
+  this->paramCount = this->Range.rows();
+  this->setPosition();
+}
+void CMCMC::setSeed(unsigned Seed){
+  this->random.setSeed(Seed);
+}
+void CMCMC::setRange(Eigen::MatrixXd newRange){
+  this->Range = newRange;
+
+  this->paramCount = this->Range.rows();
+  this->Position = Eigen::MatrixXd::Zero(1,paramCount);
+  this->testPosition = Eigen::MatrixXd::Zero(1,paramCount);
+}
+void CMCMC::setWidths(Eigen::VectorXd newWidths){
+  this->Widths = newWidths;
+}
+void CMCMC::setPosition(Eigen::MatrixXd newPosition){
+  this->Position = newPosition;
+}
+void CMCMC::setPosition(){
+  this->Position = Eigen::MatrixXd::Zero(1,this->paramCount);
+  this->testPosition = Eigen::MatrixXd::Zero(1,this->paramCount);
+  for(int i=0;i<this->paramCount;i++){
+    this->Position(0,i) = this->Range(i,0) + this->random.uniform()*(this->Range(i,1)-this->Range(i,0));
+  }
+}
+
+
 /*STEP--
 **************/
+void CMCMC::step(){
+  for(int i=0;i<this->paramCount;i++){
+    this->testPosition(0,i) = this->Position(0,i) + this->random.normal()*this->Widths(i);
+  }
+}
+double CMCMC::getLikelihood(Eigen::MatrixXd Z1, Eigen::MatrixXd Z2){
+ double z=0.0, diff=0.0;
+ int obsCount = Z1.cols();
+  for(int i=0;i<obsCount;i++){
+    diff = (Z1(0,i) - Z2(0,i));
+    z += diff*diff;
+  }
+  z *= 0.5;
+  return -z;
+}
+bool CMCMC::decide(double likelihood){
+  double ratio;
+  for(int i=0;i<paramCount;i++){
+    if(this->testPosition(0,i) < this->Range(i,0)){
+      return false;
+    } else if(this->testPosition(0,i) > this->Range(i,1)){
+      return false;
+    }
+  }
+
+  ratio = likelihood - this->Likelihood;
+  if(ratio>0){
+    this->Position = this->testPosition;
+    this->Likelihood = likelihood;
+    likelihood = this->Likelihood;
+    if(likelihood > this->maxLogLikelihood){
+      this->maxLogLikelihood = likelihood;
+      printf("MaxLogLH: %f\n",this->maxLogLikelihood);
+    }
+    return true;
+  }else{
+    if(log(random.uniform())<ratio){
+      this->Position = this->testPosition;
+      this->Likelihood = likelihood;
+      likelihood = this->Likelihood;
+      if(likelihood > this->maxLogLikelihood){
+	this->maxLogLikelihood = likelihood;
+	printf("MaxLogLH: %f\n",this->maxLogLikelihood);
+      }
+      return true;
+    }else{
+      return false;
+    }
+  }
+}
+Eigen::MatrixXd CMCMC::Run(CGaussianProcess *Emulator, Eigen::MatrixXd targetZ, int NSamp){
+  this->NSamples = NSamp;
+  this->Likelihood = this->getLikelihood(targetZ,Emulator->Emulate(this->Position));
+  bool 
+    takeStep=false;
+  int
+    percent=0,
+    print=this->NSamples/10,
+    obsCount=targetZ.cols(),
+    hist=0,
+    beginhist=this->NSamples/5;
+  Eigen::MatrixXd 
+    testZ = Eigen::MatrixXd::Zero(1,obsCount);
+  double 
+    acceptedSteps = 0.0,
+    likelihood;
+  Eigen::MatrixXd 
+    History = Eigen::MatrixXd::Zero(this->NSamples*4/25,this->paramCount+obsCount+1);
+  for(int step=0;step<this->NSamples;step++){
+    this->step();
+    testZ = Emulator->Emulate(this->testPosition);
+    likelihood = this->getLikelihood(targetZ,testZ);
+    if(this->decide(likelihood)){
+      acceptedSteps++;
+    }
+    if((step+1)>beginhist){
+      if((step+1)%5==0){
+	History(hist,0) = log(this->Likelihood);
+	History.block(hist,1,1,this->paramCount) = this->Position;
+	History.block(hist,1+this->paramCount,1,obsCount) = testZ;
+	hist++;
+      }
+    }
+    if((step+1)%print==0){
+      percent+=10;
+      printf("%d%% completed...%f%% steps accepted\n",percent,acceptedSteps*100.0/(double)(step+1));
+    }
+  }
+  acceptedSteps *= 100.0/(double) this->NSamples;
+  printf("Percent Acceptance: %f%%...\n",acceptedSteps);
+  printf("MaxLLH: %f...\n",this->maxLogLikelihood);
+  return History;
+}
+    
+/*RUN--
+***************/
+
+
+/*************
+
+GRAVEYARD
+
+*************/
+/*
+
+
 double MCMC::getLogLikelihoodGaussian(Eigen::MatrixXd Z){
   double z=0.0, diff=0.0;
   for(int i=0;i<this->obsCount;i++){
@@ -78,13 +203,8 @@ double MCMC::getLogLikelihoodLorentzian(Eigen::MatrixXd Z){
     diff = (Z(0,i) - this->targetValue(0,i));
     z += diff*diff;
   }
-  z += 0.25*width*width;
+p  z += 0.25*width*width;
   return -log(z);
-}
-void MCMC::step(){
-  for(int i=0;i<this->paramCount;i++){
-    testPosition(0,i) = Position(0,i) + normal()*this->Widths(i);
-  }
 }
 void MCMC::step(CCosh dist, Eigen::MatrixXd MinMax){
   int 
@@ -107,6 +227,7 @@ void MCMC::step(CCosh dist, Eigen::MatrixXd MinMax){
     this->testPosition(0,i) = (this->testPosition(0,i) - MinMax(i,0))/(MinMax(i,1) - MinMax(i,0));
   }
 }
+
 bool MCMC::decideGaussian(Eigen::MatrixXd Z){
   double random, LH, ratio;
   for(int i=0;i<paramCount;i++){
@@ -177,44 +298,6 @@ bool MCMC::decideLorentzian(Eigen::MatrixXd Z){
     }
   }
 }
-void MCMC::Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y, Eigen::MatrixXd MinMax){
-  Eigen::MatrixXd testValue;
-  bool takeStep=false;
-  int 
-    print=Samples/10,
-    percent=0,
-    ab=4,
-    nmax = obsEmulator.paramCount/ab - 2;
 
-  double acceptedSteps = 0.0;
-  CCosh dist(nmax);
-  History = Eigen::MatrixXd::Zero(Samples,this->paramCount+this->obsCount);
 
-  for(int step=0;step<Samples;step++){
-    this->step();
-    //this->step(dist,MinMax);
-    if(this->NR==true){
-      obsEmulator.Emulate_NR(this->testPosition,Y,testValue);
-    }else{
-      obsEmulator.Emulate(this->testPosition,Y,testValue);
-    }      
-    takeStep = this->decideGaussian(testValue);
-    //takeStep = this->decideLorentzian(testValue);
-    History.block(step,0,1,this->paramCount) = this->Position;
-    History.block(step,this->paramCount,1,this->obsCount) = testValue;
-
-    if(takeStep==true){
-      acceptedSteps++;
-    }
-    if((step+1)%print==0){
-      percent+=10;
-      printf("%d%% completed...%f%% steps accepted\n",percent,acceptedSteps*100/((double)Samples*percent/100));
-    }
-  }
-  acceptedSteps *= 100.0/(double) Samples;
-  printf("Percent Acceptance: %f%%...\n",acceptedSteps);
-  printf("MaxLLH: %f...\n",this->maxLogLikelihood);
-}
-    
-/*RUN--
-***************/
+*/

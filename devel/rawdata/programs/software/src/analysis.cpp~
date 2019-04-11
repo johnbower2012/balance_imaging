@@ -19,6 +19,164 @@ void RemoveColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove){
 
   matrix.conservativeResize(numRows,numCols);
 }
+
+CAnalysis::CAnalysis(){
+}
+void CAnalysis::ComputeMean(){
+  int rows=this->Data.rows(),
+    cols=this->Data.cols();
+  this->Mean = Eigen::VectorXd::Zero(rows);
+  for(int row=0;row<rows;row++){
+    for(int col=0;col<cols;col++){
+      this->Mean(row) += this->Data(row,col);
+    }
+    this->Mean(row) /= (double) cols;
+  }
+}
+void CAnalysis::SumErrorInQuadrature(Eigen::MatrixXd Error2){
+  int 
+    rows = this->Error.rows(),
+    cols = this->Error.cols();
+  if(rows==0 && cols==0){
+    this->Error = Error2;
+  }
+  else if(Error2.rows() != rows || Error2.cols() != cols){
+      printf("SumInQuadrature Failed. Either A.rows != B.rows or A.cols != B.cols\n");
+      printf("A.rows=%d. A.cols=%d. B.rows=%d. B.cols=%d\n",rows,cols,(int)Error2.rows(),(int)Error2.cols());
+      exit(1);
+  }
+  else{
+    Eigen::MatrixXd sum = Eigen::MatrixXd::Zero(rows,cols);
+    for(int i=0;i<rows;i++){
+      for(int j=0;j<cols;j++){
+	  sum(i,j) = sqrt(this->Error(i,j)*this->Error(i,j) + Error2(i,j)*Error2(i,j));
+	  if(sum(i,j) == 0.0) sum(i,j) = 10e-5;
+	}
+    }
+    this->Error=sum;
+  }
+}
+void CAnalysis::SumErrorInQuadrature(Eigen::VectorXd error2){
+  int 
+    rows = this->Error.rows(),
+    cols = this->Error.cols();
+  if(rows==0 && cols==0){
+    this->Error = Eigen::MatrixXd::Zero(error2.size(),1);
+    this->Error.col(0) = error2;
+  }
+  else if(error2.size() != rows){
+      printf("SumInQuadrature Failed. A.rows != b.size\n");
+      printf("A.rows=%d. A.cols=%d. b.size=%d\n",rows,cols,(int) error2.size());
+      exit(1);
+  }
+  else{
+    Eigen::MatrixXd sum = Eigen::MatrixXd::Zero(rows,cols);
+    for(int i=0;i<rows;i++){
+      for(int j=0;j<cols;j++){
+	sum(i,j) = sqrt(this->Error(i,j)*this->Error(i,j) + error2(i)*error2(i));
+	if(sum(i,j) == 0.0) sum(i,j) = 10e-5;
+      }
+    }
+    this->Error = sum;
+  }
+}
+void CAnalysis::ComputeTilde(){
+  int rows=this->Data.rows(),
+    cols=this->Data.cols();
+  this->Tilde = Eigen::MatrixXd::Zero(rows,cols);
+  for(int row=0;row<rows;row++){
+    for(int col=0;col<cols;col++){
+      this->Tilde(row,col) = (this->Data(row,col) - this->Mean(row))/this->Error(row,col);
+    }
+  }
+}
+void CAnalysis::InvertTilde(){
+  int rows=this->Data.rows(),
+    cols=this->Data.cols();
+  this->Tilde = Eigen::MatrixXd::Zero(rows,cols);
+  for(int row=0;row<rows;row++){
+    for(int col=0;col<cols;col++){
+      this->Data(row,col) = this->Tilde(row,col)*this->Error(row,col) + this->Mean(row);
+    }
+  }
+}
+void CAnalysis::ComputeCovariance(){
+  int rows=this->Tilde.rows(),
+    cols=this->Tilde.cols();
+  this->Covariance = Eigen::MatrixXd::Zero(rows,rows);
+  for(int row1=0;row1<rows;row1++){
+    for(int row2=0;row2<rows;row2++){
+      for(int col=0;col<cols;col++){
+	this->Covariance(row1,row2) += this->Tilde(row1,col)*this->Tilde(row2,col);
+      }
+      this->Covariance(row1,row2) /= (double) cols;
+    }
+  }
+}
+void CAnalysis::EigenSolve(){
+  Eigen::EigenSolver<Eigen::MatrixXd> eigensolver(this->Covariance);
+  if(eigensolver.info() != Eigen::Success) abort();
+  this->EigenValues = eigensolver.eigenvalues().real();
+  this->EigenVectors = eigensolver.eigenvectors().real();
+}
+void CAnalysis::EigenSort(){
+  Eigen::VectorXd eigval = this->EigenValues;
+  Eigen::MatrixXd eigvec = this->EigenVectors;
+  int index,
+    vals = eigval.size();
+  double max;
+  bool tick=false;
+  Eigen::MatrixXd eigsort = Eigen::MatrixXd::Zero(vals,vals),
+    eigval_matrix = Eigen::MatrixXd::Zero(vals,2);
+  for(int val=0;val<vals;val++){
+    eigval_matrix(val,0) = 0;
+    eigval_matrix(val,1) = -1;
+  } 
+  for(int val=0;val<vals;val++){
+    index=0;
+    for(int search2=0;search2<val;search2++){
+      if(eigval_matrix(search2,1)==index){
+	index++;
+	search2=-1;
+      }
+    }
+    max = eigval(index,0);
+    for(int search1=index;search1<vals;search1++){
+      tick=false;
+      for(int search2=0;search2<val;search2++){
+	if(eigval_matrix(search2,1)==search1){
+	  tick=true;
+	  break;
+	}
+      }
+      if(tick==true){
+	continue;
+      }
+      if(eigval(search1)>max){
+	max = eigval(search1);
+	index = search1;
+      }
+      eigval_matrix(val,1) = index;
+      eigval_matrix(val,0) = max;
+    }
+  }
+  for(int col=0;col<vals;col++){
+    eigval(col) = eigval_matrix(col,0);
+    index=eigval_matrix(col,1);
+    for(int row=0;row<vals;row++){
+      eigsort(row,col) = eigvec(row,index);
+    }
+  }
+  eigvec = eigsort;
+  this->EigenValues = eigval;
+  this->EigenVectors = eigvec;
+}
+void CAnalysis::ComputeZ(){
+  this->Z = this->Tilde.transpose()*this->EigenVectors;
+}
+
+
+/*
 void AddOnesRow(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
@@ -132,6 +290,7 @@ void AverageColumns(Eigen::VectorXd &average, Eigen::MatrixXd matrix){
   int rows = matrix.rows(),
     cols = matrix.cols();
   average = Eigen::VectorXd::Zero(cols);
+
   for(int col=0;col<cols;col++){
     for(int row=0;row<rows;row++){
       average(col) += matrix(row,col);
@@ -628,6 +787,7 @@ void ExtractOnly20(Eigen::MatrixXd &outMatrix, Eigen::MatrixXd inMatrix)
 void ConductModelAnalysis(std::string infoldername, std::string outfoldername, std::string delimiter, int start, int finish, Eigen::MatrixXd &ModelZ, Eigen::MatrixXd &ExpZ)
 {
   //Model BF filenames
+
   std::vector<std::string> modelfilenames={"I211_J211.dat",
 					   "I2212_J2212.dat",
 					   "I321_J2212.dat",
@@ -664,7 +824,7 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
 		  modeldy, expdy,
 		  infoldername, delimiter,
 		  start, finish);
-
+  */
   //SumInQuadrature(TotalError,ModelError[0].transpose(),ExpError[0]);
   //WriteFile("expe.dat",Iexperror," ");
   //WriteFile("mode.dat",Imodelerror," ");
@@ -679,6 +839,7 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     WriteFile(foldername+"/"+modelfilenames[i],holder,delimiter);
   }
   */
+  /*
   Eigen::MatrixXd
     ModelObs,
     ModelObsError,
@@ -704,6 +865,7 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     Mean,
 
     EigenValues;
+*/
   /*
   //Calculate Model & Exp Moments
   //Calc Error from given model/exp error values
@@ -783,10 +945,11 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
   std::cout << "COV\n" << Covariance << std::endl;
   */
   //Calculate Covariance of ModelTilde and related eigenvectors
+  /*
   Eigen::MatrixXd
     ModelOut,
     ExpOut;
-  int pc=3,
+  int pc=8,
     samples = finish - start,
     ab=4;
   ModelZ.resize(samples,pc*ab);
@@ -805,13 +968,8 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     Iexperror_vec = Iexperror.col(0);
     
     SumInQuadrature(Placeholder,Imodelerror,Imodelvar);
-    std::cout << Imodelvar.row(0) << std::endl;
-    std::cout << Imodelerror.row(0) << std::endl;
-    std::cout << Placeholder.row(0) << std::endl;
     SumInQuadrature(TotalError,Placeholder,Iexperror_vec);
-    std::cout << Iexperror_vec.transpose() << std::endl;
-    std::cout << TotalError.row(0) << std::endl;    
-    std::cout << std::endl;
+
     AverageRows(Mean,Imodel);
 
     TildeFunction(ModelTilde,Mean,TotalError,Imodel);
@@ -841,27 +999,27 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
     ExpZ.block(0,pc*func,1,pc) = ExpOut.block(0,0,1,pc);
 
 
-    /*
+
     Eigen::MatrixXd
-      print = Eigen::MatrixXd::Zero(17,201),
+      print = Eigen::MatrixXd::Zero(17,finish+1),
       recon;
     print.block(0,0,17,1) = modeldy;
-    print.block(0,1,17,200) = Imodel;
+    print.block(0,1,17,samples) = Imodel;
     WriteFile("I"+funcs+".dat",print," ");
 
-    ModelOut.block(0,pc,200,observables-pc) = Eigen::MatrixXd::Zero(200,observables-pc);
+    ModelOut.block(0,pc,samples,observables-pc) = Eigen::MatrixXd::Zero(samples,observables-pc);
 
     recon = ModelOut*EigenVectors.inverse();
     ModelOut = recon.transpose();
 
     ReverseTildeFunction(ModelOut,Mean,TotalError,recon);
     print.block(0,0,17,1) = modeldy;
-    print.block(0,1,17,200) = recon;
+    print.block(0,1,17,samples) = recon;
 
     WriteFile("recon"+funcs+".dat",print," ");
-    */
+
   }
-  
+
   // Eigen::MatrixXd
   //  EigenV=Eigen::MatrixXd::Zero(1,observables),
   //  MeanM=Eigen::MatrixXd::Zero(1,observables),
@@ -869,8 +1027,8 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
   
   //Write out data files
   //WriteFile(foldername+"/modelmoments.dat",ModelObs," ");
-  //WriteFile(foldername+"/expmoments.dat",ExpObs," ");
-  /*
+  p//WriteFile(foldername+"/expmoments.dat",ExpObs," ");
+
   MeanM.row(0) = Mean;
   //ErrorM.row(0) = Error;
   WriteFile(foldername+"/mean.dat",MeanM," ");
@@ -887,6 +1045,7 @@ void ConductModelAnalysis(std::string infoldername, std::string outfoldername, s
   EigenV.row(0) = EigenValues;
   WriteFile(foldername+"/eigvec.dat",EigenVectors," ");
   WriteFile(foldername+"/eigval.dat",EigenV," ");
-  */
+
 
 }
+*/

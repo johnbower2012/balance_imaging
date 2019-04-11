@@ -4,13 +4,24 @@
 #include<vector>
 #include<stdlib.h>
 #include "system.h"
-#include "analysis.h"
-#include "coshfunc.h"
 #include "emulator.h"
-#include "mcmc.h"
 #include "parametermap.h"
+#include "balancemodel.h"
+
 
 int main(int argc, char* argv[]){
+  if(argc == 2){
+    int testZ = atoi(argv[1]);
+    printf("Running CBalanceModel on line %d from ModelZ.\n",testZ);
+    CBalanceModel Run("run.dat",testZ);
+  }else{
+    int testZ = -1;
+    printf("Running CBalanceModel on EXP data.\n");
+    CBalanceModel Run("run.dat",testZ);
+  }
+
+
+  /*
   CParameterMap info;
   string runname = "run.dat";
   info.ReadParsFromFile(runname);
@@ -20,10 +31,11 @@ int main(int argc, char* argv[]){
     finish = info.getI("FINISH",200),
     action = info.getI("ACTION",1),
     ab = info.getI("QUARK_PAIRS",4);
-
+  */
   /*************************************
    *    Write Parameters files        *
   *************************************/
+  /*
   std::string 
     infoldername=info.getS("MODEL_FOLDER","model_folder"),          //infoldername = model BF location
     outfoldername=info.getS("OUTPUT_FOLDER","stat_output"),         //outfoldername = write destination
@@ -33,18 +45,27 @@ int main(int argc, char* argv[]){
     delimiter=" ",   //delimiter for writing and reading files
     gabname=outfoldername+"/"+info.getS("QUARK_FUNC_FILE","gabfunctions.dat");  //write prior gab functions, in order eta, uu0, ud0, us0, ss0, uu1, ud1, ...
 
-  Eigen::MatrixXd Parameters;
 
-  WriteParameterFiles(rangename, infoldername, writefilename, delimiter,
-		      start, finish, ab, 
-		      Parameters);
+  CSystem system;
+  std::vector<Eigen::MatrixXd> pipi = system.LoadFiles(infoldername,"I211_J211.dat",0,5);
+  for(int i=0;i<5;i++){
+    std::cout << pipi[i] << std::endl;
+    std::cout << std::endl;
+  }
+  */
+  //Eigen::MatrixXd Parameters;
+  
 
-  WriteFile(infilename,Parameters,delimiter);
+  //WriteParameterFiles(rangename, infoldername, writefilename, delimiter,
+  //		      start, finish, ab, 
+  //	      Parameters);
+
+  //WriteFile(infilename,Parameters,delimiter);
 
   /*************************************
    *    Construct gab functions       *
   *************************************/
-  WriteGABFunctions(gabname,Parameters,delimiter,ab);
+  //WriteGABFunctions(gabname,Parameters,delimiter,ab);
 
   /*************************************
    *   Run Model for output           *
@@ -61,16 +82,12 @@ int main(int argc, char* argv[]){
   Eigen::MatrixXd 
     ModelZ,
     ExpZ;
-  ConductModelAnalysis(infoldername, outfoldername, delimiter, start, finish, ModelZ, ExpZ);
+  //ConductModelAnalysis(infoldername, outfoldername, delimiter, start, finish, ModelZ, ExpZ);
 
   /*************************************
    *   Plot ModelZ w/ Params          *
   *************************************/
-  //for(int i=ab-1;i>-1;i--)
-  //  {
-  //    RemoveColumn(Parameters,1+i*3);
-  //  }
-
+  /*
   int 
     parameters=Parameters.cols(),
     observables=ModelZ.cols(),
@@ -83,17 +100,17 @@ int main(int argc, char* argv[]){
   ScaleMatrixColumnsUniform(Parameters,MinMax,ScaledParam);
 
   plot.block(0,parameters,finish-start,observables) = ModelZ;
-
   plot.block(0,0,finish-start,parameters) = Parameters;
-
   WriteFile(outfoldername+"/trainplot.dat",plot," ");
+
   plot.block(0,0,finish-start,parameters) = ScaledParam;
   WriteFile(outfoldername+"/scaledtrainplot.dat",plot," ");
   WriteFile(outfoldername+"/scaledmoments_parameters.dat",ScaledParam," ");
-
+  */
   /*************************************
    *   Conduct MCMC Analysis          *
   *************************************/
+  /*
   if(action==1)
     {
       int 
@@ -117,6 +134,7 @@ int main(int argc, char* argv[]){
   //Load Range File
   LoadParamFile(rangename,paramNames,range,delimiter);
 
+  //Remove g0 for each ab during mcmc
   for(int i=ab-1;i>-1;i--)
     {
       RemoveRow(MinMax,i*3+1);
@@ -126,7 +144,6 @@ int main(int argc, char* argv[]){
 
   //Create Widths
   ConstructWidths(Width,range,parameters,fraction);
-  
   linearRegressionLeastSquares(ModelZ,ScaledParam,Beta);
   WriteFile(outfoldername+"/scaledbeta.dat",Beta," ");
 
@@ -219,10 +236,11 @@ int main(int argc, char* argv[]){
   WriteFile(outfoldername+"/mcmcmean.dat",Avg,delimiter);
 }
 
-
+  */
   /*************************************
    *   Conduct Fit Analysis           *
   *************************************/
+  /*
   Eigen::MatrixXd
     print = Eigen::MatrixXd::Zero(finish-start,parameters+observables);
 
@@ -275,7 +293,7 @@ int main(int argc, char* argv[]){
       }  
   WriteFile("outMatrix.dat",print," ");
     }
-
+  */
 
   return 0;
 }

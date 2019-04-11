@@ -170,18 +170,18 @@ CDistCosh::CDistCosh(Eigen::VectorXd Width, Eigen::MatrixXd G) : coshcalc(){
   this->width = Width;
   this->g = G;
 
-  coshcalc.Set_NMax(ng);
+  coshcalc.Set_NMax(ng+1);
 }
 void CDistCosh::Set_WG(Eigen::VectorXd Width, Eigen::MatrixXd G){
   this->width = Width;
   this->g = G;
-  int ng=G.cols()-1;
+  int ng=G.cols();
   if(coshcalc.nmax!=ng){
     coshcalc.Set_NMax(ng);
   }
 }
 void CDistCosh::GenX(int ab, double &x, double &weight){
-  int n,ng=coshcalc.nmax;
+  int n,ng=this->coshcalc.nmax;
   x=coshcalc.GetRandomX();
   //  double Z=0.0;
   weight=0.0;
@@ -194,31 +194,50 @@ void CDistCosh::GenX(int ab, double &x, double &weight){
   //  x*=PI/2.0/1.83193118835; //should return 1.0 on avg
   //2.0*Catalan: 1.83193118835
 }
-void CDistCosh::Functions(int n, double x, Eigen::MatrixXd &M){
-  int ab = width.size();
-  int nmax = coshcalc.nmax;
+Eigen::MatrixXd CDistCosh::GenG0(int ab, Eigen::MatrixXd G){
+  int nmax=G.cols()/ab-1,
+    samples=G.rows();
+  this->coshcalc.Set_NMax(nmax+1);
+  Eigen::MatrixXd newG = Eigen::MatrixXd::Zero(samples,ab*(nmax+2));
+  for(int i=0;i<samples;i++){
+    for(int j=0;j<ab;j++){
+      newG(i,j*(nmax+2)) = G(i,j*(nmax+1));
+      newG(i,j*(nmax+2)+1) = 1.0/G(i,j*(nmax+1));
+      for(int k=1;k<nmax+1;k++){
+	newG(i,j*(nmax+2)+k+1) = G(i,j*(nmax+1)+k);
+	newG(i,j*(nmax+2)+1) -= G(i,j*(nmax+1)+k)*this->coshcalc.Z(k);
+      }
+      newG(i,j*(nmax+2)+1) /= (this->coshcalc.Z(0));
+    }
+  }
+  return newG;
+}
+Eigen::MatrixXd CDistCosh::Functions(int n, double x){
+  int ab = this->width.size();
+  int nmax = this->g.cols();
   double dx=x/double(n), xx=0.0;
-  M = Eigen::MatrixXd::Zero(n+1,ab+1);
+  Eigen::MatrixXd M = Eigen::MatrixXd::Zero(n+1,ab+1);
   for(int xi=0;xi<n+1;xi++){
     M(xi,0) = xx;
     for(int species=0;species<ab;species++){
-      for(int m=0;m<nmax+1;m++){
+      for(int m=0;m<nmax;m++){
 	M(xi,species+1) += coshcalc.GetG(m,xx/width(species))*g(species,m);
       }
     }
     xx += dx;
   }
+  return M;
 }
-void CDistCosh::FunctionSet(int grid, double x, int samples, int ab, int nmax, Eigen::MatrixXd G, Eigen::MatrixXd &Func){
+Eigen::MatrixXd CDistCosh::FunctionSet(int grid, double x, int samples, int ab, int nmax, Eigen::MatrixXd G){
   int Grid=grid+1,
     Cols=samples*ab+1;
-  Func = Eigen::MatrixXd::Zero(Grid,Cols);
+  Eigen::MatrixXd Func = Eigen::MatrixXd::Zero(Grid,Cols);
   Eigen::VectorXd 
     width(ab);
   Eigen::MatrixXd 
     g(ab,nmax+1),
     m;
-
+  this->coshcalc.Set_NMax(nmax+1);
   for(int i=0;i<samples;i++){
     for(int j=0;j<ab;j++){
       width(j) = G(i,j*(nmax+2));
@@ -226,9 +245,9 @@ void CDistCosh::FunctionSet(int grid, double x, int samples, int ab, int nmax, E
 	g(j,k) = G(i,j*(nmax+2)+k+1);
       }
     }
-
     this->Set_WG(width,g);
-    this->Functions(grid,x,m);
+    m=this->Functions(grid,x);
+
     for(int j=0;j<grid+1;j++){
       for(int k=0;k<ab;k++){
 	Func(j,1+i*ab+k) = m(j,k+1);
@@ -236,6 +255,7 @@ void CDistCosh::FunctionSet(int grid, double x, int samples, int ab, int nmax, E
       Func(j,0) = m(j,0);
     }
   }
+  return Func;
 }
 double CDistCosh::Integrate(int ab){
   int m;

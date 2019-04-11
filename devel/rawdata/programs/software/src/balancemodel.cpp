@@ -1,0 +1,356 @@
+#include "balancemodel.h"
+
+CBalanceModel::CBalanceModel(std::string filename,int testZ){
+  this->MAP.ReadParsFromFile(filename); //Load all parameters from file
+  this->testZ = testZ;
+  this->LoadData(); //Load Model & Exp Files
+  this->CutData(); //Cut out 0.05 rapidity, match exp rapidity range to model rap range
+  this->ReduceDimensions(); //Dimensional reduction via PCA
+  this->CreateEmulator();
+  this->WriteZ(); //Write out ModelZ and ExpZ
+  this->CreateMCMC();
+  this->RunMCMC();
+  this->WriteMCMC();
+  this->WriteCoshFunctions();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+void CBalanceModel::LoadData(){
+  CSystem SYSTEM;
+  char buffer[30];
+  string name;
+
+  this->START=this->MAP.getI("START",0);
+  this->FINISH=this->MAP.getI("FINISH",500);
+  this->BFSamples=FINISH-START;
+  this->PrinComp=this->MAP.getI("PRIN_COMP",4);
+  this->QuarkPairs=this->MAP.getI("QUARK_PAIRS",4);
+  this->NSamples=this->MAP.getI("NSAMPLES",10000);
+
+  this->MODEL_FOLDER=this->MAP.getS("MODEL_FOLDER","model_output");
+  this->OUTPUT_FOLDER=this->MAP.getS("OUTPUT_FOLDER","stat_output");
+  this->EXP_FOLDER=this->MAP.getS("EXP_FOLDER","model_output");
+  this->PARAMS_FILE=this->MAP.getS("PARAMS_FILE","parameters_lhc.dat");
+  this->MCMCTRACE_FILE = this->MAP.getS("MCMCTRACE_FILE","mcmctrace");
+  this->MCMCHISTORY_FILE = this->MAP.getS("MCMCHISTORY_FILE","mcmchistory");
+  this->MINMAX_FILE = this->MAP.getS("MINMAX_FILE","minmax");
+  this->GAB_FILE = this->MAP.getS("GAB_FILE","gabfunctions");
+  this->POST_EXT = this->MAP.getS("POST_EXT","posterior");
+  this->FILE_EXT = this->MAP.getS("FILE_EXT","dat");
+  this->CSV_EXT = this->MAP.getS("CSV_EXT","csv");
+
+  this->UseScaleX = this->MAP.getB("USE_SCALE_X",true);
+
+  this->CUT_MODEL=this->MAP.getB("CUT_MODEL",true);
+  this->CUT_EXP=this->MAP.getB("CUT_EXP",true);
+  this->CUT_G0=this->MAP.getB("CUT_G0",true);
+
+  this->MCMC_WIDTH=this->MAP.getD("MCMC_WIDTH",0.005);
+  this->MCMC_MIN=this->MAP.getD("MCMC_MIN",0.0);
+  this->MCMC_MAX=this->MAP.getD("MCMC_MAX",1.0);
+  this->MCMC_POST=this->MAP.getI("MCMC_POSTERIOR",20);
+
+  this->GRID=this->MAP.getI("GAB_FUNC_GRID",100);
+  this->ETA_MAX=this->MAP.getD("GAB_FUNC_CUTOFF",8);
+
+  this->CHI = Eigen::VectorXd::Zero(4);
+  this->CHI(0)=this->MAP.getD("CHI0",7.2728e+02);
+  this->CHI(1)=this->MAP.getD("CHI1",-2.2654e+02);
+  this->CHI(2)=this->MAP.getD("CHI2",-8.3627e+01);
+  this->CHI(3)=this->MAP.getD("CHI3",3.0778e+02);
+
+
+
+  Eigen::MatrixXd params=SYSTEM.LoadFile(MODEL_FOLDER+"/"+PARAMS_FILE);
+  this->QParameters=params.cols();
+  this->Parameters=params.block(START,0,this->BFSamples,this->QParameters);
+
+  std::vector<std::string> MODEL_NAMES;
+  int i=0;
+  sprintf(buffer,"MODEL_NAME_%i",i);
+  name=buffer;
+  while(this->MAP.getS(name,"NULL")!="NULL"){
+    MODEL_NAMES.push_back(this->MAP.getS(name,"NULL"));
+    i++;  
+    sprintf(buffer,"MODEL_NAME_%i",i);
+    name=buffer;
+  }
+  if(i==0){
+    printf("Usage: Enter at least one MODEL_NAME_X, e.g. MODEL_NAME_0.\n");
+    exit(1);
+  }
+   
+  std::vector<std::string> EXP_NAMES;
+  i=0;
+  sprintf(buffer,"EXP_NAME_%i",i);
+  name=buffer;
+  while(this->MAP.getS(name,"NULL")!="NULL"){
+    EXP_NAMES.push_back(this->MAP.getS(name,"NULL"));
+    i++;  
+    sprintf(buffer,"EXP_NAME_%i",i);
+    name=buffer;
+  }
+  if(i==0){
+    printf("Usage: Enter at least one EXP_NAME_X, e.g. EXP_NAME_0.\n");
+    exit(1);
+  }
+
+  int MODEL_COUNT=MODEL_NAMES.size();
+  int EXP_COUNT=EXP_NAMES.size();
+  if(MODEL_COUNT!=EXP_COUNT){
+    printf("Usage: Enter equal model and experimental balance functions.\n");
+    exit(1);
+  }else{
+    this->BFCount=MODEL_COUNT;
+  }
+  
+  this->Model=std::vector<Eigen::MatrixXd>(MODEL_COUNT);
+  this->ModelError=std::vector<Eigen::MatrixXd>(MODEL_COUNT);
+  this->ModelVariance=std::vector<Eigen::MatrixXd>(MODEL_COUNT);
+  for(int i=0;i<MODEL_COUNT;i++){
+    std::vector<Eigen::MatrixXd> matrix = SYSTEM.LoadFiles(MODEL_FOLDER,MODEL_NAMES[i],START,FINISH);
+    int YN = matrix[i].rows();
+    this->Model[i] = Eigen::MatrixXd(YN,BFSamples);
+    this->ModelError[i] = Eigen::MatrixXd(YN,BFSamples);
+    this->ModelVariance[i] = Eigen::MatrixXd(YN,BFSamples);
+    this->ModelRapidity = matrix[0].col(0);
+    for(int run=0;run<BFSamples;run++){
+      this->Model[i].col(run) = matrix[run].col(1);
+      this->ModelError[i].col(run) = matrix[run].col(2);
+      this->ModelVariance[i].col(run) = matrix[run].col(3);
+    }
+  }
+
+  this->Experiment=std::vector<Eigen::MatrixXd>(MODEL_COUNT);
+  this->ExperimentalError=std::vector<Eigen::VectorXd>(MODEL_COUNT);
+  for(int i=0;i<EXP_COUNT;i++){
+    Eigen::MatrixXd matrix = SYSTEM.LoadFile(EXP_FOLDER+"/"+EXP_NAMES[i]);
+    this->ExperimentRapidity = matrix.col(0);
+    this->Experiment[i] = matrix.col(1);
+    this->ExperimentalError[i] = matrix.col(2);
+  }
+}
+void CBalanceModel::CutData(){
+  if(this->CUT_MODEL){ //Remove 0.05 rapidity from Model
+    Eigen::MatrixXd MR = Eigen::MatrixXd::Zero(this->ModelRapidity.size(),1);
+    MR.col(0) = this->ModelRapidity;
+    RemoveRow(MR,0);
+    this->ModelRapidity = MR.col(0);
+    for(int i=0;i<this->BFCount;i++){
+      RemoveRow(this->Model[i],0);
+      RemoveRow(this->ModelError[i],0);
+      RemoveRow(this->ModelVariance[i],0);
+    }
+  }
+  if(this->CUT_EXP){ //Remove 0.05 rapidity from Exp
+    Eigen::MatrixXd ER = Eigen::MatrixXd::Zero(this->ExperimentRapidity.size(),1);
+    ER.col(0) = this->ExperimentRapidity;
+    RemoveRow(ER,0);
+    this->ExperimentRapidity = ER.col(0);
+    for(int i=0;i<this->BFCount;i++){
+      ER = this->Experiment[i];
+      RemoveRow(ER,0);
+      this->Experiment[i] = ER;
+      ER = this->ExperimentalError[i];
+      RemoveRow(ER,0);
+      this->ExperimentalError[i] = ER;
+    }
+  }
+  if(this->CUT_G0){ //Remove all g0 from Parameters
+    int ParamPerPair = this->QParameters/this->QuarkPairs;
+    for(int i=this->QuarkPairs-1;i>-1;i--){
+      RemoveColumn(this->Parameters,i*ParamPerPair+1);
+    }
+    this->QParameters = this->Parameters.cols();
+  }
+  
+  int model = ModelRapidity.size();
+  int exp = ExperimentRapidity.size();
+  if(exp > model){ //Cut Exp BF rapidity range down to match Model rapidity range
+    Eigen::MatrixXd ER = Eigen::MatrixXd::Zero(model,1),
+      temp =  Eigen::MatrixXd::Zero(exp,1);
+    temp.col(0) = this->ExperimentRapidity;
+    ER = temp.block(0,0,model,1);
+    this->ExperimentRapidity = ER.col(0);
+    for(int i=0;i<this->BFCount;i++){
+      temp = this->Experiment[i];
+      this->Experiment[i] = temp.block(0,0,model,1);
+      temp = this->ExperimentalError[i];
+      this->ExperimentalError[i] = temp.block(0,0,model,1);
+    }
+  }
+}
+void CBalanceModel::ReduceDimensions(){
+  CAnalysis PCA;
+  this->ModelZ = Eigen::MatrixXd::Zero(this->BFSamples,this->BFCount*this->PrinComp);
+  this->ExpZ = Eigen::MatrixXd::Zero(1,this->BFCount*this->PrinComp);
+  for(int i=0;i<this->BFCount;i++){
+    PCA.Data = this->Model[i];
+    PCA.ComputeMean();
+    PCA.SumErrorInQuadrature(this->ModelError[i]);
+    PCA.SumErrorInQuadrature(this->ModelVariance[i]);
+    PCA.SumErrorInQuadrature(this->ExperimentalError[i]);
+    PCA.ComputeTilde();
+    PCA.ComputeCovariance();
+    PCA.EigenSolve();
+    PCA.EigenSort();
+    PCA.ComputeZ();
+    this->ModelZ.block(0,i*this->PrinComp,this->BFSamples,this->PrinComp) = PCA.Z.block(0,0,this->BFSamples,this->PrinComp);
+
+    PCA.Data = this->Experiment[i];
+    PCA.ComputeTilde();
+    PCA.ComputeZ();
+    this->ExpZ.block(0,i*this->PrinComp,1,this->PrinComp) = PCA.Z.block(0,0,1,this->PrinComp);
+  }
+}
+void CBalanceModel::WriteZ(){
+  CSystem SYSTEM;
+  int Zs = this->ModelZ.cols();
+
+  Eigen::MatrixXd plot = Eigen::MatrixXd::Zero(this->BFSamples,this->QParameters+Zs);
+  plot.block(0,0,this->BFSamples,this->QParameters) = this->Parameters;
+  plot.block(0,this->QParameters,this->BFSamples,Zs) = this->ModelZ;
+  SYSTEM.WriteFile(this->OUTPUT_FOLDER+"/trainplot.dat",plot);
+
+  plot = ExpZ;
+  SYSTEM.WriteFile(this->OUTPUT_FOLDER+"/expz.dat",plot);
+}
+void CBalanceModel::CreateEmulator(){
+  this->Emulator.Construct(this->Parameters,this->ModelZ,this->MAP);
+  if(this->Emulator.UseScaledX==true){
+    this->Parameters = this->Emulator.X;
+    this->UnscaledParameters = this->Emulator.UnscaledX;
+  }else{
+    this->UnscaledParameters = this->Parameters;
+  }
+}
+void CBalanceModel::CreateMCMC(){
+  Eigen::MatrixXd 
+    newRange = Eigen::MatrixXd::Zero(this->QParameters,2);
+  Eigen::VectorXd
+    newWidth = Eigen::VectorXd::Zero(this->QParameters);
+  for(int i=0;i<this->QParameters;i++){
+    newWidth(i) = this->MCMC_WIDTH;
+    newRange(i,0) = this->MCMC_MIN;
+    newRange(i,1) = this->MCMC_MAX;
+  }
+  this->MCMC.Construct(newRange,newWidth);
+}
+void CBalanceModel::RunMCMC(){
+  //int testZ = this->MAP.getI("MCMC_TEST_Z",-1);
+  Eigen::MatrixXd TargetZ;
+  if(this->testZ == -1){
+    TargetZ = this->ExpZ;
+    std::cout << "ExpZ: " << TargetZ << std::endl;
+  }else{
+    TargetZ = this->ModelZ.row(this->testZ);
+    std::cout << "Param" << this->testZ << ": " << this->Parameters.row(this->testZ) << std::endl;
+    std::cout << "ModZ" << this->testZ << ": " << TargetZ << std::endl;
+  }
+  this->MCMCHistory = this->MCMC.Run(&this->Emulator,TargetZ,this->NSamples);
+}
+void CBalanceModel::WriteMCMC(){
+  CSystem SYSTEM;
+
+  int printInt = this->MCMCHistory.rows();
+  //int testZ = this->MAP.getI("MCMC_TEST_Z",-1);
+  Eigen::MatrixXd print = this->MCMCHistory.block(0,1,printInt,this->QParameters);
+  std::vector<std::string> header(this->QParameters);
+  Eigen::VectorXd MaxLLH(1);
+  MaxLLH(0) = this->MCMC.maxLogLikelihood;
+  for(int i=0;i<this->QParameters;i++){
+    header[i] = "QParameter_"+std::to_string(i);
+  }
+  if(this->testZ != -1){
+    SYSTEM.WriteCSVFile(OUTPUT_FOLDER+"/"+MCMCTRACE_FILE+std::to_string(this->testZ)+"."+this->CSV_EXT,header,print);
+    SYSTEM.WriteFile(OUTPUT_FOLDER+"/"+MCMCHISTORY_FILE+std::to_string(this->testZ)+"."+this->FILE_EXT,this->MCMCHistory);
+    SYSTEM.WriteFile(OUTPUT_FOLDER+"/maxloglikelihood"+std::to_string(this->testZ)+"."+this->FILE_EXT,MaxLLH);
+  }else{
+    SYSTEM.WriteCSVFile(OUTPUT_FOLDER+"/"+MCMCTRACE_FILE+"_exp."+this->CSV_EXT,header,print);
+    SYSTEM.WriteFile(OUTPUT_FOLDER+"/"+MCMCHISTORY_FILE+"_exp"+"."+this->FILE_EXT,this->MCMCHistory);
+    SYSTEM.WriteFile(OUTPUT_FOLDER+"/maxloglikelihood_exp."+this->FILE_EXT,MaxLLH);
+  }
+}
+void CBalanceModel::WriteCoshFunctions(){
+  CSystem SYSTEM;
+  std::string filename;
+  int ab = this->QuarkPairs;
+  CDistCosh dist;
+
+  Eigen::MatrixXd 
+    FullG = this->UnscaledParameters;
+  //Add G0 back in to create gabfunctions
+  if(this->CUT_G0){ //Add G0 back in to create gabfunctions
+    FullG = dist.GenG0(this->QuarkPairs,this->UnscaledParameters);
+  }
+
+  Eigen::MatrixXd //Create prior gabfunctions
+    Functions = dist.FunctionSet(this->GRID,
+				 this->ETA_MAX,
+				 this->BFSamples,
+				 this->QuarkPairs,
+				 this->QParameters/ab-1,
+				 FullG);
+  this->ScaleByChi(Functions); //Change unit area functions to Chi area
+  if(this->testZ!=-1){
+    filename = this->OUTPUT_FOLDER+"/"+this->GAB_FILE+std::to_string(this->testZ)+"."+this->FILE_EXT;
+  }else{
+    filename = this->OUTPUT_FOLDER+"/"+this->GAB_FILE+"_exp."+this->FILE_EXT;
+  }
+  SYSTEM.WriteFile(filename,Functions); //Write prior gabfunctions
+  
+  Eigen::MatrixXd //extract mcmctrace from mcmchistory
+    mcmc = this->MCMCHistory.block(0,1,this->MCMCHistory.rows(),this->QParameters),
+    posterior = Eigen::MatrixXd::Zero(MCMC_POST,this->QParameters);
+  posterior = ExtractPosterior(mcmc); //Extract posterior samples from trace
+
+  if(this->testZ!=-1){
+    filename = this->OUTPUT_FOLDER+"/"+this->MCMCTRACE_FILE+this->POST_EXT+std::to_string(this->testZ)+"."+this->FILE_EXT;
+  }else{
+    filename = this->OUTPUT_FOLDER+"/"+this->MCMCTRACE_FILE+this->POST_EXT+"_exp."+this->FILE_EXT;
+  }
+  SYSTEM.WriteFile(filename,posterior); //Write posterior trace
+
+  mcmc=posterior;
+  if(this->UseScaleX){ //Check if Parameters were scaled for mcmc
+    filename = this->OUTPUT_FOLDER+"/"+this->MINMAX_FILE+"."+this->FILE_EXT;
+    SYSTEM.WriteFile(filename,this->MinMax); //Write MinMax from scaling Parameters
+    mcmc = this->Emulator.UnscaleParameters(posterior); //Unscale posterior trace
+  }
+
+  FullG = posterior;
+  if(this->CUT_G0){ //Add G0 back in to create gabfunctions
+    FullG = dist.GenG0(this->QuarkPairs,posterior);
+  }
+  Functions = dist.FunctionSet(this->GRID,this->ETA_MAX, //Create posterior gabfunctions
+			       MCMC_POST,
+			       this->QuarkPairs,
+			       this->QParameters/ab-1,
+			       FullG);
+
+  this->ScaleByChi(Functions); //Change unit area functions to Chi area
+  if(this->testZ!=-1){
+    filename =this->OUTPUT_FOLDER+"/"+this->GAB_FILE+this->POST_EXT+std::to_string(this->testZ)+"."+this->FILE_EXT;
+  }else{
+    filename =this->OUTPUT_FOLDER+"/"+this->GAB_FILE+this->POST_EXT+"_exp."+this->FILE_EXT;
+  }
+  SYSTEM.WriteFile(filename,Functions); //Write posterior gabfunctions
+}
+
+void CBalanceModel::ScaleByChi(Eigen::MatrixXd &Functions){
+  for(int i=0;i<this->QuarkPairs;i++){
+    for(int j=0;j<this->BFSamples;j++){
+      Functions.col(1+j*this->QuarkPairs+i) = this->CHI(i)*Functions.col(1+j*this->QuarkPairs+i);
+    }
+  }
+}
+Eigen::MatrixXd CBalanceModel::ExtractPosterior(Eigen::MatrixXd mcmc){
+  Eigen::MatrixXd 
+    posterior = Eigen::MatrixXd::Zero(this->MCMC_POST,this->QParameters);
+  int incr = mcmc.rows()/MCMC_POST;
+  for(int i=0;i<this->MCMC_POST;i++){
+    posterior.row(i) = mcmc.row(incr*i);
+  }
+  return posterior;
+}

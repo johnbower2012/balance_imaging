@@ -20,7 +20,7 @@ class CDistribution{
 };
 
 class CCosh{
-public:
+ public:
   int nmax;
   Eigen::MatrixXd A;
   Eigen::VectorXd I;
@@ -45,19 +45,20 @@ public:
 class CDistCosh : public CDistribution{
  public:
   //Function set
-  CCosh coshcalc;  
+  CCosh coshcalc; 
 
   //widths & coeffs of invcosh functions
   Eigen::VectorXd width;
   Eigen::MatrixXd g;
 
-  CDistCosh(Eigen::VectorXd Width, Eigen::MatrixXd G);
   CDistCosh();
+  CDistCosh(Eigen::VectorXd Width, Eigen::MatrixXd G);
 
   void Set_WG(Eigen::VectorXd Width, Eigen::MatrixXd G);
   void GenX(int ab,double &x,double &weight);
-  void Functions(int n, double x, Eigen::MatrixXd &M);
-  void FunctionSet(int grid, double x, int samples, int ab, int nmax, Eigen::MatrixXd G, Eigen::MatrixXd &Functions);
+  Eigen::MatrixXd GenG0(int ab, Eigen::MatrixXd G);
+  Eigen::MatrixXd Functions(int n, double x);
+  Eigen::MatrixXd FunctionSet(int grid, double x, int samples, int ab, int nmax, Eigen::MatrixXd G);
   double Integrate(int ab);
   double IntegrateNumerical(int ab);
 };

@@ -6,38 +6,66 @@
 #include<random>
 #include<cmath>
 #include<iostream>
+#include "parametermap.h"
 
-class emulator{
+void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
+
+/*
+class CEmulator{
+ public:
+  virtual void Construct() =0;
+  virtual Eigen::MatrixXd Emulate(Eigen::MatrixXd testX) =0;
+};
+*/
+
+class CGaussianProcess{
  public:
   int trainPoints;
   int paramCount;
   int obsCount;
-  int hyperparamCount;
+  int hyperparamCount; 
   
-  bool printVariance;
+  bool PrintVariance; //calculate variance of GP, default false
+  bool UseScaledX; //Scale X for emulation
 
-  double epsilon;
-  Eigen::VectorXd noise;
+  double Epsilon; //Numerical stability factor for matrix inversion, 1e-8 by default
+  double SigmaF; //Variance of func to be emulated
+  double CharacLength; //Length overwhich func varies
+  double SigmaNoise; //Noise of func
+  Eigen::VectorXd Noise;
 
   Eigen::MatrixXd X;
-  Eigen::MatrixXd Hyperparam;
+  Eigen::MatrixXd Y;
+  Eigen::MatrixXd UnscaledX;
+  Eigen::MatrixXd MinMax;
+  Eigen::MatrixXd Hyperparameters;
   Eigen::MatrixXd Beta;
-  Eigen::MatrixXd Noise;
 
   std::vector<Eigen::MatrixXd> Kernel;
   std::vector<Eigen::MatrixXd> KernelInv;
   std::vector<Eigen::MatrixXd> HMatrix;
 
-  emulator(Eigen::MatrixXd newX, Eigen::MatrixXd newHyperparam);
-  emulator(Eigen::MatrixXd newX, Eigen::MatrixXd newHyperparam, Eigen::MatrixXd newBeta);
-  void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newHyperparam);
+  CGaussianProcess();
+  CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP);
+  CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std::string filename);
+  void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP);
+  void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std::string filename);
 
-  void kernelFunction(Eigen::MatrixXd A, Eigen::MatrixXd B, int obsIndex, Eigen::MatrixXd &kernlMatrix);
-  void regressionLinearFunction(Eigen::MatrixXd testX, int obsIndex, Eigen::MatrixXd &HMatrix);
-  void Emulate(Eigen::MatrixXd testX, Eigen::MatrixXd Y, Eigen::MatrixXd &outMatrix);
-  void Emulate_NR(Eigen::MatrixXd testX, Eigen::MatrixXd Y, Eigen::MatrixXd &outMatrix);
+  void ScaleParameters();
+  Eigen::MatrixXd UnscaleParameters(Eigen::MatrixXd ScaledParameters);
+  void ConstructHyperparameters();  
+  void ConstructBeta();
+  void RegressionLinearFunction();
+  
+  Eigen::MatrixXd KernelFunction(Eigen::MatrixXd A, Eigen::MatrixXd B, int obsIndex);
+  Eigen::MatrixXd RegressionLinearFunction(Eigen::MatrixXd testX, int obsIndex);
 
-  void setPrint(bool newPrintVariance);
+  Eigen::MatrixXd Emulate(Eigen::MatrixXd testX);
+  Eigen::MatrixXd Emulate_NR(Eigen::MatrixXd testX);
+
+  void SetPrint(bool newPrintVariance);
 };
+
+
 
 #endif

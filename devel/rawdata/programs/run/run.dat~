@@ -1,0 +1,51 @@
+int START 0
+int FINISH 200
+int ACTION 1
+int QUARK_PAIRS 4
+int PRIN_COMP 4
+int NSAMPLES 1000
+
+bool CUT_MODEL true
+bool CUT_EXP true
+bool CUT_G0 true
+bool USE_SCALE_X true
+
+double SIGMA_F 0.5
+double CHARAC_LENGTH 0.45
+double SIGMA_NOISE 0.01
+
+double MCMC_WIDTH 0.003
+double MCMC_MIN 0.0
+double MCMC_MAX 1.0
+int MCMC_POST 20
+int GRID 100
+double ETA_MAX 8
+
+double CHI0 7.2728e+02
+double CHI1 -2.2654e+02
+double CHI2 -8.3627e+01
+double CHI3 3.0778e+02
+
+string MODEL_FOLDER model_output
+string MODEL_NAME_0 I211_J211.dat
+string MODEL_NAME_1 I2212_J2212.dat
+string MODEL_NAME_2 I321_J2212.dat
+string MODEL_NAME_3 I321_J321.dat
+string EXP_FOLDER model_output
+string EXP_NAME_0 star_pipi.dat
+string EXP_NAME_1 star_ppbar.dat
+string EXP_NAME_2 star_pK.dat
+string EXP_NAME_3 star_KK.dat
+
+string OUTPUT_FOLDER stat_output
+string PARAM_FILE parameters.dat
+string PARAM_PRIOR_FILE parameter_priors.dat
+string PARAMS_FILE parameters_lhc.dat
+string MCMCTRACE_FILE mcmctrace
+string MCMCHISTORY_FILE mcmchistory
+
+string GAB_FILE gabfunctions
+string MINMAX_FILE minmax
+string POST_EXT posterior
+string FILE_EXT dat
+string CSV_EXT csv

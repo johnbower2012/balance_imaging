@@ -5,53 +5,59 @@
 #include<random>
 #include<chrono>
 #include "emulator.h"
-#include "coshfunc.h"
 
-class MCMC{
+class CRandom{
  public:
-  double maxLogLikelihood;
-  double Likelihood;
-  int obsCount;
-  int paramCount;
-  int Samples;
-  Eigen::MatrixXd targetValue;
-  Eigen::MatrixXd Range;
-
-  Eigen::MatrixXd Position;
-  Eigen::MatrixXd testPosition;
-  Eigen::VectorXd Widths;
-
   unsigned seed;
   std::default_random_engine generator;
   std::normal_distribution<double> normal_dist;
   std::uniform_real_distribution<double> uniform_dist;
 
-  bool NR;
-  MCMC();
-  MCMC(Eigen::MatrixXd newTargetValue, Eigen::MatrixXd newRange, Eigen::VectorXd newWidths, bool NR);
+  CRandom();
+  CRandom(unsigned Seed);
 
-  void setTargetValue(Eigen::MatrixXd newTargetValue);
-  void setRange(Eigen::MatrixXd newRange);
-  void setPosition();
-  void setPosition(Eigen::MatrixXd newPosition);
-  void setWidths(Eigen::VectorXd newWidths);
-
-  void setSeed(unsigned seed);
+  void setSeed(unsigned Seed);
   void setSeedClock();
 
   double normal();
   double uniform();
+};
+
+class CMCMC{
+ public:
+  double maxLogLikelihood;
+  double Likelihood;
+  CRandom random;
+
+  int paramCount;
+  int NSamples;
+
+  Eigen::MatrixXd Range;
+  Eigen::VectorXd Widths;
+
+  Eigen::MatrixXd Position;
+  Eigen::MatrixXd testPosition;
+
+  CMCMC();
+  CMCMC(Eigen::MatrixXd newRange, Eigen::VectorXd newWidths);
+  CMCMC(std::string filename);
+  void Construct(Eigen::MatrixXd newRange, Eigen::VectorXd newWidths);
+  void setSeed(unsigned Seed);
+  void setPosition();
+  void setPosition(Eigen::MatrixXd newPosition);
+  void setRange(Eigen::MatrixXd newRange);
+  void setWidths(Eigen::VectorXd newWidths);
 
   void step();
-  void step(CCosh dist, Eigen::MatrixXd MinMax);
-  double getLogLikelihood();
-  double getLogLikelihoodGaussian(Eigen::MatrixXd Z);
-  bool decideGaussian(Eigen::MatrixXd Z);
-  double getLogLikelihoodLorentzian(Eigen::MatrixXd Z);
-  bool decideLorentzian(Eigen::MatrixXd Z);
+  //void step(CCosh dist, Eigen::MatrixXd MinMax);
+  double getLikelihood(Eigen::MatrixXd Z1, Eigen::MatrixXd Z2);
+  bool decide(double likelihood);
+  //double getLogLikelihoodGaussian(Eigen::MatrixXd Z);
+  //bool decideGaussian(Eigen::MatrixXd Z);
+  //double getLogLikelihoodLorentzian(Eigen::MatrixXd Z);
+  //bool decideLorentzian(Eigen::MatrixXd Z);
 
-  void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y);
-  void Run(int Samples, Eigen::MatrixXd &History, emulator obsEmulator, Eigen::MatrixXd Y, Eigen::MatrixXd MinMax);
+  Eigen::MatrixXd Run(CGaussianProcess *Emulator, Eigen::MatrixXd Target, int NSamp);
 };
 
 #endif

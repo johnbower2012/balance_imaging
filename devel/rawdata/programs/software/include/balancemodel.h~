@@ -1,0 +1,90 @@
+#ifndef __BALANCEMODEL_H__
+#define __BALANCEMODEL_H__
+
+#include<string>
+#include<Eigen/Dense>
+#include "parametermap.h"
+#include "system.h"
+#include "analysis.h"
+#include "emulator.h"
+#include "mcmc.h"
+#include "coshfunc.h"
+
+class CBalanceModel{
+ public:
+  CParameterMap MAP;
+  CGaussianProcess Emulator;
+  CMCMC MCMC;
+
+  int START;
+  int FINISH;
+  int QParameters; //Number of Quark Parameters
+  int QuarkPairs; //Number of quark pairs
+  int BFCount; //Number of diff balance functions
+  int BFSamples; //Number of model samples
+  int PrinComp; //Number of principal components to keep per BF
+  int NSamples; //Number of MCMC Samples
+  int testZ; //Line from ModelZ to target, -1 = ExpZ
+
+  bool CUT_MODEL;
+  bool CUT_EXP;
+  bool CUT_G0;
+  bool UseScaleX;
+
+  double MCMC_WIDTH;
+  double MCMC_MIN;
+  double MCMC_MAX;
+  int MCMC_POST;
+
+  int GRID;
+  double ETA_MAX;
+
+  Eigen::VectorXd CHI;
+
+  std::string MODEL_FOLDER;
+  std::string OUTPUT_FOLDER;
+  std::string EXP_FOLDER;
+  std::string PARAMS_FILE;
+  std::string MCMCTRACE_FILE;
+  std::string MCMCHISTORY_FILE;
+  std::string GAB_FILE;
+  std::string MINMAX_FILE;
+  std::string POST_EXT;
+  std::string FILE_EXT;
+  std::string CSV_EXT;
+
+  Eigen::VectorXd ModelRapidity;
+  std::vector<Eigen::MatrixXd> Model;
+  std::vector<Eigen::MatrixXd> ModelError;
+  std::vector<Eigen::MatrixXd> ModelVariance;
+
+  Eigen::VectorXd ExperimentRapidity;
+  std::vector<Eigen::MatrixXd> Experiment;
+  std::vector<Eigen::VectorXd> ExperimentalError;
+
+  Eigen::MatrixXd Parameters;
+  Eigen::MatrixXd UnscaledParameters;  
+  Eigen::MatrixXd MinMax;
+  Eigen::MatrixXd ModelZ;
+  Eigen::MatrixXd ExpZ;
+
+  Eigen::MatrixXd MCMCHistory;
+
+  CBalanceModel(std::string filename, int testZ); 
+
+  void LoadData();
+  void CutData();
+  void ReduceDimensions();
+  void WriteZ();
+  void CreateEmulator();
+  void CreateMCMC();
+  void RunMCMC();
+  void WriteMCMC();
+  void WriteCoshFunctions();
+
+  void ScaleByChi(Eigen::MatrixXd &Functions);
+  Eigen::MatrixXd ExtractPosterior(Eigen::MatrixXd MCMC);
+};
+
+
+#endif
