@@ -10,24 +10,21 @@
 
 void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix);
 
-/*
 class CEmulator{
  public:
-  virtual void Construct() =0;
+  virtual ~CEmulator(){}
+  virtual void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP) =0;
   virtual Eigen::MatrixXd Emulate(Eigen::MatrixXd testX) =0;
 };
-*/
 
-class CGaussianProcess{
+
+class CGaussianProcess : public CEmulator{
  public:
   int trainPoints;
   int paramCount;
   int obsCount;
   int hyperparamCount; 
   
-  bool PrintVariance; //calculate variance of GP, default false
-  bool UseScaledX; //Scale X for emulation
-
   double Epsilon; //Numerical stability factor for matrix inversion, 1e-8 by default
   double SigmaF; //Variance of func to be emulated
   double CharacLength; //Length overwhich func varies
@@ -36,8 +33,6 @@ class CGaussianProcess{
 
   Eigen::MatrixXd X;
   Eigen::MatrixXd Y;
-  Eigen::MatrixXd UnscaledX;
-  Eigen::MatrixXd MinMax;
   Eigen::MatrixXd Hyperparameters;
   Eigen::MatrixXd Beta;
 
@@ -46,13 +41,12 @@ class CGaussianProcess{
   std::vector<Eigen::MatrixXd> HMatrix;
 
   CGaussianProcess();
+  ~CGaussianProcess(){}
   CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP);
   CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std::string filename);
   void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP);
   void Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std::string filename);
 
-  void ScaleParameters();
-  Eigen::MatrixXd UnscaleParameters(Eigen::MatrixXd ScaledParameters);
   void ConstructHyperparameters();  
   void ConstructBeta();
   void RegressionLinearFunction();
@@ -62,8 +56,6 @@ class CGaussianProcess{
 
   Eigen::MatrixXd Emulate(Eigen::MatrixXd testX);
   Eigen::MatrixXd Emulate_NR(Eigen::MatrixXd testX);
-
-  void SetPrint(bool newPrintVariance);
 };
 
 

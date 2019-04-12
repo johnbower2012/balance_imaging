@@ -57,7 +57,7 @@ class CMCMC{
   //double getLogLikelihoodLorentzian(Eigen::MatrixXd Z);
   //bool decideLorentzian(Eigen::MatrixXd Z);
 
-  Eigen::MatrixXd Run(CGaussianProcess *Emulator, Eigen::MatrixXd Target, int NSamp);
+  Eigen::MatrixXd Run(CEmulator *Emulator, Eigen::MatrixXd Target, int NSamp);
 };
 
 #endif

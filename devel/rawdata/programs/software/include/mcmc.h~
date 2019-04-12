@@ -51,13 +51,13 @@ class CMCMC{
   void step();
   //void step(CCosh dist, Eigen::MatrixXd MinMax);
   double getLikelihood(Eigen::MatrixXd Z1, Eigen::MatrixXd Z2);
-  bool decide(Eigen::MatrixXd Z1, Eigen::MatrixXd Z2);
+  bool decide(double likelihood);
   //double getLogLikelihoodGaussian(Eigen::MatrixXd Z);
   //bool decideGaussian(Eigen::MatrixXd Z);
   //double getLogLikelihoodLorentzian(Eigen::MatrixXd Z);
   //bool decideLorentzian(Eigen::MatrixXd Z);
 
-  Eigen::MatrixXd Run(CGaussianProcess *Emulator, Eigen::MatrixXd Target, int NSamp);
+  Eigen::MatrixXd Run(CEmulator *Emulator, Eigen::MatrixXd Target, int NSamp);
 };
 
 #endif

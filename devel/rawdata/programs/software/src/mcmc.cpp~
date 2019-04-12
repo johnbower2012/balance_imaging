@@ -90,9 +90,7 @@ void CMCMC::step(){
 double CMCMC::getLikelihood(Eigen::MatrixXd Z1, Eigen::MatrixXd Z2){
  double z=0.0, diff=0.0;
  int obsCount = Z1.cols();
-  printf("pass\n");
   for(int i=0;i<obsCount;i++){
-  printf("pass\n");
     diff = (Z1(0,i) - Z2(0,i));
     z += diff*diff;
   }

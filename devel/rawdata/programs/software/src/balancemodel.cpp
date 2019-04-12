@@ -3,15 +3,22 @@
 CBalanceModel::CBalanceModel(std::string filename,int testZ){
   this->MAP.ReadParsFromFile(filename); //Load all parameters from file
   this->testZ = testZ;
+
   this->LoadData(); //Load Model & Exp Files
   this->CutData(); //Cut out 0.05 rapidity, match exp rapidity range to model rap range
+
+  this->ScaleParameters(); //Scale to [0.1]
   this->ReduceDimensions(); //Dimensional reduction via PCA
-  this->CreateEmulator();
   this->WriteZ(); //Write out ModelZ and ExpZ
+
+  this->CreateEmulator(); 
   this->CreateMCMC();
   this->RunMCMC();
+
   this->WriteMCMC();
   this->WriteCoshFunctions();
+
+  this->DeleteEmulator();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +35,8 @@ void CBalanceModel::LoadData(){
   this->QuarkPairs=this->MAP.getI("QUARK_PAIRS",4);
   this->NSamples=this->MAP.getI("NSAMPLES",10000);
 
+  this->EMULATOR_CHOICE=this->MAP.getS("EMULATOR_CHOICE","GAUSSIAN_PROCESS");
+
   this->MODEL_FOLDER=this->MAP.getS("MODEL_FOLDER","model_output");
   this->OUTPUT_FOLDER=this->MAP.getS("OUTPUT_FOLDER","stat_output");
   this->EXP_FOLDER=this->MAP.getS("EXP_FOLDER","model_output");
@@ -40,11 +49,15 @@ void CBalanceModel::LoadData(){
   this->FILE_EXT = this->MAP.getS("FILE_EXT","dat");
   this->CSV_EXT = this->MAP.getS("CSV_EXT","csv");
 
-  this->UseScaleX = this->MAP.getB("USE_SCALE_X",true);
-
   this->CUT_MODEL=this->MAP.getB("CUT_MODEL",true);
   this->CUT_EXP=this->MAP.getB("CUT_EXP",true);
   this->CUT_G0=this->MAP.getB("CUT_G0",true);
+  this->SCALE_X = this->MAP.getB("SCALE_X",true);
+
+  this->EPSILON = MAP.getD("EPSILON",1e-8);
+  this->SIGMA_F = MAP.getD("SIGMA_F",0.5);
+  this->CHARAC_LENGTH = MAP.getD("CHARAC_LENGTH",0.45);
+  this->SIGMA_NOISE = MAP.getD("SIGMA_NOISE",0.05);
 
   this->MCMC_WIDTH=this->MAP.getD("MCMC_WIDTH",0.005);
   this->MCMC_MIN=this->MAP.getD("MCMC_MIN",0.0);
@@ -181,6 +194,20 @@ void CBalanceModel::CutData(){
     }
   }
 }
+void CBalanceModel::ScaleParameters(){
+  int rows = this->Parameters.rows(),
+    cols = this->Parameters.cols();
+  this->MinMax = Eigen::MatrixXd::Zero(cols,2);
+  this->UnscaledParameters = this->Parameters;
+  for(int col=0;col<cols;col++){
+      this->MinMax(col,0) = this->UnscaledParameters.col(col).minCoeff();
+      this->MinMax(col,1) = this->UnscaledParameters.col(col).maxCoeff();
+      for(int row=0;row<rows;row++){
+	  this->Parameters(row,col) = (this->UnscaledParameters(row,col) - this->MinMax(col,0))/(this->MinMax(col,1) - this->MinMax(col,0));
+      }
+  }
+
+}
 void CBalanceModel::ReduceDimensions(){
   CAnalysis PCA;
   this->ModelZ = Eigen::MatrixXd::Zero(this->BFSamples,this->BFCount*this->PrinComp);
@@ -217,13 +244,14 @@ void CBalanceModel::WriteZ(){
   SYSTEM.WriteFile(this->OUTPUT_FOLDER+"/expz.dat",plot);
 }
 void CBalanceModel::CreateEmulator(){
-  this->Emulator.Construct(this->Parameters,this->ModelZ,this->MAP);
-  if(this->Emulator.UseScaledX==true){
-    this->Parameters = this->Emulator.X;
-    this->UnscaledParameters = this->Emulator.UnscaledX;
-  }else{
-    this->UnscaledParameters = this->Parameters;
+  if(this->EMULATOR_CHOICE=="GAUSSIAN_PROCESS"){
+    printf("Creating GAUSSIAN_PROCESS emulator...\n");
+    this->Emulator = new CGaussianProcess;
+    this->Emulator->Construct(this->Parameters,this->ModelZ,this->MAP);
   }
+}
+void CBalanceModel::DeleteEmulator(){
+  delete this->Emulator;
 }
 void CBalanceModel::CreateMCMC(){
   Eigen::MatrixXd 
@@ -248,7 +276,7 @@ void CBalanceModel::RunMCMC(){
     std::cout << "Param" << this->testZ << ": " << this->Parameters.row(this->testZ) << std::endl;
     std::cout << "ModZ" << this->testZ << ": " << TargetZ << std::endl;
   }
-  this->MCMCHistory = this->MCMC.Run(&this->Emulator,TargetZ,this->NSamples);
+  this->MCMCHistory = this->MCMC.Run(this->Emulator,TargetZ,this->NSamples);
 }
 void CBalanceModel::WriteMCMC(){
   CSystem SYSTEM;
@@ -279,57 +307,63 @@ void CBalanceModel::WriteCoshFunctions(){
   CDistCosh dist;
 
   Eigen::MatrixXd 
+    FullG;
+  if(this->CUT_G0 && this->SCALE_X){ //Add G0 from unscaled parameters
+      FullG = dist.GenG0(this->QuarkPairs,this->UnscaledParameters);
+  }else if(this->CUT_G0){ //Add G0 back in to create gabfunctions 
+      FullG = dist.GenG0(this->QuarkPairs,this->Parameters);
+  }else if(this->SCALE_X){ //Use unscaled X
     FullG = this->UnscaledParameters;
-  //Add G0 back in to create gabfunctions
-  if(this->CUT_G0){ //Add G0 back in to create gabfunctions
-    FullG = dist.GenG0(this->QuarkPairs,this->UnscaledParameters);
+  }else{ // No alterations, simply use parameters
+    FullG = this->Parameters;
   }
 
   Eigen::MatrixXd //Create prior gabfunctions
-    Functions = dist.FunctionSet(this->GRID,
-				 this->ETA_MAX,
+    Functions = dist.FunctionSet(this->GRID,this->ETA_MAX,
 				 this->BFSamples,
 				 this->QuarkPairs,
 				 this->QParameters/ab-1,
 				 FullG);
   this->ScaleByChi(Functions); //Change unit area functions to Chi area
-  if(this->testZ!=-1){
+
+  if(this->testZ!=-1){ //Write number into filename
     filename = this->OUTPUT_FOLDER+"/"+this->GAB_FILE+std::to_string(this->testZ)+"."+this->FILE_EXT;
-  }else{
+  }else{ //Write exp into filename
     filename = this->OUTPUT_FOLDER+"/"+this->GAB_FILE+"_exp."+this->FILE_EXT;
   }
   SYSTEM.WriteFile(filename,Functions); //Write prior gabfunctions
   
+
   Eigen::MatrixXd //extract mcmctrace from mcmchistory
     mcmc = this->MCMCHistory.block(0,1,this->MCMCHistory.rows(),this->QParameters),
     posterior = Eigen::MatrixXd::Zero(MCMC_POST,this->QParameters);
-  posterior = ExtractPosterior(mcmc); //Extract posterior samples from trace
+  posterior = ExtractPosterior(mcmc); //Extract posterior samples from mcmctrace
 
-  if(this->testZ!=-1){
+
+  if(this->testZ!=-1){ //Write number into filename
     filename = this->OUTPUT_FOLDER+"/"+this->MCMCTRACE_FILE+this->POST_EXT+std::to_string(this->testZ)+"."+this->FILE_EXT;
-  }else{
+  }else{ //Write exp into filename
     filename = this->OUTPUT_FOLDER+"/"+this->MCMCTRACE_FILE+this->POST_EXT+"_exp."+this->FILE_EXT;
   }
   SYSTEM.WriteFile(filename,posterior); //Write posterior trace
 
-  mcmc=posterior;
-  if(this->UseScaleX){ //Check if Parameters were scaled for mcmc
+
+  if(this->SCALE_X){ //Check if Parameters were scaled for mcmc
     filename = this->OUTPUT_FOLDER+"/"+this->MINMAX_FILE+"."+this->FILE_EXT;
     SYSTEM.WriteFile(filename,this->MinMax); //Write MinMax from scaling Parameters
-    mcmc = this->Emulator.UnscaleParameters(posterior); //Unscale posterior trace
+    posterior = this->UnscaleParameters(posterior); //Unscale posterior trace
   }
-
   FullG = posterior;
   if(this->CUT_G0){ //Add G0 back in to create gabfunctions
     FullG = dist.GenG0(this->QuarkPairs,posterior);
   }
   Functions = dist.FunctionSet(this->GRID,this->ETA_MAX, //Create posterior gabfunctions
-			       MCMC_POST,
+			       this->MCMC_POST,
 			       this->QuarkPairs,
 			       this->QParameters/ab-1,
 			       FullG);
-
   this->ScaleByChi(Functions); //Change unit area functions to Chi area
+
   if(this->testZ!=-1){
     filename =this->OUTPUT_FOLDER+"/"+this->GAB_FILE+this->POST_EXT+std::to_string(this->testZ)+"."+this->FILE_EXT;
   }else{
@@ -337,7 +371,17 @@ void CBalanceModel::WriteCoshFunctions(){
   }
   SYSTEM.WriteFile(filename,Functions); //Write posterior gabfunctions
 }
-
+Eigen::MatrixXd CBalanceModel::UnscaleParameters(Eigen::MatrixXd ScaledParameters){
+  int rows = ScaledParameters.rows(),
+    cols = ScaledParameters.cols();
+  Eigen::MatrixXd UnscaledParameters = Eigen::MatrixXd::Zero(rows,cols);
+  for(int col=0;col<cols;col++){
+      for(int row=0;row<rows;row++){
+	UnscaledParameters(row,col) = ScaledParameters(row,col)*(this->MinMax(col,1) - this->MinMax(col,0)) + this->MinMax(col,0);
+      }
+  }
+  return UnscaledParameters;
+}
 void CBalanceModel::ScaleByChi(Eigen::MatrixXd &Functions){
   for(int i=0;i<this->QuarkPairs;i++){
     for(int j=0;j<this->BFSamples;j++){

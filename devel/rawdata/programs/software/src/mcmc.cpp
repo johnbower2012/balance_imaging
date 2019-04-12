@@ -132,7 +132,7 @@ bool CMCMC::decide(double likelihood){
     }
   }
 }
-Eigen::MatrixXd CMCMC::Run(CGaussianProcess *Emulator, Eigen::MatrixXd targetZ, int NSamp){
+Eigen::MatrixXd CMCMC::Run(CEmulator *Emulator, Eigen::MatrixXd targetZ, int NSamp){
   this->NSamples = NSamp;
   this->Likelihood = this->getLikelihood(targetZ,Emulator->Emulate(this->Position));
   bool 

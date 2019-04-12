@@ -22,9 +22,7 @@ void AddOnesColumn(Eigen::MatrixXd matrix, Eigen::MatrixXd &outMatrix){
 CGaussianProcess::CGaussianProcess(){
 }
 CGaussianProcess::CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP){
-  this->PrintVariance=MAP.getB("PrintVariance",false);
   this->Epsilon = MAP.getD("EPSILON",1e-8);
-  this->UseScaledX = MAP.getB("SCALE_X",true);
   this->SigmaF = MAP.getD("SIGMA_F",0.5);
   this->CharacLength = MAP.getD("CHARAC_LENGTH",0.45);
   this->SigmaNoise = MAP.getD("SIGMA_NOISE",0.05);
@@ -36,9 +34,6 @@ CGaussianProcess::CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, C
   this->paramCount = this->X.cols();
   this->obsCount = this->Y.cols();
 
-  if(this->UseScaledX==true){
-    this->ScaleParameters();
-  }
   this->ConstructHyperparameters();
   this->ConstructBeta();
 
@@ -60,9 +55,7 @@ CGaussianProcess::CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, s
   CParameterMap MAP;
   MAP.ReadParsFromFile(filename);
 
-  this->PrintVariance=MAP.getB("PrintVariance",false);
   this->Epsilon = MAP.getD("EPSILON",1e-8);
-  this->UseScaledX = MAP.getB("SCALE_X",true);
   this->SigmaF = MAP.getD("SIGMA_F",0.5);
   this->CharacLength = MAP.getD("CHARAC_LENGTH",0.45);
   this->SigmaNoise = MAP.getD("SIGMA_NOISE",0.05);
@@ -74,12 +67,8 @@ CGaussianProcess::CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, s
   this->paramCount = this->X.cols();
   this->obsCount = this->Y.cols();
 
-  if(this->UseScaledX==true){
-    this->ScaleParameters();
-  }
   this->ConstructHyperparameters();
   this->ConstructBeta();
-
   this->Noise = this->Hyperparameters.col(this->hyperparamCount - 1);
 
   Eigen::MatrixXd trainI = Eigen::MatrixXd::Identity(trainPoints, trainPoints);
@@ -98,9 +87,7 @@ CGaussianProcess::CGaussianProcess(Eigen::MatrixXd newX, Eigen::MatrixXd newY, s
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void CGaussianProcess::Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CParameterMap MAP){
-  this->PrintVariance=MAP.getB("PrintVariance",false);
   this->Epsilon = MAP.getD("EPSILON",1e-8);
-  this->UseScaledX = MAP.getB("SCALE_X",true);
   this->SigmaF = MAP.getD("SIGMA_F",0.5);
   this->CharacLength = MAP.getD("CHARAC_LENGTH",0.45);
   this->SigmaNoise = MAP.getD("SIGMA_NOISE",0.05);
@@ -112,14 +99,12 @@ void CGaussianProcess::Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, CPa
   this->paramCount = this->X.cols();
   this->obsCount = this->Y.cols();
 
-  if(this->UseScaledX==true){
-    this->ScaleParameters();
-  }
   this->ConstructHyperparameters();
   this->ConstructBeta();
   this->Noise = this->Hyperparameters.col(this->hyperparamCount - 1);
 
   Eigen::MatrixXd trainI = Eigen::MatrixXd::Identity(trainPoints, trainPoints);
+
   this->Kernel = std::vector<Eigen::MatrixXd>(obsCount);
   this->KernelInv = std::vector<Eigen::MatrixXd>(obsCount);
   this->HMatrix = std::vector<Eigen::MatrixXd>(obsCount);
@@ -134,9 +119,7 @@ void CGaussianProcess::Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std
   CParameterMap MAP;
   MAP.ReadParsFromFile(filename);
 
-  this->PrintVariance=MAP.getB("PrintVariance",false);
   this->Epsilon = MAP.getD("EPSILON",1e-8);
-  this->UseScaledX = MAP.getB("SCALE_X",true);
   this->SigmaF = MAP.getD("SIGMA_F",0.5);
   this->CharacLength = MAP.getD("CHARAC_LENGTH",0.45);
   this->SigmaNoise = MAP.getD("SIGMA_NOISE",0.05);
@@ -148,12 +131,8 @@ void CGaussianProcess::Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std
   this->paramCount = this->X.cols();
   this->obsCount = this->Y.cols();
 
-  if(this->UseScaledX==true){
-    this->ScaleParameters();
-  }
   this->ConstructHyperparameters();
   this->ConstructBeta();
-
   this->Noise = this->Hyperparameters.col(this->hyperparamCount - 1);
 
   Eigen::MatrixXd trainI = Eigen::MatrixXd::Identity(trainPoints, trainPoints);
@@ -167,30 +146,6 @@ void CGaussianProcess::Construct(Eigen::MatrixXd newX, Eigen::MatrixXd newY, std
     this->KernelInv[ob] = this->Kernel[ob].inverse();
     this->HMatrix[ob] = RegressionLinearFunction(this->X, ob);
   }
-}
-void CGaussianProcess::ScaleParameters(){
-  int rows = this->X.rows(),
-    cols = this->X.cols();
-  this->MinMax = Eigen::MatrixXd::Zero(cols,2);
-  this->UnscaledX = this->X;
-  for(int col=0;col<cols;col++){
-      this->MinMax(col,0) = this->UnscaledX.col(col).minCoeff();
-      this->MinMax(col,1) = this->UnscaledX.col(col).maxCoeff();
-      for(int row=0;row<rows;row++){
-	  this->X(row,col) = (this->UnscaledX(row,col) - this->MinMax(col,0))/(this->MinMax(col,1) - this->MinMax(col,0));
-      }
-  }
-}
-Eigen::MatrixXd CGaussianProcess::UnscaleParameters(Eigen::MatrixXd ScaledParameters){
-  int rows = ScaledParameters.rows(),
-    cols = ScaledParameters.cols();
-  Eigen::MatrixXd UnscaledParameters = Eigen::MatrixXd::Zero(rows,cols);
-  for(int col=0;col<cols;col++){
-      for(int row=0;row<rows;row++){
-	UnscaledParameters(row,col) = ScaledParameters(row,col)*(this->MinMax(col,1) - this->MinMax(col,0)) + this->MinMax(col,0);
-      }
-  }
-  return UnscaledParameters;
 }
 void CGaussianProcess::ConstructHyperparameters(){
   int rows = this->Y.rows(),
@@ -282,11 +237,7 @@ Eigen::MatrixXd CGaussianProcess::Emulate(Eigen::MatrixXd testX){
   
   //outMatrix = Eigen::MatrixXd::Zero(testPoints,this->paramCount+this->obsCount);
   Eigen::MatrixXd outMatrix;
-  if(this->PrintVariance==true){
-    outMatrix = Eigen::MatrixXd::Zero(testPoints,this->obsCount*2);
-  }else{
     outMatrix = Eigen::MatrixXd::Zero(testPoints,this->obsCount);
-  }
 
   for(int ob=0;ob<this->obsCount;ob++){
     KernelS = this->KernelFunction(this->X, testX, ob);
@@ -301,16 +252,10 @@ Eigen::MatrixXd CGaussianProcess::Emulate(Eigen::MatrixXd testX){
 
     meanMatrix = KernelS.transpose()*this->KernelInv[ob]*Y.col(ob) + R.transpose()*betaMatrix;
 
-    if(this->PrintVariance==true){
-      varMatrix = KernelSS - KernelS.transpose()*this->KernelInv[ob]*KernelS + R.transpose()*tempPPInv*R;
-      L = varMatrix.llt().matrixL();
-
-      L = varMatrix.llt().matrixL();
-      outMatrix.col(ob*2) = meanMatrix.col(0);
-      outMatrix.col(ob*2+1) = L.diagonal();
-    }else{
-      outMatrix.col(ob) = meanMatrix.col(0);
-    }
+    //varMatrix = KernelSS - KernelS.transpose()*this->KernelInv[ob]*KernelS + R.transpose()*tempPPInv*R;
+    //L = varMatrix.llt().matrixL();
+    
+    outMatrix.col(ob) = meanMatrix.col(0);
   }
   return outMatrix;
 }
@@ -335,11 +280,7 @@ Eigen::MatrixXd CGaussianProcess::Emulate_NR(Eigen::MatrixXd testX){
     testI = Eigen::MatrixXd::Identity(testPoints,testPoints);
 
   Eigen::MatrixXd outMatrix;
-  if(this->PrintVariance==true){
-    outMatrix = Eigen::MatrixXd::Zero(testPoints,this->obsCount*2);
-  }else{
     outMatrix = Eigen::MatrixXd::Zero(testPoints,this->obsCount);
-  }
 
   for(int ob=0;ob<obsCount;ob++){
     KernelS = this->KernelFunction(this->X, testX, ob);
@@ -348,17 +289,9 @@ Eigen::MatrixXd CGaussianProcess::Emulate_NR(Eigen::MatrixXd testX){
 
     meanMatrix = KernelS.transpose()*this->KernelInv[ob]*Y.col(ob);
 
-    if(this->PrintVariance==true){
-      varMatrix = KernelSS - KernelS.transpose()*this->KernelInv[ob]*KernelS;
-      L = varMatrix.llt().matrixL();
-      outMatrix.col(ob*2) = meanMatrix.col(0);
-      outMatrix.col(ob*2+1) = L.diagonal();
-    }else{
-      outMatrix.col(ob) = meanMatrix.col(0);
-    }
+    //varMatrix = KernelSS - KernelS.transpose()*this->KernelInv[ob]*KernelS;
+    //L = varMatrix.llt().matrixL();
+    outMatrix.col(ob) = meanMatrix.col(0);
   }
   return outMatrix;
-}
-void CGaussianProcess::SetPrint(bool newPrintVariance){
-  this->PrintVariance = newPrintVariance;
 }

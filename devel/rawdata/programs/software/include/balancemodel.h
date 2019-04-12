@@ -13,7 +13,7 @@
 class CBalanceModel{
  public:
   CParameterMap MAP;
-  CGaussianProcess Emulator;
+  CEmulator* Emulator;
   CMCMC MCMC;
 
   int START;
@@ -29,7 +29,12 @@ class CBalanceModel{
   bool CUT_MODEL;
   bool CUT_EXP;
   bool CUT_G0;
-  bool UseScaleX;
+  bool SCALE_X;
+
+  double EPSILON;
+  double SIGMA_F;
+  double CHARAC_LENGTH;
+  double SIGMA_NOISE;
 
   double MCMC_WIDTH;
   double MCMC_MIN;
@@ -38,6 +43,8 @@ class CBalanceModel{
 
   int GRID;
   double ETA_MAX;
+
+  std::string EMULATOR_CHOICE;
 
   Eigen::VectorXd CHI;
 
@@ -75,9 +82,11 @@ class CBalanceModel{
 
   void LoadData();
   void CutData();
+  void ScaleParameters();
   void ReduceDimensions();
   void WriteZ();
   void CreateEmulator();
+  void DeleteEmulator();
   void CreateMCMC();
   void RunMCMC();
   void WriteMCMC();
@@ -85,6 +94,7 @@ class CBalanceModel{
 
   void ScaleByChi(Eigen::MatrixXd &Functions);
   Eigen::MatrixXd ExtractPosterior(Eigen::MatrixXd MCMC);
+  Eigen::MatrixXd UnscaleParameters(Eigen::MatrixXd ScaledParameters);
 };
 
 
